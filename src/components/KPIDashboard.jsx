@@ -492,7 +492,7 @@ const KPIDashboard = () => {
   useEffect(() => {
     // If user doesn't have access to current active tab, set to first allowed tab
     if (!isTabAccessible(activeTab)) {
-      const firstAllowedTab = currentUser.allowedTabs[0] || 'headcount';
+      const firstAllowedTab = currentUser.allowedTabs[0] || 'general-manager';
       setActiveTab(firstAllowedTab);
     }
   }, [currentUser, activeTab, isTabAccessible]);
@@ -552,29 +552,35 @@ const KPIDashboard = () => {
       'general-manager': {
         email: 'gm@example.com',
         role: 'general-manager',
-        allowedTabs: ['general-manager', 'headcount']
+        allowedTabs: ['general-manager'] // Removed 'headcount'
       },
       'branch-manager': {
         email: 'bm@example.com',
         role: 'branch-manager',
-        allowedTabs: ['branch-manager', 'headcount']
+        allowedTabs: ['branch-manager'] // Removed 'headcount'
       },
       'account-manager': {
         email: 'am@example.com',
         role: 'account-manager',
-        allowedTabs: ['account-manager', 'headcount']
+        allowedTabs: ['account-manager'] // Removed 'headcount'
       },
       'field-supervisor': {
         email: 'fs@example.com',
         role: 'field-supervisor',
-        allowedTabs: ['field-supervisor', 'headcount']
+        allowedTabs: ['field-supervisor'] // Removed 'headcount'
       },
       'specialist': {
         email: 'specialist@example.com',
         role: 'specialist',
-        allowedTabs: ['specialist', 'headcount']
+        allowedTabs: ['specialist'] // Removed 'headcount'
       }
     };
+    
+    // If user is currently on headcount tab but is switching to non-admin role, 
+    // change active tab to their role-specific tab
+    if (activeTab === 'headcount' && role !== 'admin') {
+      setActiveTab(role);
+    }
     
     setCurrentUser(roleMap[role] || roleMap.admin);
   };
