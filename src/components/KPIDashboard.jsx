@@ -759,15 +759,23 @@ const KPIDashboard = () => {
     }));
   };
 
-  // Calculate total bonus for all employees in a position
+  // Calculate total bonus for all employees in a position based on forecast percentage
   const calculateTotalPositionBonus = (positionKey) => {
     const position = positions[positionKey];
     const count = headcount[positionKey];
-    const bonusPerPerson = calculateActualTotalBonus(position);
-    return bonusPerPerson * count * (bonusMultiplier / 100);
+    
+    if (bonusMultiplier === 100) {
+      // If slider is at 100%, use the actual earned bonus
+      const bonusPerPerson = calculateActualTotalBonus(position);
+      return bonusPerPerson * count;
+    } else {
+      // Otherwise, use the percentage of available bonus
+      const availableBonusPerPerson = calculateTotalBonus(position.salary);
+      return availableBonusPerPerson * count * (bonusMultiplier / 100);
+    }
   };
 
-  // Calculate original total bonus for all employees in a position (without multiplier)
+  // Calculate original total bonus for all employees in a position (based on KPI performance)
   const calculateOriginalTotalPositionBonus = (positionKey) => {
     const position = positions[positionKey];
     const count = headcount[positionKey];
@@ -1214,7 +1222,6 @@ const KPIDashboard = () => {
           </div>
         </div>
         
-        {/* Bonus Forecast Slider */}
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Bonus Forecast Slider</h3>
           <div className="flex items-center mb-2">
@@ -1243,23 +1250,21 @@ const KPIDashboard = () => {
             </div>
           </div>
           <p className="text-sm text-gray-600">
-            Adjust this slider to forecast how different bonus payout percentages would affect the total budget.
+            Adjust this slider to forecast different bonus scenarios. The percentage represents how much of the total available bonus will be paid out.
             <br />
             <span className="flex mt-2 items-center">
-              <span className="font-medium">100% Bonus Budget:</span>
-              <span className="ml-2 font-bold text-gray-800">{formatCurrency(calculateGrandTotalOriginalBonus())}</span>
-              {bonusMultiplier !== 100 && (
-                <>
-                  <span className="mx-2">→</span>
-                  <span className="font-medium">Forecasted Bonus Budget ({bonusMultiplier}%):</span>
-                  <span className="ml-2 font-bold text-red-600">
-                    {formatCurrency(calculateGrandTotalBonus())}
-                  </span>
-                  <span className="ml-2 text-gray-500 text-sm">
-                    ({Math.round(bonusMultiplier - 100)}%)
-                  </span>
-                </>
-              )}
+              <span className="font-medium">Available Bonus Budget ({bonusMultiplier}%):</span>
+              <span className="ml-2 font-bold text-blue-600">{formatCurrency(calculateGrandTotalBonus())}</span>
+              <span className="mx-2">vs.</span>
+              <span className="font-medium">Performance-Based Bonus:</span>
+              <span className="ml-2 font-bold text-gray-800">{formatCurrency(
+                Object.keys(positions).reduce((total, positionKey) => {
+                  const position = positions[positionKey];
+                  const count = headcount[positionKey];
+                  const performanceBasedBonus = calculateActualTotalBonus(position) * count;
+                  return total + performanceBasedBonus;
+                }, 0)
+              )}</span>
             </span>
           </p>
         </div>
@@ -1282,32 +1287,39 @@ const KPIDashboard = () => {
               {Object.keys(positions).map((positionKey) => {
                 const position = positions[positionKey];
                 const count = headcount[positionKey];
-                const bonusPerPerson = calculateActualTotalBonus(position);
-                const originalTotalBonus = bonusPerPerson * count;
-                const adjustedTotalBonus = originalTotalBonus * (bonusMultiplier / 100);
+                const availableBonusPerPerson = calculateTotalBonus(position.salary);
+                const performanceBasedBonusPerPerson = calculateActualTotalBonus(position);
+                
+                // Calculate forecasted bonus based on slider
+                const forecastedBonusPerPerson = availableBonusPerPerson * (bonusMultiplier / 100);
+                const forecastedTotalBonus = forecastedBonusPerPerson * count;
+                const performanceBasedTotalBonus = performanceBasedBonusPerPerson * count;
+                
                 const totalSalary = position.salary * count;
-                const totalCompensation = totalSalary + adjustedTotalBonus;
+                const totalCompensation = totalSalary + forecastedTotalBonus;
                 
                 return (
                   <tr key={positionKey} className="border-b">
                     <td className="py-2 px-4 border font-medium">{position.title}</td>
                     <td className="py-2 px-4 border text-center">{count}</td>
                     <td className="py-2 px-4 border text-right">
-                      {formatCurrency(bonusPerPerson * (bonusMultiplier / 100))}
-                      {bonusMultiplier !== 100 && (
-                        <div className="text-xs text-gray-500">
-                          (Original: {formatCurrency(bonusPerPerson)})
-                        </div>
-                      )}
+                      {formatCurrency(forecastedBonusPerPerson)}
+                      <div className="text-xs text-gray-500">
+                        (Available: {formatCurrency(availableBonusPerPerson)})
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        (Performance: {formatCurrency(performanceBasedBonusPerPerson)})
+                      </div>
                     </td>
                     <td className="py-2 px-4 border text-right">{formatCurrency(position.salary)}</td>
-                    <td className="py-2 px-4 border text-right font-medium text-green-600">
-                      {formatCurrency(adjustedTotalBonus)}
-                      {bonusMultiplier !== 100 && (
-                        <div className="text-xs text-gray-500">
-                          (Original: {formatCurrency(originalTotalBonus)})
-                        </div>
-                      )}
+                    <td className="py-2 px-4 border text-right font-medium text-blue-600">
+                      {formatCurrency(forecastedTotalBonus)}
+                      <div className="text-xs text-gray-500">
+                        (Available: {formatCurrency(availableBonusPerPerson * count)})
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        (Performance: {formatCurrency(performanceBasedTotalBonus)})
+                      </div>
                     </td>
                     <td className="py-2 px-4 border text-right">{formatCurrency(totalCompensation)}</td>
                   </tr>
@@ -1315,21 +1327,37 @@ const KPIDashboard = () => {
               })}
               <tr className="bg-blue-50">
                 <td colSpan="4" className="py-3 px-4 border font-semibold text-right">Grand Total:</td>
-                <td className="py-3 px-4 border text-right font-bold text-green-700">
+                <td className="py-3 px-4 border text-right font-bold text-blue-600">
                   {formatCurrency(calculateGrandTotalBonus())}
-                  {bonusMultiplier !== 100 && (
-                    <div className="text-xs text-gray-600">
-                      (Original: {formatCurrency(calculateGrandTotalOriginalBonus())})
-                    </div>
-                  )}
+                  <div className="text-xs text-gray-600">
+                    (Available at 100%: {formatCurrency(
+                      Object.keys(positions).reduce((total, positionKey) => {
+                        const position = positions[positionKey];
+                        const count = headcount[positionKey];
+                        const availableBonusPerPerson = calculateTotalBonus(position.salary);
+                        return total + (availableBonusPerPerson * count);
+                      }, 0)
+                    )})
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    (Performance-based: {formatCurrency(
+                      Object.keys(positions).reduce((total, positionKey) => {
+                        const position = positions[positionKey];
+                        const count = headcount[positionKey];
+                        const performanceBasedBonus = calculateActualTotalBonus(position) * count;
+                        return total + performanceBasedBonus;
+                      }, 0)
+                    )})
+                  </div>
                 </td>
                 <td className="py-3 px-4 border text-right font-bold">{formatCurrency(
                   Object.keys(positions).reduce((total, positionKey) => {
                     const position = positions[positionKey];
                     const count = headcount[positionKey];
-                    const bonusPerPerson = calculateActualTotalBonus(position);
-                    const adjustedTotalBonus = bonusPerPerson * count * (bonusMultiplier / 100);
-                    return total + (position.salary * count) + adjustedTotalBonus;
+                    const totalSalary = position.salary * count;
+                    const forecastedTotalBonus = calculateTotalBonus(position.salary) * count * (bonusMultiplier / 100);
+                    
+                    return total + totalSalary + forecastedTotalBonus;
                   }, 0)
                 )}</td>
               </tr>
