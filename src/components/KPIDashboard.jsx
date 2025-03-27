@@ -323,7 +323,7 @@ const KPIDashboard = () => {
     'account-manager': 7,
     'field-supervisor': 10,
     'specialist': 7,
-    'asset-risk-manager': 2
+    'asset-risk-manager': 1
   });
 
   // User authentication and role management (placeholder for future implementation)
