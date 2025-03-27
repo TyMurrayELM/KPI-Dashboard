@@ -191,7 +191,12 @@ const KPIDashboard = () => {
           name: 'Property Checklist Item Completion',
           description: 'Ensure all items on visit note checklists are completed, and completed satisfactorily, on a daily basis to keep properties in great condition and improve retention.',
           target: 100,
-          actual: 80
+          actual: 80,
+          successFactors: [
+            "Create actionable and applicable checklist items for crews",
+            "Ensure crew completes the checklists in CRM",
+            "Validate completion via crew photos and property visits"
+          ]
         }
       ]
     },
@@ -238,7 +243,12 @@ const KPIDashboard = () => {
           name: 'Property Checklist Item Completion',
           description: 'Ensure all items on visit note checklists are completed, and completed satisfactorily, on a daily basis to keep properties in great condition and improve retention.',
           target: 100,
-          actual: 80
+          actual: 80,
+          successFactors: [
+            "Create actionable and applicable checklist items for crews",
+            "Ensure crew completes the checklists in CRM",
+            "Validate completion via crew photos and property visits"
+          ]
         }
       ]
     },
