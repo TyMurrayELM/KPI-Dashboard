@@ -60,7 +60,12 @@ const KPIDashboard = () => {
           name: 'Extra Sales',
           description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
           target: 100,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure all budgeted proposals for properties are provided to client",
+            "Capture all proposal requests or property needs so specialists can put together proposals",
+            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+          ]
         },
         {
           name: 'Direct Labor Maintenance %',
@@ -121,7 +126,12 @@ const KPIDashboard = () => {
           name: 'Extra Sales',
           description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
           target: 100,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure all budgeted proposals for properties are provided to client",
+            "Capture all proposal requests or property needs so specialists can put together proposals",
+            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+          ]
         },
         {
           name: 'Direct Labor Maintenance %',
@@ -170,7 +180,12 @@ const KPIDashboard = () => {
           name: 'Extra Sales',
           description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
           target: 100,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure all budgeted proposals for properties are provided to client",
+            "Capture all proposal requests or property needs so specialists can put together proposals",
+            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+          ]
         },
         {
           name: 'Property Checklist Item Completion',
@@ -212,7 +227,12 @@ const KPIDashboard = () => {
           name: 'Extra Sales',
           description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
           target: 100,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure all budgeted proposals for properties are provided to client",
+            "Capture all proposal requests or property needs so specialists can put together proposals",
+            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+          ]
         },
         {
           name: 'Property Checklist Item Completion',
