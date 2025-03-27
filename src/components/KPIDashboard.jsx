@@ -49,7 +49,12 @@ const KPIDashboard = () => {
           name: 'Visit Note Creation',
           description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
+            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Coordinate with team members to ensure all visits have proper notes and checklists"
+          ]
         },
         {
           name: 'Extra Sales',
@@ -105,7 +110,12 @@ const KPIDashboard = () => {
           name: 'Visit Note Creation',
           description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
+            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Coordinate with team members to ensure all visits have proper notes and checklists"
+          ]
         },
         {
           name: 'Extra Sales',
@@ -149,7 +159,12 @@ const KPIDashboard = () => {
           name: 'Visit Note Creation',
           description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
+            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Coordinate with team members to ensure all visits have proper notes and checklists"
+          ]
         },
         {
           name: 'Extra Sales',
@@ -186,7 +201,12 @@ const KPIDashboard = () => {
           name: 'Visit Note Creation',
           description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
+            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Coordinate with team members to ensure all visits have proper notes and checklists"
+          ]
         },
         {
           name: 'Extra Sales',
