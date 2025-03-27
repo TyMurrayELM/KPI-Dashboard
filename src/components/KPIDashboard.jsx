@@ -164,6 +164,38 @@ const KPIDashboard = () => {
           actual: 90
         }
       ]
+    },
+    'asset-risk-manager': {
+      title: 'Asset & Risk Manager',
+      salary: 80000,
+      kpis: [
+        {
+          name: 'Fleet Uptime Rate',
+          description: 'Percentage of time equipment is operational vs. down for maintenance or repairs. Higher uptime indicates better maintenance practices and equipment reliability.',
+          target: 95,
+          actual: 93
+        },
+        {
+          name: 'Preventative vs. Reactive Maintenance Ratio',
+          description: 'Cost comparison of scheduled maintenance versus emergency repairs, calculated as (Maintenance Costs) / (Repair Costs) as a percentage. Higher ratios indicate more proactive maintenance approaches.',
+          target: 80,
+          actual: 75
+        },
+        {
+          name: 'Accident/Incident Rate',
+          description: 'Number of accidents or safety incidents per miles driven. Measured using Samsara event notifications and reported incidents. Lower rates indicate better safety outcomes.',
+          target: 5,
+          actual: 7,
+          isInverse: true
+        },
+        {
+          name: 'Safety Incidents Magnitude',
+          description: 'Severity and impact of safety incidents, measured on a scale. Lower values indicate less severe safety incidents or better management of incident consequences.',
+          target: 10,
+          actual: 12,
+          isInverse: true
+        }
+      ]
     }
   };
 
@@ -179,15 +211,16 @@ const KPIDashboard = () => {
     'branch-manager': 4,
     'account-manager': 7,
     'field-supervisor': 10,
-    'specialist': 7
+    'specialist': 7,
+    'asset-risk-manager': 2
   });
 
   // User authentication and role management (placeholder for future implementation)
   // In a real application, this would come from your authentication system
   const [currentUser, setCurrentUser] = useState({
     email: 'admin@example.com',
-    role: 'admin', // 'admin', 'general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist'
-    allowedTabs: ['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'headcount']
+    role: 'admin', // 'admin', 'general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager'
+    allowedTabs: ['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
   });
 
   // Calculate the total potential bonus
@@ -223,6 +256,8 @@ const KPIDashboard = () => {
         return 'bg-amber-50';
       case 'specialist':
         return 'bg-cyan-50';
+      case 'asset-risk-manager':
+        return 'bg-red-50';
       case 'headcount':
         return 'bg-gray-50';
       default:
@@ -243,6 +278,8 @@ const KPIDashboard = () => {
         return 'bg-amber-100';
       case 'specialist':
         return 'bg-cyan-100';
+      case 'asset-risk-manager':
+        return 'bg-red-100';
       case 'headcount':
         return 'bg-gray-100';
       default:
@@ -418,6 +455,140 @@ const KPIDashboard = () => {
         return kpiTotalAvailable; // 100% of KPI bonus
       }
     }
+    // Special calculation for Fleet Uptime Rate
+    else if (kpi.name === 'Fleet Uptime Rate') {
+      // Below 90%
+      if (kpi.actual < 90) {
+        return 0;
+      }
+      // At 90% exactly
+      else if (kpi.actual === 90) {
+        return kpiTotalAvailable * 0.25; // 25% of KPI bonus
+      }
+      // Between 90% and target (95%)
+      else if (kpi.actual > 90 && kpi.actual < 95) {
+        // Base 25% for hitting 90%
+        const baseAmount = kpiTotalAvailable * 0.25;
+        // Calculate progress from 90% to 95% (0-75%)
+        const progressToTarget = (kpi.actual - 90) / 5;
+        // Remaining 50% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.5) * progressToTarget;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At target exactly (95%)
+      else if (kpi.actual === 95) {
+        return kpiTotalAvailable * 0.75; // 75% of KPI bonus
+      }
+      // Between target (95%) and 98%
+      else if (kpi.actual > 95 && kpi.actual < 98) {
+        // Base 75% for hitting target
+        const baseAmount = kpiTotalAvailable * 0.75;
+        // Calculate progress from 95% to 98% (0-25%)
+        const progressAboveTarget = (kpi.actual - 95) / 3;
+        // Remaining 25% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.25) * progressAboveTarget;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or above 98%
+      else {
+        return kpiTotalAvailable; // 100% of KPI bonus
+      }
+    }
+    // Special calculation for Preventative vs. Reactive Maintenance Ratio
+    else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') {
+      // Below 70%
+      if (kpi.actual < 70) {
+        return 0;
+      }
+      // Between 70% and target (80%)
+      else if (kpi.actual >= 70 && kpi.actual < 80) {
+        // Linear progression from 0 to 75% of bonus as we approach 80%
+        return kpiTotalAvailable * 0.75 * ((kpi.actual - 70) / 10);
+      }
+      // At target exactly (80%)
+      else if (kpi.actual === 80) {
+        return kpiTotalAvailable * 0.75; // 75% of KPI bonus
+      }
+      // Between 80% and 90%
+      else if (kpi.actual > 80 && kpi.actual < 90) {
+        // Base 75% for hitting target
+        const baseAmount = kpiTotalAvailable * 0.75;
+        // Calculate progress from 80% to 90% (0-25%)
+        const progressAboveTarget = (kpi.actual - 80) / 10;
+        // Remaining 25% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.25) * progressAboveTarget;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or above 90%
+      else {
+        return kpiTotalAvailable; // 100% of KPI bonus
+      }
+    }
+    // Special calculation for Accident/Incident Rate (inverse - lower is better)
+    else if (kpi.name === 'Accident/Incident Rate') {
+      // Above 10 (worse performance)
+      if (kpi.actual > 10) {
+        return 0;
+      }
+      // Between 10 and 7
+      else if (kpi.actual > 7 && kpi.actual <= 10) {
+        // Linear progression from 0 to 50% of bonus as we approach 7
+        return kpiTotalAvailable * 0.5 * ((10 - kpi.actual) / 3);
+      }
+      // At 7 exactly
+      else if (kpi.actual === 7) {
+        return kpiTotalAvailable * 0.5; // 50% of KPI bonus
+      }
+      // Between target (5) and 7
+      else if (kpi.actual > 5 && kpi.actual < 7) {
+        // Base 50% for hitting 7
+        const baseAmount = kpiTotalAvailable * 0.5;
+        // Calculate progress from 7 to 5 (0-50%)
+        const progressToTarget = (7 - kpi.actual) / 2;
+        // Remaining 50% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.5) * progressToTarget;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or below target (5) - best performance
+      else {
+        return kpiTotalAvailable; // 100% of KPI bonus
+      }
+    }
+    // Special calculation for Safety Incidents Magnitude (inverse - lower is better)
+    else if (kpi.name === 'Safety Incidents Magnitude') {
+      // Above 15 (worse performance)
+      if (kpi.actual > 15) {
+        return 0;
+      }
+      // Between 15 and 12
+      else if (kpi.actual > 12 && kpi.actual <= 15) {
+        // Linear progression from 0 to 50% of bonus as we approach 12
+        return kpiTotalAvailable * 0.5 * ((15 - kpi.actual) / 3);
+      }
+      // At 12 exactly
+      else if (kpi.actual === 12) {
+        return kpiTotalAvailable * 0.5; // 50% of KPI bonus
+      }
+      // Between target (10) and 12
+      else if (kpi.actual > 10 && kpi.actual < 12) {
+        // Base 50% for hitting 12
+        const baseAmount = kpiTotalAvailable * 0.5;
+        // Calculate progress from 12 to 10 (0-50%)
+        const progressToTarget = (12 - kpi.actual) / 2;
+        // Remaining 50% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.5) * progressToTarget;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or below target (10) - best performance
+      else {
+        return kpiTotalAvailable; // 100% of KPI bonus
+      }
+    }
     // For other KPIs, use a simple percentage calculation for now
     else {
       // Calculate achievement percentage (capped at 100%)
@@ -512,6 +683,14 @@ const KPIDashboard = () => {
         max = 80;
       } else if (kpi.name === 'LV Maintenance Growth') {
         max = 10;
+      } else if (kpi.name === 'Fleet Uptime Rate') {
+        max = 100;
+      } else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') {
+        max = 100;
+      } else if (kpi.name === 'Accident/Incident Rate') {
+        max = 15;
+      } else if (kpi.name === 'Safety Incidents Magnitude') {
+        max = 20;
       }
       
       kpi.actual = Math.min(max, kpi.actual + 1);
@@ -533,6 +712,14 @@ const KPIDashboard = () => {
         min = 40;
       } else if (kpi.name === 'Property Checklist Item Completion') {
         min = 50;
+      } else if (kpi.name === 'Fleet Uptime Rate') {
+        min = 85;
+      } else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') {
+        min = 50;
+      } else if (kpi.name === 'Accident/Incident Rate') {
+        min = 0;
+      } else if (kpi.name === 'Safety Incidents Magnitude') {
+        min = 0;
       }
       
       kpi.actual = Math.max(min, kpi.actual - 1);
@@ -547,7 +734,7 @@ const KPIDashboard = () => {
       'admin': {
         email: 'admin@example.com',
         role: 'admin',
-        allowedTabs: ['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'headcount']
+        allowedTabs: ['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
       },
       'general-manager': {
         email: 'gm@example.com',
@@ -573,6 +760,11 @@ const KPIDashboard = () => {
         email: 'specialist@example.com',
         role: 'specialist',
         allowedTabs: ['specialist'] // Removed 'headcount'
+      },
+      'asset-risk-manager': {
+        email: 'arm@example.com',
+        role: 'asset-risk-manager',
+        allowedTabs: ['asset-risk-manager'] // Removed 'headcount'
       }
     };
     
@@ -608,14 +800,8 @@ const KPIDashboard = () => {
                   <div className="flex-1 mr-4">
                     <input 
                       type="range" 
-                      min={kpi.name === 'Direct Labor Maintenance %' ? 25 : 
-                          (kpi.name === 'Retention %' || kpi.name === 'Visit Note Creation' || kpi.name === 'Extra Sales') ? 50 : 
-                          kpi.name === 'Total Gross Margin % on Completed Jobs' ? 40 :
-                          kpi.name === 'Property Checklist Item Completion' ? 50 : 0}
-                      max={kpi.name === 'Direct Labor Maintenance %' ? 45 : 
-                          kpi.name === 'Extra Sales' ? 110 : 
-                          kpi.name === 'Total Gross Margin % on Completed Jobs' ? 80 :
-                          kpi.name === 'LV Maintenance Growth' ? 10 : 100}
+                      min={getMinValueForKPI(kpi.name)}
+                      max={getMaxValueForKPI(kpi.name)}
                       value={kpi.actual}
                       onChange={(e) => handleSliderChange(positionKey, index, e.target.value)}
                       className="w-full h-6 bg-blue-100 rounded-lg appearance-none cursor-pointer"
@@ -708,6 +894,64 @@ const KPIDashboard = () => {
                     }
                   </div>
                 )}
+                {kpi.name === 'Fleet Uptime Rate' && (
+                  <div className="mt-1 text-xs text-gray-500">
+                    {kpi.actual < 90 ? 
+                      "Below 90% (0% bonus)" : 
+                      kpi.actual === 90 ? 
+                        "At 90% (25% bonus)" :
+                        kpi.actual < 95 ?
+                          `${25 + Math.round(((kpi.actual - 90) / 5) * 50)}% of bonus` :
+                        kpi.actual === 95 ?
+                          "At target (75% bonus)" :
+                        kpi.actual >= 98 ?
+                          "Maximum bonus reached" :
+                          `${75 + Math.round(((kpi.actual - 95) / 3) * 25)}% of bonus`
+                    }
+                  </div>
+                )}
+                {kpi.name === 'Preventative vs. Reactive Maintenance Ratio' && (
+                  <div className="mt-1 text-xs text-gray-500">
+                    {kpi.actual < 70 ? 
+                      "Below 70% (0% bonus)" : 
+                      kpi.actual < 80 ? 
+                        `${Math.round(((kpi.actual - 70) / 10) * 75)}% of bonus` :
+                      kpi.actual === 80 ? 
+                        "At target (75% bonus)" :
+                      kpi.actual >= 90 ?
+                        "Maximum bonus reached" :
+                        `${75 + Math.round(((kpi.actual - 80) / 10) * 25)}% of bonus`
+                    }
+                  </div>
+                )}
+                {kpi.name === 'Accident/Incident Rate' && (
+                  <div className="mt-1 text-xs text-gray-500">
+                    {kpi.actual > 10 ? 
+                      "Above 10 (0% bonus)" : 
+                      kpi.actual > 7 ? 
+                        `${Math.round(((10 - kpi.actual) / 3) * 50)}% of bonus` :
+                      kpi.actual === 7 ? 
+                        "At 7 (50% bonus)" :
+                      kpi.actual <= 5 ?
+                        "At or below target (full bonus)" :
+                        `${50 + Math.round(((7 - kpi.actual) / 2) * 50)}% of bonus`
+                    }
+                  </div>
+                )}
+                {kpi.name === 'Safety Incidents Magnitude' && (
+                  <div className="mt-1 text-xs text-gray-500">
+                    {kpi.actual > 15 ? 
+                      "Above 15 (0% bonus)" : 
+                      kpi.actual > 12 ? 
+                        `${Math.round(((15 - kpi.actual) / 3) * 50)}% of bonus` :
+                      kpi.actual === 12 ? 
+                        "At 12 (50% bonus)" :
+                      kpi.actual <= 10 ?
+                        "At or below target (full bonus)" :
+                        `${50 + Math.round(((12 - kpi.actual) / 2) * 50)}% of bonus`
+                    }
+                  </div>
+                )}
               </div>
             </div>
             
@@ -715,8 +959,8 @@ const KPIDashboard = () => {
               <p className="text-xs text-gray-500">Bonus Impact</p>
               <div>
                 <p className={`text-md font-medium ${
-                  (kpi.name === 'Direct Labor Maintenance %' && kpi.actual <= kpi.target) || 
-                  (kpi.name !== 'Direct Labor Maintenance %' && kpi.actual >= kpi.target) ? 
+                  (kpi.isInverse && kpi.actual <= kpi.target) || 
+                  (!kpi.isInverse && kpi.actual >= kpi.target) ? 
                   'text-green-600' : 'text-yellow-600'}`}>
                   {formatCurrency(kpiBonus)}
                 </p>
@@ -729,6 +973,55 @@ const KPIDashboard = () => {
         </div>
       );
     });
+  };
+
+  // Helper function to get min value for sliders based on KPI type
+  const getMinValueForKPI = (kpiName) => {
+    switch(kpiName) {
+      case 'Direct Labor Maintenance %':
+        return 25;
+      case 'Retention %':
+      case 'Visit Note Creation':
+      case 'Extra Sales':
+        return 50;
+      case 'Total Gross Margin % on Completed Jobs':
+        return 40;
+      case 'Property Checklist Item Completion':
+        return 50;
+      case 'Fleet Uptime Rate':
+        return 85;
+      case 'Preventative vs. Reactive Maintenance Ratio':
+        return 50;
+      case 'Accident/Incident Rate':
+      case 'Safety Incidents Magnitude':
+        return 0;
+      default:
+        return 0;
+    }
+  };
+
+  // Helper function to get max value for sliders based on KPI type
+  const getMaxValueForKPI = (kpiName) => {
+    switch(kpiName) {
+      case 'Direct Labor Maintenance %':
+        return 45;
+      case 'Extra Sales':
+        return 110;
+      case 'Total Gross Margin % on Completed Jobs':
+        return 80;
+      case 'LV Maintenance Growth':
+        return 10;
+      case 'Fleet Uptime Rate':
+        return 100;
+      case 'Preventative vs. Reactive Maintenance Ratio':
+        return 100;
+      case 'Accident/Incident Rate':
+        return 15;
+      case 'Safety Incidents Magnitude':
+        return 20;
+      default:
+        return 100;
+    }
   };
 
   // Render the headcount tab content
@@ -820,7 +1113,7 @@ const KPIDashboard = () => {
       <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Demo: Select User Role</h3>
         <div className="flex flex-wrap gap-2">
-          {['admin', 'general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist'].map(role => (
+          {['admin', 'general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager'].map(role => (
             <button
               key={role}
               onClick={() => handleUserChange(role)}
@@ -840,8 +1133,8 @@ const KPIDashboard = () => {
       </div>
       
       {/* Tabs - only render tabs that the user has access to */}
-      <div className="flex border-b border-gray-200 mb-6">
-        {['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'headcount']
+      <div className="flex flex-wrap border-b border-gray-200 mb-6">
+        {['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
           .filter(tabKey => isTabAccessible(tabKey))
           .map((tabKey) => (
           <button
