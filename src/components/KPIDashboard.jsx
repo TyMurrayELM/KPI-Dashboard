@@ -22,27 +22,6 @@ const KPIDashboard = () => {
             "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
             "All extras work is proposed to ensure property looks it's best and is in it's best form",
             "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
-          ],
-          successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
-          ],
-          successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
-          ],
-          successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
           ]
         },
         {
@@ -73,12 +52,6 @@ const KPIDashboard = () => {
           target: 40,
           actual: 40,
           isInverse: true,
-          successFactors: [
-            "Ensuring accuracy of On-Property hours required",
-            "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
-            "Identifying opportunities for hour efficiency and improvements",
-            "Provide actionable and clear visit notes to Maintenance Crews so On-Property Hours are maximally effective"
-          ],
           successFactors: [
             "Ensuring accuracy of On-Property hours required",
             "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
@@ -468,10 +441,9 @@ const KPIDashboard = () => {
     }
     // Special calculation for Extra Sales
     else if (kpi.name === 'Extra Sales') {
-      // Below target (100%)
+      // Below target (100%) - 0% bonus
       if (kpi.actual < 100) {
-        // Linear progression from 0 to 50% of bonus
-        return kpiTotalAvailable * 0.5 * (kpi.actual / 100);
+        return 0;
       }
       // At target exactly (100%)
       else if (kpi.actual === 100) {
@@ -1025,7 +997,7 @@ const KPIDashboard = () => {
                 {kpi.name === 'Extra Sales' && (
                   <div className="mt-1 text-xs text-gray-500">
                     {kpi.actual < 100 ? 
-                      `${Math.round((kpi.actual / 100) * 50)}% of bonus` : 
+                      "Below 100% target (0% bonus)" : 
                       kpi.actual === 100 ? 
                         "At target (50% bonus)" : 
                         kpi.actual >= 110 ? 
