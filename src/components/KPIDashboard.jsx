@@ -323,7 +323,7 @@ const KPIDashboard = () => {
     'account-manager': 7,
     'field-supervisor': 10,
     'specialist': 7,
-    'asset-risk-manager': 1
+    'asset-risk-manager': 2
   });
 
   // User authentication and role management (placeholder for future implementation)
@@ -344,8 +344,8 @@ const KPIDashboard = () => {
     return amount.toLocaleString('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     });
   };
   
