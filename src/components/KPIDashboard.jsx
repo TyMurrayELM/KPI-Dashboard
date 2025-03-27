@@ -15,7 +15,35 @@ const KPIDashboard = () => {
           name: 'Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ],
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ],
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ],
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ]
         },
         {
           name: 'Visit Note Creation',
@@ -34,7 +62,19 @@ const KPIDashboard = () => {
           description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate more efficient labor utilization and better profitability.',
           target: 40,
           actual: 40,
-          isInverse: true
+          isInverse: true,
+          successFactors: [
+            "Ensuring accuracy of On-Property hours required",
+            "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
+            "Identifying opportunities for hour efficiency and improvements",
+            "Provide actionable and clear visit notes to Maintenance Crews so On-Property Hours are maximally effective"
+          ],
+          successFactors: [
+            "Ensuring accuracy of On-Property hours required",
+            "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
+            "Identifying opportunities for hour efficiency and improvements",
+            "Provide actionable and clear visit notes to Maintenance Crews so On-Property Hours are maximally effective"
+          ]
         },
         {
           name: 'LV Maintenance Growth',
@@ -52,7 +92,14 @@ const KPIDashboard = () => {
           name: 'Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ]
         },
         {
           name: 'Visit Note Creation',
@@ -71,7 +118,13 @@ const KPIDashboard = () => {
           description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate more efficient labor utilization and better profitability.',
           target: 40,
           actual: 40,
-          isInverse: true
+          isInverse: true,
+          successFactors: [
+            "Ensuring accuracy of On-Property hours required",
+            "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
+            "Identifying opportunities for hour efficiency and improvements",
+            "Provide actionable and clear visit notes to Maintenance Crews so On-Property Hours are maximally effective"
+          ]
         }
       ]
     },
@@ -83,7 +136,14 @@ const KPIDashboard = () => {
           name: 'Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ]
         },
         {
           name: 'Visit Note Creation',
@@ -113,7 +173,14 @@ const KPIDashboard = () => {
           name: 'Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Ensure property is in good shape and up to Encore standards",
+            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
+            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
+            "All extras work is proposed to ensure property looks it's best and is in it's best form",
+            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+          ]
         },
         {
           name: 'Visit Note Creation',
@@ -143,13 +210,24 @@ const KPIDashboard = () => {
           name: 'Sales Goal Met',
           description: 'Percentage of sales targets achieved across all service lines. Meeting or exceeding sales goals ensures business growth and sustainability.',
           target: 100,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Meeting Proposal Goals",
+            "Managing Pipeline and Follow-ups",
+            "Communicating and Coordinating with Account Managers",
+            "Reviewing Budgets and Proposing all budgeted work"
+          ]
         },
         {
           name: 'Total Gross Margin % on Completed Jobs',
           description: 'Total gross margin percentage across all completed enhancement and arbor jobs. Higher margins indicate effective pricing and cost management.',
           target: 60,
-          actual: 60
+          actual: 60,
+          successFactors: [
+            "Jobs properly bid",
+            "Coordinating and communicating expectations for jobs with operations",
+            "Reviewing completed work to ensure no warranty work needs to occur"
+          ]
         },
         {
           name: 'Arbor/Enhancement Process Followed',
@@ -161,7 +239,14 @@ const KPIDashboard = () => {
           name: 'Pipeline Updates Current',
           description: 'Percentage of pipeline projects with up-to-date status and follow-ups scheduled at various data checkpoints. Maintaining current pipeline data improves forecasting accuracy, resource planning and improves closing rates.',
           target: 100,
-          actual: 90
+          actual: 90,
+          successFactors: [
+            "Proposal Requests provided by due date",
+            "Follow-ups scheduled for all opportunities",
+            "Opportunities in proper status",
+            "Client portals updated on-time with proper status (ex: Prologis)",
+            "Proposing effort from budgets on time and for all budgeted effort"
+          ]
         }
       ]
     },
@@ -777,6 +862,55 @@ const KPIDashboard = () => {
     setCurrentUser(roleMap[role] || roleMap.admin);
   };
 
+  // Helper function to get min value for sliders based on KPI type
+  const getMinValueForKPI = (kpiName) => {
+    switch(kpiName) {
+      case 'Direct Labor Maintenance %':
+        return 25;
+      case 'Retention %':
+      case 'Visit Note Creation':
+      case 'Extra Sales':
+        return 50;
+      case 'Total Gross Margin % on Completed Jobs':
+        return 40;
+      case 'Property Checklist Item Completion':
+        return 50;
+      case 'Fleet Uptime Rate':
+        return 85;
+      case 'Preventative vs. Reactive Maintenance Ratio':
+        return 50;
+      case 'Accident/Incident Rate':
+      case 'Safety Incidents Magnitude':
+        return 0;
+      default:
+        return 0;
+    }
+  };
+
+  // Helper function to get max value for sliders based on KPI type
+  const getMaxValueForKPI = (kpiName) => {
+    switch(kpiName) {
+      case 'Direct Labor Maintenance %':
+        return 45;
+      case 'Extra Sales':
+        return 110;
+      case 'Total Gross Margin % on Completed Jobs':
+        return 80;
+      case 'LV Maintenance Growth':
+        return 10;
+      case 'Fleet Uptime Rate':
+        return 100;
+      case 'Preventative vs. Reactive Maintenance Ratio':
+        return 100;
+      case 'Accident/Incident Rate':
+        return 15;
+      case 'Safety Incidents Magnitude':
+        return 20;
+      default:
+        return 100;
+    }
+  };
+
   // Render KPI cards with sliders and increment/decrement buttons
   const renderKPICards = (position, positionKey) => {
     return position.kpis.map((kpi, index) => {
@@ -970,58 +1104,40 @@ const KPIDashboard = () => {
               </div>
             </div>
           </div>
+
+          {/* Success Factors section - only show for KPIs that have success factors */}
+          {kpi.successFactors && (
+            <>
+              {/* Divider */}
+              <div className="border-t border-gray-200 mt-4 mb-3"></div>
+              
+              {/* Success Factors section */}
+              <div className="mt-3">
+                <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Success Factors
+                </h4>
+                
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <ul className="space-y-2">
+                    {kpi.successFactors.map((factor, factorIndex) => (
+                      <li key={factorIndex} className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm text-gray-700">{factor}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       );
     });
-  };
-
-  // Helper function to get min value for sliders based on KPI type
-  const getMinValueForKPI = (kpiName) => {
-    switch(kpiName) {
-      case 'Direct Labor Maintenance %':
-        return 25;
-      case 'Retention %':
-      case 'Visit Note Creation':
-      case 'Extra Sales':
-        return 50;
-      case 'Total Gross Margin % on Completed Jobs':
-        return 40;
-      case 'Property Checklist Item Completion':
-        return 50;
-      case 'Fleet Uptime Rate':
-        return 85;
-      case 'Preventative vs. Reactive Maintenance Ratio':
-        return 50;
-      case 'Accident/Incident Rate':
-      case 'Safety Incidents Magnitude':
-        return 0;
-      default:
-        return 0;
-    }
-  };
-
-  // Helper function to get max value for sliders based on KPI type
-  const getMaxValueForKPI = (kpiName) => {
-    switch(kpiName) {
-      case 'Direct Labor Maintenance %':
-        return 45;
-      case 'Extra Sales':
-        return 110;
-      case 'Total Gross Margin % on Completed Jobs':
-        return 80;
-      case 'LV Maintenance Growth':
-        return 10;
-      case 'Fleet Uptime Rate':
-        return 100;
-      case 'Preventative vs. Reactive Maintenance Ratio':
-        return 100;
-      case 'Accident/Incident Rate':
-        return 15;
-      case 'Safety Incidents Magnitude':
-        return 20;
-      default:
-        return 100;
-    }
   };
 
   // Render the headcount tab content
