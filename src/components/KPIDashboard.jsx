@@ -317,10 +317,10 @@ const KPIDashboard = () => {
   const [headcount, setHeadcount] = useState({
     'general-manager': 1,
     'branch-manager': 4,
-    'account-manager': 7,
+    'account-manager': 6,
     'field-supervisor': 10,
     'specialist': 7,
-    'asset-risk-manager': 2
+    'asset-risk-manager': 1
   });
 
   // User authentication and role management (placeholder for future implementation)
