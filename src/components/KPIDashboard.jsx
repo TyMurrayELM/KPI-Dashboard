@@ -274,7 +274,7 @@ const KPIDashboard = () => {
       ]
     },
     'asset-risk-manager': {
-      title: 'Asset & Risk Manager',
+      title: 'Placeholder Manager',
       salary: 30000,
       kpis: [
         {
