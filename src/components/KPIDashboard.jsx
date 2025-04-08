@@ -9,7 +9,7 @@ const KPIDashboard = () => {
   const initialPositions = {
     'general-manager': {
       title: 'General Manager',
-      salary: 120000,
+      salary: 30000,
       kpis: [
         {
           name: 'Retention %',
@@ -69,7 +69,7 @@ const KPIDashboard = () => {
     },
     'branch-manager': {
       title: 'Branch Manager',
-      salary: 95000,
+      salary: 30000,
       kpis: [
         {
           name: 'Retention %',
@@ -123,7 +123,7 @@ const KPIDashboard = () => {
     },
     'account-manager': {
       title: 'Account Manager',
-      salary: 75000,
+      salary: 30000,
       kpis: [
         {
           name: 'Retention %',
@@ -175,7 +175,7 @@ const KPIDashboard = () => {
     },
     'field-supervisor': {
       title: 'Field Supervisor',
-      salary: 60000,
+      salary: 30000,
       kpis: [
         {
           name: 'Retention %',
@@ -227,7 +227,7 @@ const KPIDashboard = () => {
     },
     'specialist': {
       title: 'Specialist',
-      salary: 65000,
+      salary: 30000,
       kpis: [
         {
           name: 'Sales Goal Met',
@@ -275,7 +275,7 @@ const KPIDashboard = () => {
     },
     'asset-risk-manager': {
       title: 'Asset & Risk Manager',
-      salary: 80000,
+      salary: 30000,
       kpis: [
         {
           name: 'Fleet Uptime Rate',
