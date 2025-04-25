@@ -90,37 +90,36 @@ const KPIDashboard = () => {
         },
         {
           name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
+          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
           actual: 90,
           successFactors: [
             "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
             "Coordinate with team members to ensure all visits have proper notes and checklists"
           ]
         },
         {
-          name: 'Extra Sales',
-          description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
+          name: 'Extra Services',
+          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
           target: 100,
           actual: 90,
           successFactors: [
-            "Ensure all budgeted proposals for properties are provided to client",
-            "Capture all proposal requests or property needs so specialists can put together proposals",
-            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+            "Ensure all budgeted proposals for properties are proactively provided to clients",
+            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
           ]
         },
         {
           name: 'Direct Labor Maintenance %',
-          description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate more efficient labor utilization and better profitability.',
+          description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
           target: 40,
           actual: 40,
           isInverse: true,
           successFactors: [
-            "Ensuring accuracy of On-Property hours required",
-            "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
-            "Identifying opportunities for hour efficiency and improvements",
-            "Provide actionable and clear visit notes to Maintenance Crews so On-Property Hours are maximally effective"
+            "Ensure accuracy of On-Property hours required to complete directed work",
+            "Regularly review Direct Labor Dashboard and Crew Schedules to ensure we're meeting the desired Direct Labor goals",
+            "Identify opportunities to maximize crew effeciency and productivity ",
+            "Provide actionable and clear visit notes so crews are making the best use of hours spent on property"
           ]
         }
       ]
@@ -144,24 +143,23 @@ const KPIDashboard = () => {
         },
         {
           name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
+          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
           actual: 90,
           successFactors: [
             "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
             "Coordinate with team members to ensure all visits have proper notes and checklists"
           ]
         },
         {
-          name: 'Extra Sales',
-          description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
+          name: 'Extra Services',
+          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
           target: 100,
           actual: 90,
           successFactors: [
-            "Ensure all budgeted proposals for properties are provided to client",
-            "Capture all proposal requests or property needs so specialists can put together proposals",
-            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+            "Ensure all budgeted proposals for properties are proactively provided to clients",
+            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
           ]
         },
         {
@@ -196,24 +194,23 @@ const KPIDashboard = () => {
         },
         {
           name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
+          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
           actual: 90,
           successFactors: [
             "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
             "Coordinate with team members to ensure all visits have proper notes and checklists"
           ]
         },
         {
-          name: 'Extra Sales',
-          description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
+          name: 'Extra Services',
+          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
           target: 100,
           actual: 90,
           successFactors: [
-            "Ensure all budgeted proposals for properties are provided to client",
-            "Capture all proposal requests or property needs so specialists can put together proposals",
-            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+            "Ensure all budgeted proposals for properties are proactively provided to clients",
+            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
           ]
         },
         {
