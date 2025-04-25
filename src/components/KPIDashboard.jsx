@@ -77,15 +77,15 @@ const KPIDashboard = () => {
       kpis: [
         {
           name: 'Client Retention %',
-          description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
+          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
           target: 90,
           actual: 90,
           successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+            "Ensure maintenance quality meets Encore standards",
+            "Clear direction is consistently provided to Maintenance Crews to drive quality",
+            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
+            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
+            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
           ]
         },
         {
@@ -131,15 +131,15 @@ const KPIDashboard = () => {
       kpis: [
         {
           name: 'Client Retention %',
-          description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
+          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
           target: 90,
           actual: 90,
           successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+            "Ensure maintenance quality meets Encore standards",
+            "Clear direction is consistently provided to Maintenance Crews to drive quality",
+            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
+            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
+            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
           ]
         },
         {
@@ -183,15 +183,15 @@ const KPIDashboard = () => {
       kpis: [
         {
           name: 'Client Retention %',
-          description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
+          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
           target: 90,
           actual: 90,
           successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+            "Ensure maintenance quality meets Encore standards",
+            "Clear direction is consistently provided to Maintenance Crews to drive quality",
+            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
+            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
+            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
           ]
         },
         {
