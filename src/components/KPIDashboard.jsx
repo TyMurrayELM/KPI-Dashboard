@@ -73,7 +73,7 @@ const KPIDashboard = () => {
     },
     'branch-manager': {
       title: 'Branch Manager',
-      salary: 30000,
+      salary: 88750,
       kpis: [
         {
           name: 'Client Retention %',
@@ -127,7 +127,7 @@ const KPIDashboard = () => {
     },
     'account-manager': {
       title: 'Client Specialist',
-      salary: 30000,
+      salary: 72000,
       kpis: [
         {
           name: 'Client Retention %',
@@ -179,7 +179,7 @@ const KPIDashboard = () => {
     },
     'field-supervisor': {
       title: 'Field Supervisor',
-      salary: 30000,
+      salary: 67250,
       kpis: [
         {
           name: 'Client Retention %',
@@ -231,7 +231,7 @@ const KPIDashboard = () => {
     },
     'specialist': {
       title: 'Specialist',
-      salary: 30000,
+      salary: 77750,
       kpis: [
         {
           name: 'Sales Goal Met',
