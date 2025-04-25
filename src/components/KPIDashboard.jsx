@@ -13,57 +13,61 @@ const KPIDashboard = () => {
       kpis: [
         {
           name: 'Retention %',
-          description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
+          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
           target: 90,
           actual: 90,
           successFactors: [
-            "Ensure property is in good shape and up to Encore standards",
-            "Provide actionable and clear visit notes to Maintenance Crews to drive quality",
-            "Quick responsiveness and quality communication with Clients to ensure their satisfaction",
-            "All extras work is proposed to ensure property looks it's best and is in it's best form",
-            "Status 'Hot Properties' and other issues in CRM so action plans can be developed if necessary"
+            "Ensure maintenance quality meets Encore standards",
+            "Clear direction is consistently provided to Maintenance Crews to drive quality",
+            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
+            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
+            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
           ]
         },
         {
           name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with quality visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
+          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
           target: 90,
           actual: 90,
           successFactors: [
             "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Get eyes on properties weekly to develop great notes that ensure client satisfaction and maximize the property's landscape quality",
+            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
             "Coordinate with team members to ensure all visits have proper notes and checklists"
           ]
         },
         {
-          name: 'Extra Sales',
-          description: 'Additional enhancement and arbor services sold as a percentage of the base maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and result in satisfied customers.',
+          name: 'Extra Services',
+          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
           target: 100,
           actual: 90,
           successFactors: [
-            "Ensure all budgeted proposals for properties are provided to client",
-            "Capture all proposal requests or property needs so specialists can put together proposals",
-            "Keep an eye out for potential arbor, enhancement, spray or irrigation work while on property to maximize property quality for our clients"
+            "Ensure all budgeted proposals for properties are proactively provided to clients",
+            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
           ]
         },
         {
           name: 'Direct Labor Maintenance %',
-          description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate more efficient labor utilization and better profitability.',
+          description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
           target: 40,
           actual: 40,
           isInverse: true,
           successFactors: [
-            "Ensuring accuracy of On-Property hours required",
-            "Reviewing Direct Labor % Schedule(s) and Dashboard(s)",
-            "Identifying opportunities for hour efficiency and improvements",
-            "Provide actionable and clear visit notes to Maintenance Crews so On-Property Hours are maximally effective"
+            "Ensure accuracy of On-Property hours required to complete directed work",
+            "Regularly review Direct Labor Dashboard and Crew Schedules to ensure we're meeting the desired Direct Labor goals",
+            "Identify opportunities to maximize crew effeciency and productivity ",
+            "Provide actionable and clear visit notes so crews are making the best use of hours spent on property"
           ]
         },
         {
           name: 'LV Maintenance Growth',
-          description: 'Growth in recurring landscape maintenance contracts. Measured as percentage increase in maintenance contract value compared to previous year.',
+          description: 'Grow maintenance book of business for LV market. Measured as percentage increase in maintenance contract value compared to previous year.',
           target: 3,
-          actual: 1
+          actual: 1,
+          successFactors: [
+            "Collaborate with Business Development team to maximize market opportunities",
+            "Participation in local networking groups and events to drive brand recognition",
+            "Nurture existing client relationships to become our client's preferrred service provider"
+          ]
         }
       ]
     },
@@ -72,7 +76,7 @@ const KPIDashboard = () => {
       salary: 30000,
       kpis: [
         {
-          name: 'Retention %',
+          name: 'Client Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
           actual: 90,
@@ -122,7 +126,7 @@ const KPIDashboard = () => {
       ]
     },
     'account-manager': {
-      title: 'Account Manager',
+      title: 'Client Specialist',
       salary: 30000,
       kpis: [
         {
