@@ -12,7 +12,7 @@ const KPIDashboard = () => {
       salary: 30000,
       kpis: [
         {
-          name: 'Retention %',
+          name: 'Client Retention %',
           description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
           target: 90,
           actual: 90,
@@ -130,7 +130,7 @@ const KPIDashboard = () => {
       salary: 30000,
       kpis: [
         {
-          name: 'Retention %',
+          name: 'Client Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
           actual: 90,
@@ -182,7 +182,7 @@ const KPIDashboard = () => {
       salary: 30000,
       kpis: [
         {
-          name: 'Retention %',
+          name: 'Client Retention %',
           description: 'Percentage of properties that are still under maintenance contract when compared to January books of business. Maintaining strong client relationships ensures stable revenue and reduces acquisition costs.',
           target: 90,
           actual: 90,
@@ -421,7 +421,7 @@ const KPIDashboard = () => {
     const kpiTotalAvailable = totalBonus * kpiWeight; // Equal distribution of total bonus for each KPI
     
     // Special calculation for Retention % and Visit Note Creation (both use same logic)
-    if (kpi.name === 'Retention %' || kpi.name === 'Visit Note Creation') {
+    if (kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation') {
       // Below target (90%)
       if (kpi.actual < 90) {
         return 0;
@@ -848,7 +848,7 @@ const KPIDashboard = () => {
       
       if (kpi.name === 'Direct Labor Maintenance %') {
         min = 25;
-      } else if (kpi.name === 'Retention %' || kpi.name === 'Visit Note Creation' || kpi.name === 'Extra Sales') {
+      } else if (kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation' || kpi.name === 'Extra Sales') {
         min = 50;
       } else if (kpi.name === 'Total Gross Margin % on Completed Jobs') {
         min = 40;
@@ -924,7 +924,7 @@ const KPIDashboard = () => {
     switch(kpiName) {
       case 'Direct Labor Maintenance %':
         return 25;
-      case 'Retention %':
+      case 'Client Retention %':
       case 'Visit Note Creation':
       case 'Extra Sales':
         return 50;
@@ -1017,7 +1017,7 @@ const KPIDashboard = () => {
                   </div>
                 </div>
                 
-                {(kpi.name === 'Retention %' || kpi.name === 'Visit Note Creation') && (
+                {(kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation') && (
                   <div className="mt-1 text-xs text-gray-500">
                     {kpi.actual < 90 ? 
                       "Below 90% target" : 
