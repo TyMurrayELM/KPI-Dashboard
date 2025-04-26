@@ -279,7 +279,7 @@ const KPIDashboard = () => {
         return 'bg-blue-50';
       case 'branch-manager':
         return 'bg-green-50';
-      case 'account-manager':
+      case 'client-specialist':
         return 'bg-purple-50';
       case 'field-supervisor':
         return 'bg-amber-50';
@@ -301,7 +301,7 @@ const KPIDashboard = () => {
         return 'bg-blue-100';
       case 'branch-manager':
         return 'bg-green-100';
-      case 'account-manager':
+      case 'client-specialist':
         return 'bg-purple-100';
       case 'field-supervisor':
         return 'bg-amber-100';
