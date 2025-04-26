@@ -1521,7 +1521,7 @@ const KPIDashboard = () => {
           <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Annual Salary</h3>
+                <h3 className="text-xs md:text-lg font-semibold text-gray-800">Annual Salary</h3>
                 <div className="flex items-center mt-2">
                   <span className="text-gray-500 mr-1">$</span>
                   <input
@@ -1533,7 +1533,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Bonus %</h3>
+                <h3 className="text-xs md:text-lg font-semibold text-gray-800">Bonus %</h3>
                 <div className="flex items-center mt-2">
                   <input
                     type="number"
@@ -1548,14 +1548,14 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
-                <p className="text-2xl font-bold text-green-600 mt-2">
+                <h3 className="text-xs md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
+                <p className="text-lg md:text-2xl font-bold text-green-600 mt-2">
                   {formatCurrency(calculateActualTotalBonus(positions[activeTab]))}
                 </p>
               </div>
               <div>
-                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Available Bonus</h3>
-                <p className="text-2xl font-bold text-blue-600 mt-2">
+                <h3 className="text-xs md:text-lg font-semibold text-gray-800">Available Bonus</h3>
+                <p className="text-lg md:text-2xl font-bold text-blue-600 mt-2">
                   {formatCurrency(calculateTotalBonus(positions[activeTab]))}
                 </p>
               </div>
