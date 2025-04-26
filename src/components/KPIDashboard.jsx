@@ -1512,7 +1512,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Bonus Percentage</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Bonus %</h3>
                 <div className="flex items-center mt-2">
                   <input
                     type="number"
@@ -1527,7 +1527,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Current Projected Bonus</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Projected Bonus</h3>
                 <p className="text-2xl font-bold text-green-600 mt-2">
                   {formatCurrency(calculateActualTotalBonus(positions[activeTab]))}
                 </p>
