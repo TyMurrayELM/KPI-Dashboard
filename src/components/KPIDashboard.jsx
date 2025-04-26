@@ -719,6 +719,15 @@ const KPIDashboard = () => {
     }, 0);
   };
   
+  // Helper function to get performance status color for KPI summary
+  const getPerformanceStatusColor = (percent) => {
+    if (percent === 100) return 'text-green-600';
+    if (percent >= 75) return 'text-green-500';
+    if (percent >= 50) return 'text-yellow-600';
+    if (percent >= 25) return 'text-orange-500';
+    return 'text-red-500';
+  };
+  
   // Effect to set initial active tab based on user's role
   useEffect(() => {
     // If user doesn't have access to current active tab, set to first allowed tab
@@ -727,6 +736,26 @@ const KPIDashboard = () => {
       setActiveTab(firstAllowedTab);
     }
   }, [currentUser, activeTab, isTabAccessible]);
+  
+  const [expandedSuccessFactors, setExpandedSuccessFactors] = useState({});
+
+  // Toggle success factors visibility
+  const toggleSuccessFactors = (positionKey, kpiIndex) => {
+    setExpandedSuccessFactors(prev => {
+      const key = `${positionKey}-${kpiIndex}`;
+      return {
+        ...prev,
+        [key]: !prev[key]
+      };
+    });
+  };
+  
+  // Initialize success factors to be collapsed
+  useEffect(() => {
+    // This will keep track of which KPIs have their success factors expanded
+    // By default, all will be collapsed (not in the state)
+    setExpandedSuccessFactors({});
+  }, []);
 
   // Completely revised increment function to ensure exact 1% increments
   const handleIncrementKPI = (positionKey, kpiIndex) => {
@@ -851,6 +880,30 @@ const KPIDashboard = () => {
       default:
         return 0;
     }
+  };
+  
+  // Helper function to determine if a KPI is on target or better
+  const isKpiOnTarget = (kpi) => {
+    if (kpi.isInverse) {
+      // For inverse KPIs (lower is better), on target means actual <= target
+      return kpi.actual <= kpi.target;
+    } else {
+      // For normal KPIs (higher is better), on target means actual >= target
+      return kpi.actual >= kpi.target;
+    }
+  };
+
+  // Calculate KPI summary data for a position
+  const getKpiSummary = (position) => {
+    const totalKpis = position.kpis.length;
+    const onTargetKpis = position.kpis.filter(kpi => isKpiOnTarget(kpi)).length;
+    const percentOnTarget = Math.round((onTargetKpis / totalKpis) * 100);
+    
+    return {
+      total: totalKpis,
+      onTarget: onTargetKpis,
+      percent: percentOnTarget
+    };
   };
 
   // Helper function to get max value for sliders based on KPI type
@@ -1082,16 +1135,45 @@ const KPIDashboard = () => {
               {/* Divider */}
               <div className="border-t border-gray-200 mt-4 mb-3"></div>
               
-              {/* Success Factors section */}
-              <div className="mt-3">
-                <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+              {/* Success Factors toggle header */}
+              <div 
+                className="mt-3 flex items-center cursor-pointer py-1 px-2 hover:bg-gray-50 rounded-md transition-colors"
+                onClick={() => toggleSuccessFactors(positionKey, index)}
+                aria-expanded={expandedSuccessFactors[`${positionKey}-${index}`] || false}
+                role="button"
+                tabIndex={0}
+              >
+                <h4 className="text-sm font-medium text-gray-700 flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Success Factors
                 </h4>
-                
-                <div className="bg-blue-50 p-3 rounded-lg">
+                <div className="text-blue-500 flex items-center ml-2">
+                  <span className="text-xs mr-1 text-blue-600">
+                    {expandedSuccessFactors[`${positionKey}-${index}`] ? 'Hide' : 'Show'}
+                  </span>
+                  {expandedSuccessFactors[`${positionKey}-${index}`] ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              
+              {/* Success Factors content - with smooth animation */}
+              <div 
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  expandedSuccessFactors[`${positionKey}-${index}`] 
+                    ? 'max-h-96 opacity-100' 
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="bg-blue-50 p-3 rounded-lg mt-2">
                   <ul className="space-y-2">
                     {kpi.successFactors.map((factor, factorIndex) => (
                       <li key={factorIndex} className="flex items-start">
@@ -1352,8 +1434,8 @@ const KPIDashboard = () => {
         renderHeadcountTab()
       ) : (
         <div className={`p-6 rounded-lg ${getTabColor(activeTab)}`}>
-          {/* Salary and Bonus Info */}
-          <div className={`p-4 rounded-lg shadow-md mb-6 ${getHeaderColor(activeTab)}`}>
+          {/* Salary and Bonus Info with KPI Summary - Sticky Header */}
+          <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>
             <div className="grid grid-cols-4 gap-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Annual Salary</h3>
@@ -1394,6 +1476,42 @@ const KPIDashboard = () => {
                   {formatCurrency(calculateTotalBonus(positions[activeTab]))}
                 </p>
               </div>
+            </div>
+            
+            {/* KPI Summary - Compact Version */}
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              {(() => {
+                const summary = getKpiSummary(positions[activeTab]);
+                return (
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-600 mr-2">
+                      <span className="font-medium">{summary.onTarget}</span> of <span className="font-medium">{summary.total}</span> KPIs on target
+                      {summary.onTarget === summary.total && 
+                        <span className="ml-1 text-green-600 font-medium">(All targets met!)</span>
+                      }
+                    </span>
+                    
+                    <div className="flex-1 mr-2">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            summary.percent === 100 ? 'bg-green-500' :
+                            summary.percent >= 75 ? 'bg-green-400' :
+                            summary.percent >= 50 ? 'bg-yellow-400' :
+                            summary.percent >= 25 ? 'bg-orange-400' : 
+                            'bg-red-400'
+                          }`}
+                          style={{ width: `${summary.percent}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <span className={`text-xs font-medium ${getPerformanceStatusColor(summary.percent)} min-w-[70px] text-right`}>
+                      {summary.percent}% on Track
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
           
