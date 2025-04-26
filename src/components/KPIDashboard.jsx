@@ -182,7 +182,7 @@ const KPIDashboard = () => {
         { ...KPI_DIRECT_LABOR_MAINTENANCE }
       ]
     },
-    'account-manager': {
+    'client-specialist': {
       title: 'Client Specialist',
       salary: 72000,
       bonusPercentage: 10,
@@ -238,7 +238,7 @@ const KPIDashboard = () => {
   const [headcount, setHeadcount] = useState({
     'general-manager': 1,
     'branch-manager': 4,
-    'account-manager': 7,
+    'client-specialist': 7,
     'field-supervisor': 10,
     'specialist': 7,
     'asset-risk-manager': 1
@@ -248,8 +248,8 @@ const KPIDashboard = () => {
   // In a real application, this would come from your authentication system
   const [currentUser, setCurrentUser] = useState({
     email: 'admin@example.com',
-    role: 'admin', // 'admin', 'general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager'
-    allowedTabs: ['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
+    role: 'admin', // 'admin', 'general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager'
+    allowedTabs: ['general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
   });
 
   // Calculate the total potential bonus
@@ -814,7 +814,7 @@ const KPIDashboard = () => {
       'admin': {
         email: 'admin@example.com',
         role: 'admin',
-        allowedTabs: ['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
+        allowedTabs: ['general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
       },
       'general-manager': {
         email: 'gm@example.com',
@@ -826,10 +826,10 @@ const KPIDashboard = () => {
         role: 'branch-manager',
         allowedTabs: ['branch-manager'] // Removed 'headcount'
       },
-      'account-manager': {
-        email: 'am@example.com',
-        role: 'account-manager',
-        allowedTabs: ['account-manager'] // Removed 'headcount'
+      'client-specialist': {
+        email: 'cs@example.com',
+        role: 'client-specialist',
+        allowedTabs: ['client-specialist'] // Removed 'headcount'
       },
       'field-supervisor': {
         email: 'fs@example.com',
@@ -1391,7 +1391,7 @@ const KPIDashboard = () => {
       <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Demo: Select User Role</h3>
         <div className="flex flex-wrap gap-2">
-          {['admin', 'general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager'].map(role => (
+          {['admin', 'general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager'].map(role => (
             <button
               key={role}
               onClick={() => handleUserChange(role)}
@@ -1412,7 +1412,7 @@ const KPIDashboard = () => {
       
       {/* Tabs - only render tabs that the user has access to */}
       <div className="flex flex-wrap border-b border-gray-200 mb-6">
-        {['general-manager', 'branch-manager', 'account-manager', 'field-supervisor', 'specialist', 'asset-risk-manager', 'headcount']
+        {['general-manager', 'branch-manager', 'client-specialist', 'specialist', 'field-supervisor', 'asset-risk-manager', 'headcount']
           .filter(tabKey => isTabAccessible(tabKey))
           .map((tabKey) => (
           <button
