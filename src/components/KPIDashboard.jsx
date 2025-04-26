@@ -1004,7 +1004,7 @@ const KPIDashboard = () => {
       
       return (
         <div key={index} className="bg-white p-4 rounded-lg shadow-md mb-4">
-          <h3 className="text-2xl md:text-lg font-semibold text-gray-800">{kpi.name}</h3>
+          <h3 className="text-sm md:text-lg font-semibold text-gray-800">{kpi.name}</h3>
           <p className="text-sm text-gray-600 mt-1 mb-3">{kpi.description}</p>
           
           <div className="grid grid-cols-4 gap-4">
@@ -1290,10 +1290,10 @@ const KPIDashboard = () => {
   const renderHeadcountTab = () => {
     return (
       <div className="bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-3xl md:text-xl font-semibold text-gray-800 mb-4">Headcount & Financial Planning</h2>
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Headcount & Financial Planning</h2>
         
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h3 className="text-2xl md:text-lg font-semibold text-gray-800 mb-4">Bonus Forecast Slider</h3>
+          <h3 className="text-sm md:text-lg font-semibold text-gray-800 mb-4">Bonus Forecast Slider</h3>
           <div className="flex items-center mb-2">
             <div className="flex-1 mr-4">
               <input
@@ -1341,7 +1341,7 @@ const KPIDashboard = () => {
         
         {/* Bonus Summary Table */}
         <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-2xl md:text-lg font-semibold text-gray-800 mb-4">Bonus Budget Summary</h3>
+          <h3 className="text-sm md:text-lg font-semibold text-gray-800 mb-4">Bonus Budget Summary</h3>
           <table className="w-full border-collapse">
             <thead className="bg-gray-100">
               <tr>
@@ -1466,7 +1466,7 @@ const KPIDashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Employee KPI Dashboard</h1>
+      <h1 className="text-xl md:text-3xl font-bold text-center text-gray-800 mb-6">Employee KPI Dashboard</h1>
       
       {/* Demo User Role Selector - would be removed in production */}
       <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
@@ -1521,7 +1521,7 @@ const KPIDashboard = () => {
           <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <h3 className="text-2xl md:text-lg font-semibold text-gray-800">Annual Salary</h3>
+                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Annual Salary</h3>
                 <div className="flex items-center mt-2">
                   <span className="text-gray-500 mr-1">$</span>
                   <input
@@ -1533,7 +1533,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl md:text-lg font-semibold text-gray-800">Bonus %</h3>
+                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Bonus %</h3>
                 <div className="flex items-center mt-2">
                   <input
                     type="number"
@@ -1548,13 +1548,13 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
+                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
                 <p className="text-2xl font-bold text-green-600 mt-2">
                   {formatCurrency(calculateActualTotalBonus(positions[activeTab]))}
                 </p>
               </div>
               <div>
-                <h3 className="text-2xl md:text-lg font-semibold text-gray-800">Available Bonus</h3>
+                <h3 className="text-sm md:text-lg font-semibold text-gray-800">Available Bonus</h3>
                 <p className="text-2xl font-bold text-blue-600 mt-2">
                   {formatCurrency(calculateTotalBonus(positions[activeTab]))}
                 </p>
@@ -1672,7 +1672,7 @@ const KPIDashboard = () => {
           </div>
           
           {/* KPI Section Header */}
-          <h2 className="text-3xl md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
           
           {/* KPI Cards Grid */}
           <div className="grid grid-cols-1 gap-4">
