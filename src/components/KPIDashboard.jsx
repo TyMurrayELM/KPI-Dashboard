@@ -1598,7 +1598,7 @@ const KPIDashboard = () => {
             </div>
             
             {/* KPI Current Bonus Breakdown - Toggleable */}
-            <div className="mt-4 pt-3 border-t border-gray-200">
+            <div className="mt-2 pt-2 border-t border-gray-200">
               <div 
                 className="flex items-center cursor-pointer py-1 px-2 hover:bg-gray-100 rounded-md transition-colors"
                 onClick={() => setExpandedBreakdown(!expandedBreakdown)}
