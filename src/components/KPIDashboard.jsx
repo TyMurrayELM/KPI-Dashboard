@@ -804,6 +804,7 @@ const KPIDashboard = () => {
   }, [currentUser, activeTab, isTabAccessible]);
   
   const [expandedSuccessFactors, setExpandedSuccessFactors] = useState({});
+  const [expandedBreakdown, setExpandedBreakdown] = useState(false);
 
   // Toggle success factors visibility
   const toggleSuccessFactors = (positionKey, kpiIndex) => {
@@ -1532,7 +1533,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Bonus Percentage</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Bonus %</h3>
                 <div className="flex items-center mt-2">
                   <input
                     type="number"
@@ -1547,7 +1548,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Current Projected Bonus</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Projected Bonus</h3>
                 <p className="text-2xl font-bold text-green-600 mt-2">
                   {formatCurrency(calculateActualTotalBonus(positions[activeTab]))}
                 </p>
@@ -1594,6 +1595,79 @@ const KPIDashboard = () => {
                   </div>
                 );
               })()}
+            </div>
+            
+            {/* KPI Current Bonus Breakdown - Toggleable */}
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <div 
+                className="flex items-center cursor-pointer py-1 px-2 hover:bg-gray-100 rounded-md transition-colors"
+                onClick={() => setExpandedBreakdown(!expandedBreakdown)}
+              >
+                <h4 className="text-sm font-medium text-gray-700 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                  </svg>
+                  KPI Current Bonus Breakdown
+                </h4>
+                <div className="text-blue-500 flex items-center ml-2">
+                  <span className="text-xs mr-1 text-blue-600">
+                    {expandedBreakdown ? 'Hide' : 'Show'}
+                  </span>
+                  {expandedBreakdown ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              
+              {/* KPI Breakdown Content - with smooth animation */}
+              <div 
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  expandedBreakdown 
+                    ? 'max-h-96 opacity-100 mt-2' 
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-4">
+                  {positions[activeTab].kpis.map((kpi, index) => {
+                    const kpiBonus = calculateKpiBonus(positions[activeTab], index);
+                    const maxKpiBonus = calculateTotalBonus(positions[activeTab]) / positions[activeTab].kpis.length;
+                    const percentage = Math.round((kpiBonus / maxKpiBonus) * 100);
+                    
+                    return (
+                      <div key={index} className="bg-white p-2 rounded shadow-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-medium text-gray-600 truncate" title={kpi.name}>
+                            {kpi.name}
+                          </span>
+                          <span className={`text-xs font-bold ${
+                            percentage >= 90 ? 'text-green-600' : 
+                            percentage >= 50 ? 'text-yellow-600' : 
+                            'text-red-600'
+                          }`}>
+                            {formatCurrency(kpiBonus)}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                          <div 
+                            className={`h-1.5 rounded-full ${
+                              percentage >= 90 ? 'bg-green-500' :
+                              percentage >= 50 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
           
