@@ -33,7 +33,7 @@ const KPI_EXTRA_SERVICES = {
   name: 'Extra Services',
   description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
   target: 100,
-  actual: 90,
+  actual: 100,
   successFactors: [
     "Ensure all budgeted proposals for properties are proactively provided to clients",
     "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
@@ -161,8 +161,8 @@ const KPIDashboard = () => {
   const initialPositions = {
     'general-manager': {
       title: 'General Manager',
-      salary: 30000,
-      bonusPercentage: 10,
+      salary: 150000,
+      bonusPercentage: 20,
       kpis: [
         { ...KPI_CLIENT_RETENTION },
         { ...KPI_VISIT_NOTE_CREATION },
@@ -207,7 +207,7 @@ const KPIDashboard = () => {
     'specialist': {
       title: 'Sales Specialist',
       salary: 77750,
-      bonusPercentage: 10,
+      bonusPercentage: 8,
       kpis: [
         { ...KPI_SALES_GOAL_MET },
         { ...KPI_TOTAL_GROSS_MARGIN },
@@ -360,8 +360,8 @@ const KPIDashboard = () => {
         return kpiTotalAvailable; // 100% of KPI bonus
       }
     }
-    // Special calculation for Extra Sales
-    else if (kpi.name === 'Extra Sales') {
+    // Special calculation for Extra Services
+    else if (kpi.name === 'Extra Services') {
       // Below target (100%) - 0% bonus
       if (kpi.actual < 100) {
         return 0;
@@ -728,61 +728,52 @@ const KPIDashboard = () => {
     }
   }, [currentUser, activeTab, isTabAccessible]);
 
-  // Handle increment/decrement buttons for KPI values
+  // Completely revised increment function to ensure exact 1% increments
   const handleIncrementKPI = (positionKey, kpiIndex) => {
     setPositions(prevPositions => {
-      const newPositions = { ...prevPositions };
+      // Create deep clone to avoid mutation issues
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
       const kpi = newPositions[positionKey].kpis[kpiIndex];
+      
+      // Determine maximum value for this KPI
       let max = 100;
+      if (kpi.name === 'Direct Labor Maintenance %') max = 45;
+      else if (kpi.name === 'Extra Services') max = 110;
+      else if (kpi.name === 'Total Gross Margin % on Completed Jobs') max = 80;
+      else if (kpi.name === 'LV Maintenance Growth') max = 10;
+      else if (kpi.name === 'Fleet Uptime Rate') max = 100;
+      else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') max = 100;
+      else if (kpi.name === 'Accident/Incident Rate') max = 15;
+      else if (kpi.name === 'Safety Incidents Magnitude') max = 20;
       
-      if (kpi.name === 'Direct Labor Maintenance %') {
-        max = 45;
-      } else if (kpi.name === 'Extra Sales') {
-        max = 110;
-      } else if (kpi.name === 'Total Gross Margin % on Completed Jobs') {
-        max = 80;
-      } else if (kpi.name === 'LV Maintenance Growth') {
-        max = 10;
-      } else if (kpi.name === 'Fleet Uptime Rate') {
-        max = 100;
-      } else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') {
-        max = 100;
-      } else if (kpi.name === 'Accident/Incident Rate') {
-        max = 15;
-      } else if (kpi.name === 'Safety Incidents Magnitude') {
-        max = 20;
-      }
+      // Force to integer and add exactly 1
+      const newValue = Math.min(max, parseInt(kpi.actual) + 1);
+      kpi.actual = newValue;
       
-      kpi.actual = Math.min(max, kpi.actual + 1);
       return newPositions;
     });
   };
   
+  // Completely revised decrement function to ensure exact 1% decrements
   const handleDecrementKPI = (positionKey, kpiIndex) => {
     setPositions(prevPositions => {
-      const newPositions = { ...prevPositions };
+      // Create deep clone to avoid mutation issues
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
       const kpi = newPositions[positionKey].kpis[kpiIndex];
+      
+      // Determine minimum value for this KPI
       let min = 0;
+      if (kpi.name === 'Direct Labor Maintenance %') min = 25;
+      else if (kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation' || kpi.name === 'Extra Services') min = 50;
+      else if (kpi.name === 'Total Gross Margin % on Completed Jobs') min = 40;
+      else if (kpi.name === 'Property Checklist Item Completion') min = 50;
+      else if (kpi.name === 'Fleet Uptime Rate') min = 85;
+      else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') min = 50;
       
-      if (kpi.name === 'Direct Labor Maintenance %') {
-        min = 25;
-      } else if (kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation' || kpi.name === 'Extra Sales') {
-        min = 50;
-      } else if (kpi.name === 'Total Gross Margin % on Completed Jobs') {
-        min = 40;
-      } else if (kpi.name === 'Property Checklist Item Completion') {
-        min = 50;
-      } else if (kpi.name === 'Fleet Uptime Rate') {
-        min = 85;
-      } else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') {
-        min = 50;
-      } else if (kpi.name === 'Accident/Incident Rate') {
-        min = 0;
-      } else if (kpi.name === 'Safety Incidents Magnitude') {
-        min = 0;
-      }
+      // Force to integer and subtract exactly 1
+      const newValue = Math.max(min, parseInt(kpi.actual) - 1);
+      kpi.actual = newValue;
       
-      kpi.actual = Math.max(min, kpi.actual - 1);
       return newPositions;
     });
   };
@@ -844,7 +835,7 @@ const KPIDashboard = () => {
         return 25;
       case 'Client Retention %':
       case 'Visit Note Creation':
-      case 'Extra Sales':
+      case 'Extra Services':
         return 50;
       case 'Total Gross Margin % on Completed Jobs':
         return 40;
@@ -867,7 +858,7 @@ const KPIDashboard = () => {
     switch(kpiName) {
       case 'Direct Labor Maintenance %':
         return 45;
-      case 'Extra Sales':
+      case 'Extra Services':
         return 110;
       case 'Total Gross Margin % on Completed Jobs':
         return 80;
@@ -952,7 +943,7 @@ const KPIDashboard = () => {
                     }
                   </div>
                 )}
-                {kpi.name === 'Extra Sales' && (
+                {kpi.name === 'Extra Services' && (
                   <div className="mt-1 text-xs text-gray-500">
                     {kpi.actual < 100 ? 
                       "Below 100% target (0% bonus)" : 
