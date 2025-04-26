@@ -617,6 +617,58 @@ const KPIDashboard = () => {
         return kpiTotalAvailable; // 100% of KPI bonus
       }
     }
+    // Special calculation for Pipeline Updates Current
+    else if (kpi.name === 'Pipeline Updates Current') {
+      // Below minimum threshold (90%)
+      if (kpi.actual < 90) {
+        return 0; // 0% bonus
+      }
+      // At exactly 90%
+      else if (kpi.actual === 90) {
+        return kpiTotalAvailable * 0.5; // 50% of KPI bonus
+      }
+      // Between 90% and 100%
+      else if (kpi.actual > 90 && kpi.actual < 100) {
+        // Base 50% for hitting 90% threshold
+        const baseAmount = kpiTotalAvailable * 0.5;
+        // Calculate progress from 90% to 100% (0-100%)
+        const progressAboveThreshold = (kpi.actual - 90) / 10;
+        // Remaining 50% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveThreshold;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or above 100%
+      else {
+        return kpiTotalAvailable; // 100% of KPI bonus
+      }
+    }
+    // Special calculation for Arbor/Enhancement Process Followed
+    else if (kpi.name === 'Arbor/Enhancement Process Followed') {
+      // Below minimum threshold (90%)
+      if (kpi.actual < 90) {
+        return 0; // 0% bonus
+      }
+      // At exactly 90%
+      else if (kpi.actual === 90) {
+        return kpiTotalAvailable * 0.5; // 50% of KPI bonus
+      }
+      // Between 90% and 95% (target)
+      else if (kpi.actual > 90 && kpi.actual < 95) {
+        // Base 50% for hitting 90% threshold
+        const baseAmount = kpiTotalAvailable * 0.5;
+        // Calculate progress from 90% to 95% (0-100%)
+        const progressAboveThreshold = (kpi.actual - 90) / 5;
+        // Remaining 50% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveThreshold;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or above target (95%)
+      else {
+        return kpiTotalAvailable; // 100% of KPI bonus
+      }
+    }
     // For other KPIs, use a simple percentage calculation for now
     else {
       // Calculate achievement percentage (capped at 100%)
@@ -1096,17 +1148,37 @@ const KPIDashboard = () => {
                     }
                   </div>
                 )}
-                {kpi.name === 'Safety Incidents Magnitude' && (
+                {kpi.name === 'Sales Goal Met' && (
                   <div className="mt-1 text-xs text-gray-500">
-                    {kpi.actual > 15 ? 
-                      "Above 15 (0% bonus)" : 
-                      kpi.actual > 12 ? 
-                        `${Math.round(((15 - kpi.actual) / 3) * 50)}% of bonus` :
-                      kpi.actual === 12 ? 
-                        "At 12 (50% bonus)" :
-                      kpi.actual <= 10 ?
-                        "At or below target (full bonus)" :
-                        `${50 + Math.round(((12 - kpi.actual) / 2) * 50)}% of bonus`
+                    {kpi.actual < 50 ? 
+                      "Below 50% target (limited bonus)" : 
+                      kpi.actual < 100 ? 
+                        `${Math.round((kpi.actual / kpi.target) * 100)}% of bonus` : 
+                        "At or above target (full bonus)"
+                    }
+                  </div>
+                )}
+                {kpi.name === 'Arbor/Enhancement Process Followed' && (
+                  <div className="mt-1 text-xs text-gray-500">
+                    {kpi.actual < 90 ? 
+                      "Below 90% target (0% bonus)" : 
+                      kpi.actual === 90 ? 
+                        "At 90% (50% bonus)" :
+                      kpi.actual < 95 ? 
+                        `${50 + Math.round(((kpi.actual - 90) / 5) * 50)}% of bonus` : 
+                        "At or above target (100% bonus)"
+                    }
+                  </div>
+                )}
+                {kpi.name === 'Pipeline Updates Current' && (
+                  <div className="mt-1 text-xs text-gray-500">
+                    {kpi.actual < 90 ? 
+                      "Below 90% target (0% bonus)" : 
+                      kpi.actual === 90 ? 
+                        "At 90% (50% bonus)" :
+                      kpi.actual < 100 ? 
+                        `${50 + Math.round(((kpi.actual - 90) / 10) * 50)}% of bonus` : 
+                        "At or above target (100% bonus)"
                     }
                   </div>
                 )}
