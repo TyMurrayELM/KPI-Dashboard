@@ -899,7 +899,12 @@ const KPIDashboard = () => {
           <div className="grid grid-cols-4 gap-4">
             <div>
               <p className="text-xs text-gray-500">Target</p>
-              <p className="text-md font-medium text-gray-800">{kpi.target}%</p>
+              <p className="text-md font-medium text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12zm0-2a4 4 0 100-8 4 4 0 000 8zm0-2a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+                {kpi.target}%
+              </p>
             </div>
             
             <div className="col-span-2">
