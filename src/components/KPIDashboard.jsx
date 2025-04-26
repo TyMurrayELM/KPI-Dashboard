@@ -2,317 +2,234 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
+// Define KPIs as constants to avoid duplication
+const KPI_CLIENT_RETENTION = {
+  name: 'Client Retention %',
+  description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
+  target: 90,
+  actual: 90,
+  successFactors: [
+    "Ensure maintenance quality meets Encore standards",
+    "Clear direction is consistently provided to Maintenance Crews to drive quality",
+    "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
+    "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
+    "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
+  ]
+};
+
+const KPI_VISIT_NOTE_CREATION = {
+  name: 'Visit Note Creation',
+  description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
+  target: 90,
+  actual: 90,
+  successFactors: [
+    "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
+    "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
+    "Coordinate with team members to ensure all visits have proper notes and checklists"
+  ]
+};
+
+const KPI_EXTRA_SERVICES = {
+  name: 'Extra Services',
+  description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
+  target: 100,
+  actual: 90,
+  successFactors: [
+    "Ensure all budgeted proposals for properties are proactively provided to clients",
+    "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
+  ]
+};
+
+const KPI_DIRECT_LABOR_MAINTENANCE = {
+  name: 'Direct Labor Maintenance %',
+  description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
+  target: 40,
+  actual: 40,
+  isInverse: true,
+  successFactors: [
+    "Ensure accuracy of On-Property hours required to complete directed work",
+    "Regularly review Direct Labor Dashboard and Crew Schedules to ensure we're meeting the desired Direct Labor goals",
+    "Identify opportunities to maximize crew effeciency and productivity ",
+    "Provide actionable and clear visit notes so crews are making the best use of hours spent on property"
+  ]
+};
+
+const KPI_LV_MAINTENANCE_GROWTH = {
+  name: 'LV Maintenance Growth',
+  description: 'Grow maintenance book of business for LV market. Measured as percentage increase in maintenance contract value compared to previous year.',
+  target: 3,
+  actual: 1,
+  successFactors: [
+    "Collaborate with Business Development team to maximize market opportunities",
+    "Participation in local networking groups and events to drive brand recognition",
+    "Nurture existing client relationships to become our client's preferrred service provider"
+  ]
+};
+
+const KPI_PROPERTY_CHECKLIST_ITEM_COMPLETION = {
+  name: 'Property Checklist Item Completion',
+  description: 'Ensure all items on visit note checklists are completed, and completed satisfactorily, on a daily basis to keep properties in great condition and improve retention.',
+  target: 100,
+  actual: 80,
+  successFactors: [
+    "Create actionable and applicable checklist items for crews",
+    "Ensure crew completes the checklists in CRM",
+    "Validate completion via crew photos and property visits"
+  ]
+};
+
+const KPI_SALES_GOAL_MET = {
+  name: 'Sales Goal Met',
+  description: 'Percentage of sales targets achieved across all service lines. Meeting or exceeding sales goals ensures business growth and sustainability.',
+  target: 100,
+  actual: 90,
+  successFactors: [
+    "Meeting Proposal Goals",
+    "Managing Pipeline and Follow-ups",
+    "Communicating and Coordinating with Account Managers",
+    "Reviewing Budgets and Proposing all budgeted work"
+  ]
+};
+
+const KPI_TOTAL_GROSS_MARGIN = {
+  name: 'Total Gross Margin % on Completed Jobs',
+  description: 'Total gross margin percentage across all completed enhancement and arbor jobs. Higher margins indicate effective pricing and cost management.',
+  target: 60,
+  actual: 60,
+  successFactors: [
+    "Jobs properly bid",
+    "Coordinating and communicating expectations for jobs with operations",
+    "Reviewing completed work to ensure no warranty work needs to occur"
+  ]
+};
+
+const KPI_ARBOR_ENHANCEMENT_PROCESS = {
+  name: 'Arbor/Enhancement Process Followed',
+  description: 'Percentage of jobs that strictly followed the prescribed process from estimate to completion. Proper process adherence ensures quality, safety, and profitability.',
+  target: 95,
+  actual: 90
+};
+
+const KPI_PIPELINE_UPDATES_CURRENT = {
+  name: 'Pipeline Updates Current',
+  description: 'Percentage of pipeline projects with up-to-date status and follow-ups scheduled at various data checkpoints. Maintaining current pipeline data improves forecasting accuracy, resource planning and improves closing rates.',
+  target: 100,
+  actual: 90,
+  successFactors: [
+    "Proposal Requests provided by due date",
+    "Follow-ups scheduled for all opportunities",
+    "Opportunities in proper status",
+    "Client portals updated on-time with proper status (ex: Prologis)",
+    "Proposing effort from budgets on time and for all budgeted effort"
+  ]
+};
+
+const KPI_FLEET_UPTIME_RATE = {
+  name: 'Fleet Uptime Rate',
+  description: 'Percentage of time equipment is operational vs. down for maintenance or repairs. Higher uptime indicates better maintenance practices and equipment reliability.',
+  target: 95,
+  actual: 93
+};
+
+const KPI_PREVENTATIVE_VS_REACTIVE = {
+  name: 'Preventative vs. Reactive Maintenance Ratio',
+  description: 'Cost comparison of scheduled maintenance versus emergency repairs, calculated as (Maintenance Costs) / (Repair Costs) as a percentage. Higher ratios indicate more proactive maintenance approaches.',
+  target: 80,
+  actual: 75
+};
+
+const KPI_ACCIDENT_INCIDENT_RATE = {
+  name: 'Accident/Incident Rate',
+  description: 'Number of accidents or safety incidents per miles driven. Measured using Samsara event notifications and reported incidents. Lower rates indicate better safety outcomes.',
+  target: 5,
+  actual: 7,
+  isInverse: true
+};
+
+const KPI_SAFETY_INCIDENTS_MAGNITUDE = {
+  name: 'Safety Incidents Magnitude',
+  description: 'Severity and impact of safety incidents, measured on a scale. Lower values indicate less severe safety incidents or better management of incident consequences.',
+  target: 10,
+  actual: 12,
+  isInverse: true
+};
+
 const KPIDashboard = () => {
   const [activeTab, setActiveTab] = useState('general-manager');
   
-  // Initial positions data
+  // Initial positions data using KPI constants
   const initialPositions = {
     'general-manager': {
       title: 'General Manager',
       salary: 30000,
+      bonusPercentage: 10,
       kpis: [
-        {
-          name: 'Client Retention %',
-          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Ensure maintenance quality meets Encore standards",
-            "Clear direction is consistently provided to Maintenance Crews to drive quality",
-            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
-            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
-            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
-          ]
-        },
-        {
-          name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
-            "Coordinate with team members to ensure all visits have proper notes and checklists"
-          ]
-        },
-        {
-          name: 'Extra Services',
-          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
-          target: 100,
-          actual: 90,
-          successFactors: [
-            "Ensure all budgeted proposals for properties are proactively provided to clients",
-            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
-          ]
-        },
-        {
-          name: 'Direct Labor Maintenance %',
-          description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
-          target: 40,
-          actual: 40,
-          isInverse: true,
-          successFactors: [
-            "Ensure accuracy of On-Property hours required to complete directed work",
-            "Regularly review Direct Labor Dashboard and Crew Schedules to ensure we're meeting the desired Direct Labor goals",
-            "Identify opportunities to maximize crew effeciency and productivity ",
-            "Provide actionable and clear visit notes so crews are making the best use of hours spent on property"
-          ]
-        },
-        {
-          name: 'LV Maintenance Growth',
-          description: 'Grow maintenance book of business for LV market. Measured as percentage increase in maintenance contract value compared to previous year.',
-          target: 3,
-          actual: 1,
-          successFactors: [
-            "Collaborate with Business Development team to maximize market opportunities",
-            "Participation in local networking groups and events to drive brand recognition",
-            "Nurture existing client relationships to become our client's preferrred service provider"
-          ]
-        }
+        { ...KPI_CLIENT_RETENTION },
+        { ...KPI_VISIT_NOTE_CREATION },
+        { ...KPI_EXTRA_SERVICES },
+        { ...KPI_DIRECT_LABOR_MAINTENANCE },
+        { ...KPI_LV_MAINTENANCE_GROWTH }
       ]
     },
     'branch-manager': {
       title: 'Branch Manager',
       salary: 88750,
+      bonusPercentage: 10,
       kpis: [
-        {
-          name: 'Client Retention %',
-          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Ensure maintenance quality meets Encore standards",
-            "Clear direction is consistently provided to Maintenance Crews to drive quality",
-            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
-            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
-            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
-          ]
-        },
-        {
-          name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
-            "Coordinate with team members to ensure all visits have proper notes and checklists"
-          ]
-        },
-        {
-          name: 'Extra Services',
-          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
-          target: 100,
-          actual: 90,
-          successFactors: [
-            "Ensure all budgeted proposals for properties are proactively provided to clients",
-            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
-          ]
-        },
-        {
-          name: 'Direct Labor Maintenance %',
-          description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
-          target: 40,
-          actual: 40,
-          isInverse: true,
-          successFactors: [
-            "Ensure accuracy of On-Property hours required to complete directed work",
-            "Regularly review Direct Labor Dashboard and Crew Schedules to ensure we're meeting the desired Direct Labor goals",
-            "Identify opportunities to maximize crew effeciency and productivity ",
-            "Provide actionable and clear visit notes so crews are making the best use of hours spent on property"
-          ]
-        }
+        { ...KPI_CLIENT_RETENTION },
+        { ...KPI_VISIT_NOTE_CREATION },
+        { ...KPI_EXTRA_SERVICES },
+        { ...KPI_DIRECT_LABOR_MAINTENANCE }
       ]
     },
     'account-manager': {
       title: 'Client Specialist',
       salary: 72000,
+      bonusPercentage: 10,
       kpis: [
-        {
-          name: 'Client Retention %',
-          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Ensure maintenance quality meets Encore standards",
-            "Clear direction is consistently provided to Maintenance Crews to drive quality",
-            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
-            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
-            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
-          ]
-        },
-        {
-          name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
-            "Coordinate with team members to ensure all visits have proper notes and checklists"
-          ]
-        },
-        {
-          name: 'Extra Services',
-          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
-          target: 100,
-          actual: 90,
-          successFactors: [
-            "Ensure all budgeted proposals for properties are proactively provided to clients",
-            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
-          ]
-        },
-        {
-          name: 'Property Checklist Item Completion',
-          description: 'Ensure all items on visit note checklists are completed, and completed satisfactorily, on a daily basis to keep properties in great condition and improve retention.',
-          target: 100,
-          actual: 80,
-          successFactors: [
-            "Create actionable and applicable checklist items for crews",
-            "Ensure crew completes the checklists in CRM",
-            "Validate completion via crew photos and property visits"
-          ]
-        }
+        { ...KPI_CLIENT_RETENTION },
+        { ...KPI_VISIT_NOTE_CREATION },
+        { ...KPI_EXTRA_SERVICES },
+        { ...KPI_PROPERTY_CHECKLIST_ITEM_COMPLETION }
       ]
     },
     'field-supervisor': {
       title: 'Field Supervisor',
       salary: 67250,
+      bonusPercentage: 10,
       kpis: [
-        {
-          name: 'Client Retention %',
-          description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Ensure maintenance quality meets Encore standards",
-            "Clear direction is consistently provided to Maintenance Crews to drive quality",
-            "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
-            "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
-            "Utilize internal systems to capture accurate status of issues so items can be addressed effeciently and effectively "
-          ]
-        },
-        {
-          name: 'Visit Note Creation',
-          description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
-          target: 90,
-          actual: 90,
-          successFactors: [
-            "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-            "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
-            "Coordinate with team members to ensure all visits have proper notes and checklists"
-          ]
-        },
-        {
-          name: 'Extra Services',
-          description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
-          target: 100,
-          actual: 90,
-          successFactors: [
-            "Ensure all budgeted proposals for properties are proactively provided to clients",
-            "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
-          ]
-        },
-        {
-          name: 'Property Checklist Item Completion',
-          description: 'Ensure all items on visit note checklists are completed, and completed satisfactorily, on a daily basis to keep properties in great condition and improve retention.',
-          target: 100,
-          actual: 80,
-          successFactors: [
-            "Create actionable and applicable checklist items for crews",
-            "Ensure crew completes the checklists in CRM",
-            "Validate completion via crew photos and property visits"
-          ]
-        }
+        { ...KPI_CLIENT_RETENTION },
+        { ...KPI_VISIT_NOTE_CREATION },
+        { ...KPI_EXTRA_SERVICES },
+        { ...KPI_PROPERTY_CHECKLIST_ITEM_COMPLETION }
       ]
     },
     'specialist': {
-      title: 'Specialist',
+      title: 'Sales Specialist',
       salary: 77750,
+      bonusPercentage: 10,
       kpis: [
-        {
-          name: 'Sales Goal Met',
-          description: 'Percentage of sales targets achieved across all service lines. Meeting or exceeding sales goals ensures business growth and sustainability.',
-          target: 100,
-          actual: 90,
-          successFactors: [
-            "Meeting Proposal Goals",
-            "Managing Pipeline and Follow-ups",
-            "Communicating and Coordinating with Account Managers",
-            "Reviewing Budgets and Proposing all budgeted work"
-          ]
-        },
-        {
-          name: 'Total Gross Margin % on Completed Jobs',
-          description: 'Total gross margin percentage across all completed enhancement and arbor jobs. Higher margins indicate effective pricing and cost management.',
-          target: 60,
-          actual: 60,
-          successFactors: [
-            "Jobs properly bid",
-            "Coordinating and communicating expectations for jobs with operations",
-            "Reviewing completed work to ensure no warranty work needs to occur"
-          ]
-        },
-        {
-          name: 'Arbor/Enhancement Process Followed',
-          description: 'Percentage of jobs that strictly followed the prescribed process from estimate to completion. Proper process adherence ensures quality, safety, and profitability.',
-          target: 95,
-          actual: 90
-        },
-        {
-          name: 'Pipeline Updates Current',
-          description: 'Percentage of pipeline projects with up-to-date status and follow-ups scheduled at various data checkpoints. Maintaining current pipeline data improves forecasting accuracy, resource planning and improves closing rates.',
-          target: 100,
-          actual: 90,
-          successFactors: [
-            "Proposal Requests provided by due date",
-            "Follow-ups scheduled for all opportunities",
-            "Opportunities in proper status",
-            "Client portals updated on-time with proper status (ex: Prologis)",
-            "Proposing effort from budgets on time and for all budgeted effort"
-          ]
-        }
+        { ...KPI_SALES_GOAL_MET },
+        { ...KPI_TOTAL_GROSS_MARGIN },
+        { ...KPI_ARBOR_ENHANCEMENT_PROCESS },
+        { ...KPI_PIPELINE_UPDATES_CURRENT }
       ]
     },
     'asset-risk-manager': {
       title: 'Placeholder Manager',
       salary: 30000,
+      bonusPercentage: 10,
       kpis: [
-        {
-          name: 'Fleet Uptime Rate',
-          description: 'Percentage of time equipment is operational vs. down for maintenance or repairs. Higher uptime indicates better maintenance practices and equipment reliability.',
-          target: 95,
-          actual: 93
-        },
-        {
-          name: 'Preventative vs. Reactive Maintenance Ratio',
-          description: 'Cost comparison of scheduled maintenance versus emergency repairs, calculated as (Maintenance Costs) / (Repair Costs) as a percentage. Higher ratios indicate more proactive maintenance approaches.',
-          target: 80,
-          actual: 75
-        },
-        {
-          name: 'Accident/Incident Rate',
-          description: 'Number of accidents or safety incidents per miles driven. Measured using Samsara event notifications and reported incidents. Lower rates indicate better safety outcomes.',
-          target: 5,
-          actual: 7,
-          isInverse: true
-        },
-        {
-          name: 'Safety Incidents Magnitude',
-          description: 'Severity and impact of safety incidents, measured on a scale. Lower values indicate less severe safety incidents or better management of incident consequences.',
-          target: 10,
-          actual: 12,
-          isInverse: true
-        }
+        { ...KPI_FLEET_UPTIME_RATE },
+        { ...KPI_PREVENTATIVE_VS_REACTIVE },
+        { ...KPI_ACCIDENT_INCIDENT_RATE },
+        { ...KPI_SAFETY_INCIDENTS_MAGNITUDE }
       ]
     }
   };
 
   // State to track positions data including slider values
   const [positions, setPositions] = useState(initialPositions);
-  
-  // State for bonus percentage (default 10%)
-  const [bonusPercentage, setBonusPercentage] = useState(10);
   
   // State for bonus multiplier (global adjustment to all bonuses)
   const [bonusMultiplier, setBonusMultiplier] = useState(100);
@@ -336,8 +253,8 @@ const KPIDashboard = () => {
   });
 
   // Calculate the total potential bonus
-  const calculateTotalBonus = (salary) => {
-    return salary * (bonusPercentage / 100);
+  const calculateTotalBonus = (position) => {
+    return position.salary * (position.bonusPercentage / 100);
   };
 
   // Format currency
@@ -412,7 +329,7 @@ const KPIDashboard = () => {
 
   // Calculate the bonus amount per KPI
   const calculateKpiBonus = (position, kpiIndex) => {
-    const totalBonus = calculateTotalBonus(position.salary);
+    const totalBonus = calculateTotalBonus(position);
     const kpi = position.kpis[kpiIndex];
     const kpiWeight = 1 / position.kpis.length; // Equal weight for each KPI
     const kpiTotalAvailable = totalBonus * kpiWeight; // Equal distribution of total bonus for each KPI
@@ -743,8 +660,12 @@ const KPIDashboard = () => {
   };
   
   // Handle bonus percentage change
-  const handleBonusPercentageChange = (newPercentage) => {
-    setBonusPercentage(parseFloat(newPercentage) || 0);
+  const handleBonusPercentageChange = (positionKey, newPercentage) => {
+    setPositions(prevPositions => {
+      const newPositions = { ...prevPositions };
+      newPositions[positionKey].bonusPercentage = parseFloat(newPercentage) || 0;
+      return newPositions;
+    });
   };
   
   // Handle bonus multiplier change
@@ -771,7 +692,7 @@ const KPIDashboard = () => {
       return bonusPerPerson * count;
     } else {
       // Otherwise, use the percentage of available bonus
-      const availableBonusPerPerson = calculateTotalBonus(position.salary);
+      const availableBonusPerPerson = calculateTotalBonus(position);
       return availableBonusPerPerson * count * (bonusMultiplier / 100);
     }
   };
@@ -1153,7 +1074,7 @@ const KPIDashboard = () => {
                   {formatCurrency(kpiBonus)}
                 </p>
                 <p className="text-xs text-gray-500">
-                  (Max: {formatCurrency(calculateTotalBonus(position.salary) / position.kpis.length)})
+                  (Max: {formatCurrency(calculateTotalBonus(position) / position.kpis.length)})
                 </p>
               </div>
             </div>
@@ -1278,8 +1199,9 @@ const KPIDashboard = () => {
               <tr>
                 <th className="py-2 px-4 border text-left">Position</th>
                 <th className="py-2 px-4 border text-center">Headcount</th>
+                <th className="py-2 px-4 border text-center">Bonus %</th>
                 <th className="py-2 px-4 border text-center">Bonus Per Person</th>
-                <th className="py-2 px-4 border text-center">Salary</th>
+                <th className="py-2 px-4 border text-center">Avg Salary</th>
                 <th className="py-2 px-4 border text-center">Total Bonus</th>
                 <th className="py-2 px-4 border text-center">Total Compensation</th>
               </tr>
@@ -1288,7 +1210,7 @@ const KPIDashboard = () => {
               {Object.keys(positions).map((positionKey) => {
                 const position = positions[positionKey];
                 const count = headcount[positionKey];
-                const availableBonusPerPerson = calculateTotalBonus(position.salary);
+                const availableBonusPerPerson = calculateTotalBonus(position);
                 const performanceBasedBonusPerPerson = calculateActualTotalBonus(position);
                 
                 // Calculate forecasted bonus based on slider
@@ -1303,6 +1225,18 @@ const KPIDashboard = () => {
                   <tr key={positionKey} className="border-b">
                     <td className="py-2 px-4 border font-medium">{position.title}</td>
                     <td className="py-2 px-4 border text-center">{count}</td>
+                    <td className="py-2 px-4 border text-center">
+                      <input
+                        type="number"
+                        value={position.bonusPercentage}
+                        onChange={(e) => handleBonusPercentageChange(positionKey, e.target.value)}
+                        className="w-16 border border-gray-300 rounded px-2 py-1 font-medium text-blue-600 bg-white text-center"
+                        min="0"
+                        max="100"
+                        step="0.5"
+                      />
+                      <span className="text-blue-600 font-medium">%</span>
+                    </td>
                     <td className="py-2 px-4 border text-right">
                       {formatCurrency(forecastedBonusPerPerson)}
                       <div className="text-xs text-gray-500">
@@ -1327,7 +1261,7 @@ const KPIDashboard = () => {
                 );
               })}
               <tr className="bg-blue-50">
-                <td colSpan="4" className="py-3 px-4 border font-semibold text-right">Grand Total:</td>
+                <td colSpan="5" className="py-3 px-4 border font-semibold text-right">Grand Total:</td>
                 <td className="py-3 px-4 border text-right font-bold text-blue-600">
                   {formatCurrency(calculateGrandTotalBonus())}
                   <div className="text-xs text-gray-600">
@@ -1335,7 +1269,7 @@ const KPIDashboard = () => {
                       Object.keys(positions).reduce((total, positionKey) => {
                         const position = positions[positionKey];
                         const count = headcount[positionKey];
-                        const availableBonusPerPerson = calculateTotalBonus(position.salary);
+                        const availableBonusPerPerson = calculateTotalBonus(position);
                         return total + (availableBonusPerPerson * count);
                       }, 0)
                     )})
@@ -1356,7 +1290,7 @@ const KPIDashboard = () => {
                     const position = positions[positionKey];
                     const count = headcount[positionKey];
                     const totalSalary = position.salary * count;
-                    const forecastedTotalBonus = calculateTotalBonus(position.salary) * count * (bonusMultiplier / 100);
+                    const forecastedTotalBonus = calculateTotalBonus(position) * count * (bonusMultiplier / 100);
                     
                     return total + totalSalary + forecastedTotalBonus;
                   }, 0)
@@ -1442,8 +1376,8 @@ const KPIDashboard = () => {
                 <div className="flex items-center mt-2">
                   <input
                     type="number"
-                    value={bonusPercentage}
-                    onChange={(e) => handleBonusPercentageChange(e.target.value)}
+                    value={positions[activeTab].bonusPercentage}
+                    onChange={(e) => handleBonusPercentageChange(activeTab, e.target.value)}
                     className="w-24 border border-gray-300 rounded px-2 py-1 text-xl font-bold text-blue-600 bg-white"
                     min="0"
                     max="100"
@@ -1461,7 +1395,7 @@ const KPIDashboard = () => {
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Available Bonus</h3>
                 <p className="text-2xl font-bold text-blue-600 mt-2">
-                  {formatCurrency(calculateTotalBonus(positions[activeTab].salary))}
+                  {formatCurrency(calculateTotalBonus(positions[activeTab]))}
                 </p>
               </div>
             </div>
