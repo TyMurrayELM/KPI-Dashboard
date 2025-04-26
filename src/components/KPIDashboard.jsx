@@ -8,6 +8,7 @@ const KPI_CLIENT_RETENTION = {
   description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
   target: 90,
   actual: 90,
+  weight: 25,
   successFactors: [
     "Ensure maintenance quality meets Encore standards",
     "Clear direction is consistently provided to Maintenance Crews to drive quality",
@@ -22,6 +23,7 @@ const KPI_VISIT_NOTE_CREATION = {
   description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
   target: 90,
   actual: 90,
+  weight: 25,
   successFactors: [
     "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
     "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
@@ -34,6 +36,7 @@ const KPI_EXTRA_SERVICES = {
   description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
   target: 100,
   actual: 100,
+  weight: 25,
   successFactors: [
     "Ensure all budgeted proposals for properties are proactively provided to clients",
     "Capture all client proposal requests and/or identify property needs for specialists, for creation and delivery of proposals in a timely manner"
@@ -45,6 +48,7 @@ const KPI_DIRECT_LABOR_MAINTENANCE = {
   description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
   target: 40,
   actual: 40,
+  weight: 25,
   isInverse: true,
   successFactors: [
     "Ensure accuracy of On-Property hours required to complete directed work",
@@ -59,6 +63,7 @@ const KPI_LV_MAINTENANCE_GROWTH = {
   description: 'Grow maintenance book of business for LV market. Measured as percentage increase in maintenance contract value compared to previous year.',
   target: 3,
   actual: 1,
+  weight: 20,
   successFactors: [
     "Collaborate with Business Development team to maximize market opportunities",
     "Participation in local networking groups and events to drive brand recognition",
@@ -71,6 +76,7 @@ const KPI_PROPERTY_CHECKLIST_ITEM_COMPLETION = {
   description: 'Ensure all items on visit note checklists are completed, and completed satisfactorily, on a daily basis to keep properties in great condition and improve retention.',
   target: 100,
   actual: 80,
+  weight: 25,
   successFactors: [
     "Create actionable and applicable checklist items for crews",
     "Ensure crew completes the checklists in CRM",
@@ -83,6 +89,7 @@ const KPI_SALES_GOAL_MET = {
   description: 'Percentage of sales targets achieved across all service lines. Meeting or exceeding sales goals ensures business growth and sustainability.',
   target: 100,
   actual: 90,
+  weight: 25,
   successFactors: [
     "Meeting Proposal Goals",
     "Managing Pipeline and Follow-ups",
@@ -96,6 +103,7 @@ const KPI_TOTAL_GROSS_MARGIN = {
   description: 'Total gross margin percentage across all completed enhancement and arbor jobs. Higher margins indicate effective pricing and cost management.',
   target: 60,
   actual: 60,
+  weight: 25,
   successFactors: [
     "Jobs properly bid",
     "Coordinating and communicating expectations for jobs with operations",
@@ -107,7 +115,8 @@ const KPI_ARBOR_ENHANCEMENT_PROCESS = {
   name: 'Arbor/Enhancement Process Followed',
   description: 'Percentage of jobs that strictly followed the prescribed process from estimate to completion. Proper process adherence ensures quality, safety, and profitability.',
   target: 95,
-  actual: 90
+  actual: 90,
+  weight: 25
 };
 
 const KPI_PIPELINE_UPDATES_CURRENT = {
@@ -115,6 +124,7 @@ const KPI_PIPELINE_UPDATES_CURRENT = {
   description: 'Percentage of pipeline projects with up-to-date status and follow-ups scheduled at various data checkpoints. Maintaining current pipeline data improves forecasting accuracy, resource planning and improves closing rates.',
   target: 100,
   actual: 90,
+  weight: 25,
   successFactors: [
     "Proposal Requests provided by due date",
     "Follow-ups scheduled for all opportunities",
@@ -128,14 +138,16 @@ const KPI_FLEET_UPTIME_RATE = {
   name: 'Fleet Uptime Rate',
   description: 'Percentage of time equipment is operational vs. down for maintenance or repairs. Higher uptime indicates better maintenance practices and equipment reliability.',
   target: 95,
-  actual: 93
+  actual: 93,
+  weight: 25
 };
 
 const KPI_PREVENTATIVE_VS_REACTIVE = {
   name: 'Preventative vs. Reactive Maintenance Ratio',
   description: 'Cost comparison of scheduled maintenance versus emergency repairs, calculated as (Maintenance Costs) / (Repair Costs) as a percentage. Higher ratios indicate more proactive maintenance approaches.',
   target: 80,
-  actual: 75
+  actual: 75,
+  weight: 25
 };
 
 const KPI_ACCIDENT_INCIDENT_RATE = {
@@ -143,6 +155,7 @@ const KPI_ACCIDENT_INCIDENT_RATE = {
   description: 'Number of accidents or safety incidents per miles driven. Measured using Samsara event notifications and reported incidents. Lower rates indicate better safety outcomes.',
   target: 5,
   actual: 7,
+  weight: 25,
   isInverse: true
 };
 
@@ -151,6 +164,7 @@ const KPI_SAFETY_INCIDENTS_MAGNITUDE = {
   description: 'Severity and impact of safety incidents, measured on a scale. Lower values indicate less severe safety incidents or better management of incident consequences.',
   target: 10,
   actual: 12,
+  weight: 25,
   isInverse: true
 };
 
@@ -164,11 +178,11 @@ const KPIDashboard = () => {
       salary: 150000,
       bonusPercentage: 20,
       kpis: [
-        { ...KPI_CLIENT_RETENTION },
-        { ...KPI_VISIT_NOTE_CREATION },
-        { ...KPI_EXTRA_SERVICES },
-        { ...KPI_DIRECT_LABOR_MAINTENANCE },
-        { ...KPI_LV_MAINTENANCE_GROWTH }
+        { ...KPI_CLIENT_RETENTION, weight: 20 },
+        { ...KPI_VISIT_NOTE_CREATION, weight: 20 },
+        { ...KPI_EXTRA_SERVICES, weight: 20 },
+        { ...KPI_DIRECT_LABOR_MAINTENANCE, weight: 20 },
+        { ...KPI_LV_MAINTENANCE_GROWTH, weight: 20 }
       ]
     },
     'branch-manager': {
@@ -1001,6 +1015,12 @@ const KPIDashboard = () => {
                 </svg>
                 {kpi.target}%
               </p>
+              <div className="flex items-center mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.477 6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L5 10.274zm10 0l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L15 10.274z" clipRule="evenodd" />
+                </svg>
+                <span className="text-xs text-gray-700 font-medium">Weighting: {kpi.weight}%</span>
+              </div>
             </div>
             
             <div className="col-span-2">
@@ -1512,7 +1532,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Bonus %</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Bonus Percentage</h3>
                 <div className="flex items-center mt-2">
                   <input
                     type="number"
@@ -1527,7 +1547,7 @@ const KPIDashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Projected Bonus</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Current Projected Bonus</h3>
                 <p className="text-2xl font-bold text-green-600 mt-2">
                   {formatCurrency(calculateActualTotalBonus(positions[activeTab]))}
                 </p>
