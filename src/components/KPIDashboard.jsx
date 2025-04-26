@@ -1007,8 +1007,10 @@ const KPIDashboard = () => {
           <h3 className="text-sm md:text-lg font-semibold text-gray-800">{kpi.name}</h3>
           <p className="text-sm text-gray-600 mt-1 mb-3">{kpi.description}</p>
           
-          <div className="grid grid-cols-4 gap-4">
-            <div>
+          {/* Responsive grid for KPI details */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Target section - stacks on mobile, becomes a column on desktop */}
+            <div className="mb-3 md:mb-0">
               <p className="text-xs text-gray-500">Target</p>
               <p className="text-md font-medium text-gray-800 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -1024,11 +1026,13 @@ const KPIDashboard = () => {
               </div>
             </div>
             
-            <div className="col-span-2">
-              <p className="text-xs text-gray-500">Actual</p>
+            {/* Actual section with slider - spans 2 columns on desktop */}
+            <div className="col-span-1 md:col-span-2 mb-3 md:mb-0">
+              <p className="text-xs text-gray-500 mb-2">Actual</p>
               <div className="flex flex-col">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex-1 mr-4">
+                {/* Mobile and desktop slider layout */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center mb-2">
+                  <div className="flex-1 w-full mb-2 sm:mb-0 sm:mr-4">
                     <input 
                       type="range" 
                       min={getMinValueForKPI(kpi.name)}
@@ -1039,24 +1043,27 @@ const KPIDashboard = () => {
                     />
                   </div>
                   
-                  <span className="text-gray-800 font-medium min-w-[40px] text-center">{kpi.actual}%</span>
-                  
-                  <div className="flex">
-                    <button 
-                      onClick={() => handleDecrementKPI(positionKey, index)} 
-                      className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-l border border-gray-300"
-                    >
-                      -
-                    </button>
-                    <button 
-                      onClick={() => handleIncrementKPI(positionKey, index)} 
-                      className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-r border-t border-r border-b border-gray-300"
-                    >
-                      +
-                    </button>
+                  <div className="flex items-center justify-between w-full sm:w-auto">
+                    <span className="text-gray-800 font-medium min-w-[40px] text-center mr-4 sm:mr-2">{kpi.actual}%</span>
+                    
+                    <div className="flex">
+                      <button 
+                        onClick={() => handleDecrementKPI(positionKey, index)} 
+                        className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-l border border-gray-300"
+                      >
+                        -
+                      </button>
+                      <button 
+                        onClick={() => handleIncrementKPI(positionKey, index)} 
+                        className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-r border-t border-r border-b border-gray-300"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
+                {/* Status text */}
                 {(kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation') && (
                   <div className="mt-1 text-xs text-gray-500">
                     {kpi.actual < 90 ? 
@@ -1206,6 +1213,7 @@ const KPIDashboard = () => {
               </div>
             </div>
             
+            {/* Bonus Impact section */}
             <div>
               <p className="text-xs text-gray-500">Bonus Impact</p>
               <div>
@@ -1608,13 +1616,13 @@ const KPIDashboard = () => {
       </div>
       
       {/* Tabs - only render tabs that the user has access to */}
-      <div className="flex flex-wrap border-b border-gray-200 mb-6">
+      <div className="flex flex-wrap border-b border-gray-200 mb-6 overflow-x-auto">
         {['general-manager', 'branch-manager', 'client-specialist', 'specialist', 'field-supervisor', 'asset-risk-manager', 'headcount']
           .filter(tabKey => isTabAccessible(tabKey))
           .map((tabKey) => (
           <button
             key={tabKey}
-            className={`py-2 px-4 font-medium text-sm ${
+            className={`py-2 px-4 font-medium text-sm whitespace-nowrap ${
               activeTab === tabKey
                 ? `border-b-2 border-blue-500 text-blue-600 ${getTabColor(tabKey)}`
                 : 'text-gray-500 hover:text-gray-700'
