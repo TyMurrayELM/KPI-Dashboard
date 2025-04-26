@@ -1304,16 +1304,18 @@ const KPIDashboard = () => {
                     <td className="py-2 px-4 border font-medium">{position.title}</td>
                     <td className="py-2 px-4 border text-center">{count}</td>
                     <td className="py-2 px-4 border text-center">
-                      <input
-                        type="number"
-                        value={position.bonusPercentage}
-                        onChange={(e) => handleBonusPercentageChange(positionKey, e.target.value)}
-                        className="w-16 border border-gray-300 rounded px-2 py-1 font-medium text-blue-600 bg-white text-center"
-                        min="0"
-                        max="100"
-                        step="0.5"
-                      />
-                      <span className="text-blue-600 font-medium">%</span>
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="number"
+                          value={position.bonusPercentage}
+                          onChange={(e) => handleBonusPercentageChange(positionKey, e.target.value)}
+                          className="w-20 border border-gray-300 rounded px-2 py-1 font-medium text-blue-600 bg-white text-center"
+                          min="0"
+                          max="100"
+                          step="0.5"
+                        />
+                        <span className="text-blue-600 font-medium ml-1">%</span>
+                      </div>
                     </td>
                     <td className="py-2 px-4 border text-right">
                       {formatCurrency(forecastedBonusPerPerson)}
