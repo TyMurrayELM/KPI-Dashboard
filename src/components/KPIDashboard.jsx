@@ -281,6 +281,160 @@ const KPIDashboard = () => {
     });
   };
   
+  // Make custom slider styles for better cross-browser appearance with colored tracks
+  const sliderStyles = `
+    /* Basic slider reset and styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      margin: 10px 0;
+      background: transparent;
+    }
+    
+    /* Remove default focus outline */
+    input[type=range]:focus {
+      outline: none;
+    }
+    
+    /* Thumb styling - the draggable handle */
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 22px;
+      width: 22px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #ddd;
+      cursor: pointer;
+      margin-top: -7px; /* offset for proper vertical centering */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 3;
+      transition: border-color 0.2s ease;
+    }
+    
+    input[type=range]::-moz-range-thumb {
+      height: 22px;
+      width: 22px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #ddd;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 3;
+      transition: border-color 0.2s ease;
+    }
+    
+    /* Hover states for the thumb */
+    input[type=range]:active::-webkit-slider-thumb,
+    input[type=range]:hover::-webkit-slider-thumb {
+      border-color: #aaa;
+    }
+    
+    input[type=range]:active::-moz-range-thumb,
+    input[type=range]:hover::-moz-range-thumb {
+      border-color: #aaa;
+    }
+    
+    /* Track styling - the background bar */
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 8px;
+      cursor: pointer;
+      background: #f0f0f0;
+      border-radius: 4px;
+    }
+    
+    input[type=range]::-moz-range-track {
+      width: 100%;
+      height: 8px;
+      cursor: pointer;
+      background: #f0f0f0;
+      border-radius: 4px;
+    }
+    
+    /* Green sliders */
+    input.slider-green::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, #34d399 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-green::-moz-range-track {
+      background: linear-gradient(to right, #34d399 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Yellow sliders */
+    input.slider-yellow::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, #fbbf24 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-yellow::-moz-range-track {
+      background: linear-gradient(to right, #fbbf24 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Orange sliders */
+    input.slider-orange::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, #fb923c var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-orange::-moz-range-track {
+      background: linear-gradient(to right, #fb923c var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Red sliders */
+    input.slider-red::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, #f87171 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-red::-moz-range-track {
+      background: linear-gradient(to right, #f87171 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Blue sliders */
+    input.slider-blue::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, #4a90e2 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-blue::-moz-range-track {
+      background: linear-gradient(to right, #4a90e2 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Inverse sliders - green */
+    input.slider-green-inverse::-webkit-slider-runnable-track {
+      background: linear-gradient(to left, #34d399 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-green-inverse::-moz-range-track {
+      background: linear-gradient(to left, #34d399 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Inverse sliders - yellow */
+    input.slider-yellow-inverse::-webkit-slider-runnable-track {
+      background: linear-gradient(to left, #fbbf24 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-yellow-inverse::-moz-range-track {
+      background: linear-gradient(to left, #fbbf24 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Inverse sliders - orange */
+    input.slider-orange-inverse::-webkit-slider-runnable-track {
+      background: linear-gradient(to left, #fb923c var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-orange-inverse::-moz-range-track {
+      background: linear-gradient(to left, #fb923c var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    /* Inverse sliders - red */
+    input.slider-red-inverse::-webkit-slider-runnable-track {
+      background: linear-gradient(to left, #f87171 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+    
+    input.slider-red-inverse::-moz-range-track {
+      background: linear-gradient(to left, #f87171 var(--track-fill), #f0f0f0 var(--track-fill));
+    }
+  `;
+  
   // Format salary with thousand separators for display
   const formatSalaryForDisplay = (salary) => {
     return salary.toLocaleString('en-US');
@@ -457,16 +611,26 @@ const KPIDashboard = () => {
     }
     // Special calculation for LV Maintenance Growth
     else if (kpi.name === 'LV Maintenance Growth') {
-      // Below 0%
-      if (kpi.actual < 0) {
-        return 0;
+      // Below minimum threshold (3%)
+      if (kpi.actual < 3) {
+        return 0; // 0% bonus
       }
-      // Between 0% and target (3%)
-      else if (kpi.actual >= 0 && kpi.actual < 3) {
-        // Linear progression from 0 to 100% of bonus as we approach 3%
-        return kpiTotalAvailable * (kpi.actual / 3);
+      // At target exactly (3%)
+      else if (kpi.actual === 3) {
+        return kpiTotalAvailable * 0.5; // 50% of KPI bonus
       }
-      // At or above target (3%)
+      // Between 3% and 6%
+      else if (kpi.actual > 3 && kpi.actual < 6) {
+        // Base 50% for hitting target
+        const baseAmount = kpiTotalAvailable * 0.5;
+        // Calculate progress from 3% to 6% (0-50%)
+        const progressAboveTarget = (kpi.actual - 3) / 3;
+        // Remaining 50% is prorated based on progress
+        const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveTarget;
+        
+        return baseAmount + additionalAmount;
+      }
+      // At or above 6%
       else {
         return kpiTotalAvailable; // 100% of KPI bonus
       }
@@ -959,6 +1123,74 @@ const KPIDashboard = () => {
       return kpi.actual >= kpi.target;
     }
   };
+  
+  // Helper function to determine progress status text for KPIs
+  const getProgressStatusText = (kpi) => {
+    // For Client Retention % or Visit Note Creation
+    if (kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation') {
+      if (kpi.actual < 90) {
+        return { text: "Below 90% target", color: "text-red-600" };
+      } else if (kpi.actual === 90) {
+        return { text: "At target (50% bonus)", color: "text-green-600" };
+      } else if (kpi.actual > 100) {
+        return { text: "Maximum bonus reached", color: "text-green-600" };
+      } else {
+        return { 
+          text: `${Math.round(((kpi.actual - 90) / 10) * 100)}% progress above target`, 
+          color: "text-green-600" 
+        };
+      }
+    }
+    
+    // For Extra Services
+    else if (kpi.name === 'Extra Services') {
+      if (kpi.actual < 100) {
+        return { text: "Below 100% target (0% bonus)", color: "text-red-600" };
+      } else if (kpi.actual === 100) {
+        return { text: "At target (50% bonus)", color: "text-green-600" };
+      } else if (kpi.actual >= 110) {
+        return { text: "Maximum bonus reached", color: "text-green-600" };
+      } else {
+        return { 
+          text: `${50 + Math.round(((kpi.actual - 100) / 10) * 50)}% of bonus`, 
+          color: "text-green-600" 
+        };
+      }
+    }
+    
+    // For other KPIs, return a default
+    return { text: "", color: "text-gray-500" };
+  };
+  
+  // Helper function to get slider color classes for KPI
+  const getSliderColorClass = (kpi) => {
+    const isOnTarget = isKpiOnTarget(kpi);
+    const baseClass = kpi.isInverse ? '-inverse' : '';
+    
+    if (isOnTarget) {
+      return `slider-green${baseClass}`;
+    }
+    
+    // If we're close to target (within 10%), show yellow
+    const percentOfTarget = kpi.isInverse 
+      ? (kpi.target / kpi.actual) * 100
+      : (kpi.actual / kpi.target) * 100;
+    
+    if (percentOfTarget >= 90) {
+      return `slider-yellow${baseClass}`;
+    } else if (percentOfTarget >= 75) {
+      return `slider-orange${baseClass}`;
+    } else {
+      return `slider-red${baseClass}`;
+    }
+  };
+  
+  // Function to update handle position when slider changes
+  // No longer needed with our new approach
+  const updateHandlePositions = () => {
+    // This function is kept as a placeholder in case we need
+    // to add any specific slider functionality in the future
+  };
 
   // Calculate KPI summary data for a position
   const getKpiSummary = (position) => {
@@ -1032,19 +1264,26 @@ const KPIDashboard = () => {
               <div className="flex flex-col">
                 {/* Mobile and desktop slider layout */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center mb-2">
-                  <div className="flex-1 w-full mb-2 sm:mb-0 sm:mr-4">
+                <div className="flex-1 w-full mb-2 sm:mb-0 sm:mr-4">
                     <input 
                       type="range" 
                       min={getMinValueForKPI(kpi.name)}
                       max={getMaxValueForKPI(kpi.name)}
                       value={kpi.actual}
                       onChange={(e) => handleSliderChange(positionKey, index, e.target.value)}
-                      className="w-full h-6 bg-blue-100 rounded-lg appearance-none cursor-pointer"
+                      className={`w-full ${getSliderColorClass(kpi)}`}
+                      style={{
+                        '--track-fill': kpi.isInverse 
+                          ? `${100 - ((kpi.actual - getMinValueForKPI(kpi.name)) / (getMaxValueForKPI(kpi.name) - getMinValueForKPI(kpi.name)) * 100)}%` 
+                          : `${((kpi.actual - getMinValueForKPI(kpi.name)) / (getMaxValueForKPI(kpi.name) - getMinValueForKPI(kpi.name)) * 100)}%`
+                      }}
                     />
                   </div>
                   
                   <div className="flex items-center justify-between w-full sm:w-auto">
-                    <span className="text-gray-800 font-medium min-w-[40px] text-center mr-4 sm:mr-2">{kpi.actual}%</span>
+                    <span className={`font-medium min-w-[40px] text-center mr-4 sm:mr-2 ${
+                      isKpiOnTarget(kpi) ? 'text-green-600' : 'text-gray-800'
+                    }`}>{kpi.actual}%</span>
                     
                     <div className="flex">
                       <button 
@@ -1064,32 +1303,16 @@ const KPIDashboard = () => {
                 </div>
                 
                 {/* Status text */}
-                {(kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation') && (
-                  <div className="mt-1 text-xs text-gray-500">
-                    {kpi.actual < 90 ? 
-                      "Below 90% target" : 
-                      kpi.actual === 90 ? 
-                        "At target (50% bonus)" : 
-                        kpi.actual > 100 ? 
-                          "Maximum bonus reached" : 
-                          `${Math.round(((kpi.actual - 90) / 10) * 100)}% progress above target`
-                    }
+                {kpi.name === 'Client Retention %' || kpi.name === 'Visit Note Creation' ? (
+                  <div className={`mt-1 text-xs ${getProgressStatusText(kpi).color}`}>
+                    {getProgressStatusText(kpi).text}
                   </div>
-                )}
-                {kpi.name === 'Extra Services' && (
-                  <div className="mt-1 text-xs text-gray-500">
-                    {kpi.actual < 100 ? 
-                      "Below 100% target (0% bonus)" : 
-                      kpi.actual === 100 ? 
-                        "At target (50% bonus)" : 
-                        kpi.actual >= 110 ? 
-                          "Maximum bonus reached" : 
-                          `${50 + Math.round(((kpi.actual - 100) / 10) * 50)}% of bonus`
-                    }
+                ) : kpi.name === 'Extra Services' ? (
+                  <div className={`mt-1 text-xs ${getProgressStatusText(kpi).color}`}>
+                    {getProgressStatusText(kpi).text}
                   </div>
-                )}
-                {kpi.name === 'Total Gross Margin % on Completed Jobs' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Total Gross Margin % on Completed Jobs' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 60 ? "text-red-600" : kpi.actual >= 70 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 60 ? 
                       "Below 60% target (0% bonus)" : 
                       kpi.actual === 60 ? 
@@ -1099,9 +1322,8 @@ const KPIDashboard = () => {
                           `${50 + Math.round(((kpi.actual - 60) / 10) * 50)}% of bonus`
                     }
                   </div>
-                )}
-                {kpi.name === 'Direct Labor Maintenance %' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Direct Labor Maintenance %' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual > 40 ? "text-red-600" : kpi.actual <= 38 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual > 40 ? 
                       "Above 40% target (0% bonus)" : 
                       kpi.actual === 40 ? 
@@ -1111,17 +1333,17 @@ const KPIDashboard = () => {
                           `${50 + Math.round(((40 - kpi.actual) / 2) * 50)}% of bonus`
                     }
                   </div>
-                )}
-                {kpi.name === 'LV Maintenance Growth' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'LV Maintenance Growth' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 3 ? "text-yellow-600" : "text-green-600"}`}>
                     {kpi.actual < 3 ? 
                       `${Math.round((kpi.actual / 3) * 100)}% of bonus` : 
                       "At or above 3% target (full bonus)"
                     }
                   </div>
-                )}
-                {kpi.name === 'Property Checklist Item Completion' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : null}
+                
+                {kpi.name === 'Property Checklist Item Completion' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 80 ? "text-red-600" : kpi.actual >= 100 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 80 ? 
                       "Below 80% target (0% bonus)" : 
                       kpi.actual === 80 ? 
@@ -1131,9 +1353,8 @@ const KPIDashboard = () => {
                           `${50 + Math.round(((kpi.actual - 80) / 20) * 50)}% of bonus`
                     }
                   </div>
-                )}
-                {kpi.name === 'Fleet Uptime Rate' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Fleet Uptime Rate' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 90 ? "text-red-600" : kpi.actual >= 98 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 90 ? 
                       "Below 90% (0% bonus)" : 
                       kpi.actual === 90 ? 
@@ -1147,9 +1368,8 @@ const KPIDashboard = () => {
                           `${75 + Math.round(((kpi.actual - 95) / 3) * 25)}% of bonus`
                     }
                   </div>
-                )}
-                {kpi.name === 'Preventative vs. Reactive Maintenance Ratio' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Preventative vs. Reactive Maintenance Ratio' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 70 ? "text-red-600" : kpi.actual >= 90 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 70 ? 
                       "Below 70% (0% bonus)" : 
                       kpi.actual < 80 ? 
@@ -1161,9 +1381,8 @@ const KPIDashboard = () => {
                         `${75 + Math.round(((kpi.actual - 80) / 10) * 25)}% of bonus`
                     }
                   </div>
-                )}
-                {kpi.name === 'Accident/Incident Rate' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Accident/Incident Rate' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual > 10 ? "text-red-600" : kpi.actual <= 5 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual > 10 ? 
                       "Above 10 (0% bonus)" : 
                       kpi.actual > 7 ? 
@@ -1175,9 +1394,10 @@ const KPIDashboard = () => {
                         `${50 + Math.round(((7 - kpi.actual) / 2) * 50)}% of bonus`
                     }
                   </div>
-                )}
-                {kpi.name === 'Sales Goal Met' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : null}
+                
+                {kpi.name === 'Sales Goal Met' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 50 ? "text-red-600" : kpi.actual >= 100 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 50 ? 
                       "Below 50% target (limited bonus)" : 
                       kpi.actual < 100 ? 
@@ -1185,9 +1405,8 @@ const KPIDashboard = () => {
                         "At or above target (full bonus)"
                     }
                   </div>
-                )}
-                {kpi.name === 'Arbor/Enhancement Process Followed' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Arbor/Enhancement Process Followed' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 90 ? "text-red-600" : kpi.actual >= 95 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 90 ? 
                       "Below 90% target (0% bonus)" : 
                       kpi.actual === 90 ? 
@@ -1197,9 +1416,8 @@ const KPIDashboard = () => {
                         "At or above target (100% bonus)"
                     }
                   </div>
-                )}
-                {kpi.name === 'Pipeline Updates Current' && (
-                  <div className="mt-1 text-xs text-gray-500">
+                ) : kpi.name === 'Pipeline Updates Current' ? (
+                  <div className={`mt-1 text-xs ${kpi.actual < 90 ? "text-red-600" : kpi.actual >= 100 ? "text-green-600" : "text-yellow-600"}`}>
                     {kpi.actual < 90 ? 
                       "Below 90% target (0% bonus)" : 
                       kpi.actual === 90 ? 
@@ -1209,7 +1427,7 @@ const KPIDashboard = () => {
                         "At or above target (100% bonus)"
                     }
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
             
@@ -1222,6 +1440,16 @@ const KPIDashboard = () => {
                   (!kpi.isInverse && kpi.actual >= kpi.target) ? 
                   'text-green-600' : 'text-yellow-600'}`}>
                   {formatCurrency(kpiBonus)}
+                  <span className="ml-1">
+                    {(kpi.isInverse && kpi.actual <= kpi.target) || (!kpi.isInverse && kpi.actual >= kpi.target) ? 
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg> : 
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    }
+                  </span>
                 </p>
                 <p className="text-xs text-gray-500">
                   (Max: {formatCurrency(calculateTotalBonus(position) / position.kpis.length)})
@@ -1304,14 +1532,20 @@ const KPIDashboard = () => {
           <h3 className="text-sm md:text-lg font-semibold text-gray-800 mb-4">Bonus Forecast Slider</h3>
           <div className="flex items-center mb-2">
             <div className="flex-1 mr-4">
-              <input
+                              <input
                 type="range"
                 min="0"
                 max="100"
                 step="5"
                 value={bonusMultiplier}
                 onChange={(e) => handleBonusMultiplierChange(e.target.value)}
-                className="w-full h-6 bg-blue-100 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-8 rounded-lg appearance-none cursor-pointer"
+                style={{
+                  backgroundColor: '#eef7ff',
+                  background: 'linear-gradient(to right, #4a90e2, #eef7ff)',
+                  backgroundSize: `${bonusMultiplier}% 100%`,
+                  transition: 'background 0.3s ease'
+                }}
               />
             </div>
             <div className="flex items-center">
@@ -1584,6 +1818,9 @@ const KPIDashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      {/* Add custom slider styles */}
+      <style>{sliderStyles}</style>
+      
       <div className="flex justify-between items-end mb-6">
         <h1 className="text-xl md:text-3xl font-bold text-gray-800">Employee KPI Dashboard</h1>
         <div className="text-xs md:text-sm text-gray-600 flex items-center">
