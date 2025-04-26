@@ -5,12 +5,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 // Define KPIs as constants to avoid duplication
 const KPI_CLIENT_RETENTION = {
   name: 'Client Retention %',
-  description: 'Percentage of properties still under a maintenance contract when compared to January active maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
+  description: 'Percentage of properties still under a Maintenance contract when compared to January active Maintenance contracts. The year-end calculation is January 2026 active contracts compared to January 2025 active contracts.  Build and maintain world class client relationships.',
   target: 90,
   actual: 90,
   weight: 25,
   successFactors: [
-    "Ensure maintenance quality meets Encore standards",
+    "Ensure Maintenance quality meets Encore standards",
     "Clear direction is consistently provided to Maintenance Crews to drive quality",
     "Monitor responsiveness, consistentency and proactiveness of all communication with Clients (draft)",
     "Maximize offering of extra services for properties in line with budgets and as needed (draft)",
@@ -20,20 +20,20 @@ const KPI_CLIENT_RETENTION = {
 
 const KPI_VISIT_NOTE_CREATION = {
   name: 'Visit Note Creation',
-  description: 'Percentage of weekly maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
+  description: 'Percentage of weekly Maintenance visits with proper visit notes provided for crew instruction. Thorough documentation ensures consistent service quality and helps address client concerns proactively.',
   target: 90,
   actual: 90,
   weight: 25,
   successFactors: [
     "Make sure all visits have proper instruction created via visit notes and checklist items ahead of crew visits",
-    "Inspect properties weekly to ensure client satisfaction and achieve high maintenance quality (draft)",
+    "Inspect properties weekly to ensure client satisfaction and achieve high Maintenance quality (draft)",
     "Coordinate with team members to ensure all visits have proper notes and checklists"
   ]
 };
 
 const KPI_EXTRA_SERVICES = {
   name: 'Extra Services',
-  description: 'Additional arbor, enhancement and spray services sold as a percentage of the maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
+  description: 'Additional Arbor, Enhancement and Spray services sold as a percentage of the Maintenance book of business (BOB). Collaborative work with Specialists to ensure client proposals meet client needs and results in high service satisfaction.',
   target: 100,
   actual: 100,
   weight: 25,
@@ -45,7 +45,7 @@ const KPI_EXTRA_SERVICES = {
 
 const KPI_DIRECT_LABOR_MAINTENANCE = {
   name: 'Direct Labor Maintenance %',
-  description: 'Direct maintenance labor cost as a percentage of maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
+  description: 'Direct Maintenance labor cost as a percentage of Maintenance revenue. Lower percentages indicate efficient labor utilization and increase profitability.',
   target: 40,
   actual: 40,
   weight: 25,
@@ -60,7 +60,7 @@ const KPI_DIRECT_LABOR_MAINTENANCE = {
 
 const KPI_LV_MAINTENANCE_GROWTH = {
   name: 'LV Maintenance Growth',
-  description: 'Grow maintenance book of business for LV market. Measured as percentage increase in maintenance contract value compared to previous year.',
+  description: 'Grow Maintenance book of business for LV market. Measured as percentage increase in maintenance contract value compared to previous year.',
   target: 3,
   actual: 1,
   weight: 20,
@@ -136,7 +136,7 @@ const KPI_PIPELINE_UPDATES_CURRENT = {
 
 const KPI_FLEET_UPTIME_RATE = {
   name: 'Fleet Uptime Rate',
-  description: 'Percentage of time equipment is operational vs. down for maintenance or repairs. Higher uptime indicates better maintenance practices and equipment reliability.',
+  description: 'Percentage of time equipment is operational vs. down for Maintenance or repairs. Higher uptime indicates better Maintenance practices and equipment reliability.',
   target: 95,
   actual: 93,
   weight: 25
@@ -144,7 +144,7 @@ const KPI_FLEET_UPTIME_RATE = {
 
 const KPI_PREVENTATIVE_VS_REACTIVE = {
   name: 'Preventative vs. Reactive Maintenance Ratio',
-  description: 'Cost comparison of scheduled maintenance versus emergency repairs, calculated as (Maintenance Costs) / (Repair Costs) as a percentage. Higher ratios indicate more proactive maintenance approaches.',
+  description: 'Cost comparison of scheduled Maintenance versus emergency repairs, calculated as (Maintenance Costs) / (Repair Costs) as a percentage. Higher ratios indicate more proactive Maintenance approaches.',
   target: 80,
   actual: 75,
   weight: 25
