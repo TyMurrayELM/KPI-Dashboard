@@ -1290,7 +1290,7 @@ const KPIDashboard = () => {
   const renderHeadcountTab = () => {
     return (
       <div className="bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Headcount & Financial Planning</h2>
+        <h2 className="text-3xl md:text-xl font-semibold text-gray-800 mb-4">Headcount & Financial Planning</h2>
         
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
           <h3 className="text-2xl md:text-lg font-semibold text-gray-800 mb-4">Bonus Forecast Slider</h3>
@@ -1466,7 +1466,7 @@ const KPIDashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Employee KPI Dashboard</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Employee KPI Dashboard</h1>
       
       {/* Demo User Role Selector - would be removed in production */}
       <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
@@ -1672,7 +1672,7 @@ const KPIDashboard = () => {
           </div>
           
           {/* KPI Section Header */}
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
+          <h2 className="text-3xl md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
           
           {/* KPI Cards Grid */}
           <div className="grid grid-cols-1 gap-4">
