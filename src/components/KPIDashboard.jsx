@@ -1644,7 +1644,7 @@ const KPIDashboard = () => {
                     type="text"
                     value={formatSalaryForDisplay(positions[activeTab].salary)}
                     onChange={(e) => handleSalaryChange(activeTab, e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1 text-xl font-bold text-gray-900 bg-white"
+                    className="w-full border border-gray-300 rounded px-2 py-1 text-base md:text-xl font-bold text-gray-900 bg-white"
                   />
                 </div>
               </div>
@@ -1655,12 +1655,12 @@ const KPIDashboard = () => {
                     type="number"
                     value={positions[activeTab].bonusPercentage}
                     onChange={(e) => handleBonusPercentageChange(activeTab, e.target.value)}
-                    className="w-24 border border-gray-300 rounded px-2 py-1 text-xl font-bold text-blue-600 bg-white"
+                    className="w-24 border border-gray-300 rounded px-2 py-1 text-base md:text-xl font-bold text-blue-600 bg-white"
                     min="0"
                     max="100"
                     step="0.5"
                   />
-                  <span className="text-blue-600 text-xl font-bold ml-1">%</span>
+                  <span className="text-blue-600 text-base md:text-xl font-bold ml-1">%</span>
                 </div>
               </div>
               <div>
