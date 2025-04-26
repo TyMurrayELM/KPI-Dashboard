@@ -1199,29 +1199,6 @@ const KPIDashboard = () => {
       <div className="bg-gray-50 p-6 rounded-lg">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Headcount & Financial Planning</h2>
         
-        {/* Input Grid */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Staff Headcount</h3>
-          <div className="grid grid-cols-4 gap-6">
-            {Object.keys(positions).map((positionKey) => (
-              <div key={positionKey} className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-medium text-gray-800 mb-2">{positions[positionKey].title}</h4>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={headcount[positionKey]}
-                    onChange={(e) => handleHeadcountChange(positionKey, e.target.value)}
-                    className="w-20 border border-gray-300 rounded px-2 py-1 text-lg font-medium text-gray-900 bg-white"
-                    min="0"
-                    step="1"
-                  />
-                  <span className="ml-2 text-sm text-gray-500">employees</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Bonus Forecast Slider</h3>
           <div className="flex items-center mb-2">
@@ -1302,7 +1279,18 @@ const KPIDashboard = () => {
                 return (
                   <tr key={positionKey} className="border-b">
                     <td className="py-2 px-4 border font-medium">{position.title}</td>
-                    <td className="py-2 px-4 border text-center">{count}</td>
+                    <td className="py-2 px-4 border">
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="number"
+                          value={headcount[positionKey]}
+                          onChange={(e) => handleHeadcountChange(positionKey, e.target.value)}
+                          className="w-20 border border-gray-300 rounded px-2 py-1 text-lg font-medium text-gray-900 bg-white text-center"
+                          min="0"
+                          step="1"
+                        />
+                      </div>
+                    </td>
                     <td className="py-2 px-4 border text-center">
                       <div className="flex items-center justify-center">
                         <input
