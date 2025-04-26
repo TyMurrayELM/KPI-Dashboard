@@ -1576,7 +1576,13 @@ const KPIDashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-xl md:text-3xl font-bold text-center text-gray-800 mb-6">Employee KPI Dashboard</h1>
+      <div className="flex justify-between items-end mb-6">
+        <h1 className="text-xl md:text-3xl font-bold text-gray-800">Employee KPI Dashboard</h1>
+        <div className="text-xs md:text-sm text-gray-600 flex items-center">
+          <span className="mr-1">Performance Period:</span>
+          <span className="font-medium">Jan-Dec 2025</span>
+        </div>
+      </div>
       
       {/* Demo User Role Selector - would be removed in production */}
       <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
@@ -1628,7 +1634,7 @@ const KPIDashboard = () => {
       ) : (
         <div className={`p-6 rounded-lg ${getTabColor(activeTab)}`}>
           {/* Salary and Bonus Info with KPI Summary - Sticky Header */}
-          <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>
+          <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <h3 className="text-xs md:text-lg font-semibold text-gray-800">Annual Salary</h3>
@@ -1709,29 +1715,39 @@ const KPIDashboard = () => {
             
             {/* KPI Current Bonus Breakdown - Toggleable */}
             <div className="mt-2 pt-2 border-t border-gray-200">
-              <div 
-                className="flex items-center cursor-pointer py-1 px-2 hover:bg-gray-100 rounded-md transition-colors"
-                onClick={() => setExpandedBreakdown(!expandedBreakdown)}
-              >
-                <h4 className="text-sm font-medium text-gray-700 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+              <div className="flex justify-between items-center">
+                <div 
+                  className="flex items-center cursor-pointer py-1 px-2 hover:bg-gray-100 rounded-md transition-colors"
+                  onClick={() => setExpandedBreakdown(!expandedBreakdown)}
+                >
+                  <h4 className="text-sm font-medium text-gray-700 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                    </svg>
+                    KPI Current Bonus Breakdown
+                  </h4>
+                  <div className="text-blue-500 flex items-center ml-2">
+                    <span className="text-xs mr-1 text-blue-600">
+                      {expandedBreakdown ? 'Hide' : 'Show'}
+                    </span>
+                    {expandedBreakdown ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Period indicator - hidden on mobile */}
+                <div className="hidden md:flex items-center text-xs bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200 text-blue-700 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  KPI Current Bonus Breakdown
-                </h4>
-                <div className="text-blue-500 flex items-center ml-2">
-                  <span className="text-xs mr-1 text-blue-600">
-                    {expandedBreakdown ? 'Hide' : 'Show'}
-                  </span>
-                  {expandedBreakdown ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  )}
+                  <span>Period: <span className="font-medium">Jan-Dec 2025</span></span>
                 </div>
               </div>
               
