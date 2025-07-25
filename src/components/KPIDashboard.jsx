@@ -168,8 +168,12 @@ const KPI_SAFETY_INCIDENTS_MAGNITUDE = {
   isInverse: true
 };
 
+
+
 const KPIDashboard = () => {
   const [activeTab, setActiveTab] = useState('general-manager');
+
+  const [userRoleExpanded, setUserRoleExpanded] = useState(false); // Start collapsed
   
   // Initial positions data using KPI constants
   const initialPositions = {
@@ -1829,28 +1833,65 @@ const KPIDashboard = () => {
         </div>
       </div>
       
-      {/* Demo User Role Selector - would be removed in production */}
-      <div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Demo: Select User Role</h3>
-        <div className="flex flex-wrap gap-2">
-          {['admin', 'general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager'].map(role => (
-            <button
-              key={role}
-              onClick={() => handleUserChange(role)}
-              className={`px-3 py-1 text-xs rounded ${
-                currentUser.role === role 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-              }`}
-            >
-              {role === 'admin' ? 'Admin (All Access)' : positions[role].title}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          Current user: {currentUser.email} ({currentUser.role})
-        </p>
-      </div>
+
+{/* Demo User Role Selector - would be removed in production */}
+<div className="mb-4 bg-white p-3 rounded-lg shadow-sm">
+  <div 
+    className="flex items-center justify-between cursor-pointer"
+    onClick={() => setUserRoleExpanded(!userRoleExpanded)}
+  >
+    <h3 className="text-sm font-medium text-gray-700">Demo: Select User Role</h3>
+    <div className="text-blue-500 flex items-center">
+      <span className="text-xs mr-1 text-blue-600">
+        {userRoleExpanded ? 'Hide' : 'Show'}
+      </span>
+      {userRoleExpanded ? (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+        </svg>
+      ) : (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+        </svg>
+      )}
+    </div>
+  </div>
+  
+  {/* Collapsible content */}
+  <div 
+    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+      userRoleExpanded 
+        ? 'max-h-96 opacity-100 mt-3' 
+        : 'max-h-0 opacity-0'
+    }`}
+  >
+    <div className="flex flex-wrap gap-2">
+      {['admin', 'general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager'].map(role => (
+        <button
+          key={role}
+          onClick={() => handleUserChange(role)}
+          className={`px-3 py-1 text-xs rounded ${
+            currentUser.role === role 
+            ? 'bg-blue-600 text-white' 
+            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+          }`}
+        >
+          {role === 'admin' ? 'Admin (All Access)' : positions[role].title}
+        </button>
+      ))}
+    </div>
+    <p className="text-xs text-gray-500 mt-2">
+      Current user: {currentUser.email} ({currentUser.role})
+    </p>
+  </div>
+  
+  {/* Always show current user when collapsed */}
+  {!userRoleExpanded && (
+    <p className="text-xs text-gray-500 mt-2">
+      Current: {currentUser.email} ({currentUser.role})
+    </p>
+  )}
+</div>
       
       {/* Tabs - only render tabs that the user has access to */}
       <div className="flex flex-wrap border-b border-gray-200 mb-6 overflow-x-auto">
@@ -1873,12 +1914,24 @@ const KPIDashboard = () => {
         ))}
       </div>
       
-      {/* Content */}
-      {activeTab === 'headcount' ? (
-        renderHeadcountTab()
-      ) : (
-        <div className={`p-6 rounded-lg ${getTabColor(activeTab)}`}>
-          {/* Salary and Bonus Info with KPI Summary - Sticky Header */}
+{/* Content */}
+{activeTab === 'headcount' ? (
+  renderHeadcountTab()
+) : (
+  <div className={`p-6 rounded-lg ${getTabColor(activeTab)}`}>
+    {/* Beta/Under Construction Banner - Only for Branch Manager tab */}
+    {activeTab === 'branch-manager' && (
+      <div className="mb-4 bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4 text-center">
+        <h3 className="text-lg font-bold text-yellow-800">
+          🚧 BETA VERSION - UNDER CONSTRUCTION 🚧
+        </h3>
+        <p className="text-sm text-yellow-700 mt-1">
+          Test values only. Not for actual performance evaluation.
+        </p>
+      </div>
+    )}
+    
+    {/* Salary and Bonus Info with KPI Summary - Sticky Header */}
           <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
