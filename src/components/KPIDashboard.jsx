@@ -191,7 +191,7 @@ const KPIDashboard = () => {
     },
     'branch-manager': {
       title: 'Branch Manager',
-      salary: 88750,
+      salary: 50000,
       bonusPercentage: 10,
       kpis: [
         { ...KPI_CLIENT_RETENTION },
@@ -202,7 +202,7 @@ const KPIDashboard = () => {
     },
     'client-specialist': {
       title: 'Client Specialist',
-      salary: 72000,
+      salary: 50000,
       bonusPercentage: 10,
       kpis: [
         { ...KPI_CLIENT_RETENTION },
