@@ -63,7 +63,10 @@ import PositionHeader from './KPIDashboard/components/PositionHeader';
 
 
 const KPIDashboard = () => {
-  const [activeTab, setActiveTab] = useState('general-manager');
+  // TEMPORARY FEATURE FLAG - Set to false to show all tabs
+  const SHOW_ONLY_BRANCH_MANAGER = true;  // TODO: Set to false before production
+  
+  const [activeTab, setActiveTab] = useState(SHOW_ONLY_BRANCH_MANAGER ? 'branch-manager' : 'general-manager');
 
   const [userRoleExpanded, setUserRoleExpanded] = useState(false); // Start collapsed
   
@@ -338,17 +341,22 @@ const [headcount, setHeadcount] = useState(defaultHeadcount);
       
 
 {/* Demo User Role Selector - would be removed in production */}
-<UserRoleSelector 
-  userRoleExpanded={userRoleExpanded}
-  setUserRoleExpanded={setUserRoleExpanded}
-  currentUser={currentUser}
-  handleUserChange={handleUserChange}
-  positions={positions}
-/>
+{!SHOW_ONLY_BRANCH_MANAGER && (
+  <UserRoleSelector 
+    userRoleExpanded={userRoleExpanded}
+    setUserRoleExpanded={setUserRoleExpanded}
+    currentUser={currentUser}
+    handleUserChange={handleUserChange}
+    positions={positions}
+  />
+)}
       
       {/* Tabs - only render tabs that the user has access to */}
       <div className="flex flex-wrap border-b border-gray-200 mb-6 overflow-x-auto">
-        {['general-manager', 'branch-manager', 'client-specialist', 'specialist', 'field-supervisor', 'asset-risk-manager', 'headcount']
+        {(SHOW_ONLY_BRANCH_MANAGER 
+          ? ['branch-manager']  // Show only Branch Manager when flag is true
+          : ['general-manager', 'branch-manager', 'client-specialist', 'specialist', 'field-supervisor', 'asset-risk-manager', 'headcount']  // Show all tabs when flag is false
+        )
           .filter(tabKey => isTabAccessible(tabKey))
           .map((tabKey) => (
           <button
