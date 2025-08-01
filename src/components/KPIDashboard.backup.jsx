@@ -396,7 +396,7 @@ const [headcount, setHeadcount] = useState(defaultHeadcount);
           🚧 BETA VERSION - UNDER CONSTRUCTION 🚧
         </h3>
         <p className="text-sm text-yellow-700 mt-1">
-          Test values only. Not for actual performance evaluation.
+          Test values only. Not for actual performance evaluation. KPIs unofficial
         </p>
       </div>
     )}
