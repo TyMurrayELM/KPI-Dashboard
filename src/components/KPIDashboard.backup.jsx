@@ -413,7 +413,7 @@ const [headcount, setHeadcount] = useState(defaultHeadcount);
 
 
           {/* KPI Section Header */}
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators - Unofficial, Testing Examples Only</h2>
           
 {/* KPI Cards Grid */}
 <div className="grid grid-cols-1 gap-4">

@@ -34,7 +34,7 @@ export const initialPositions = {
     ]
   },
   'branch-manager': {
-    title: 'Branch Manager',
+    title: 'Example Manager',
     salary: 50000,
     bonusPercentage: 10,
     kpis: [
