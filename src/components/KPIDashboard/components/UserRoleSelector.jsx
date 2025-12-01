@@ -44,7 +44,7 @@ const UserRoleSelector = ({
       
       <div className="mt-3">
         <div className="flex flex-wrap gap-2">
-          {['admin', 'general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'asset-risk-manager'].map(role => (
+          {['admin', 'general-manager', 'branch-manager', 'client-specialist', 'field-supervisor', 'specialist', 'quality-specialist', 'asset-risk-manager'].map(role => (
             <button
               key={role}
               onClick={() => handleUserChange(role)}

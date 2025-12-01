@@ -14,7 +14,7 @@ export const getMinValueForKPI = (kpiName) => {
     case 'Direct Labor Maintenance %':
       return 25;
     case 'Client Retention %':
-    case 'Punch List Creation':  // Updated from Visit Note Creation
+    case 'Punchlist Creation':  // Updated from Visit Note Creation
     case 'Extra Services':
       return 50;
     case 'Total Gross Margin % on Completed Jobs':
@@ -28,6 +28,8 @@ export const getMinValueForKPI = (kpiName) => {
     case 'Accident/Incident Rate':
     case 'Safety Incidents Magnitude':
       return 0;
+    case 'Irrigation Billable Time':
+      return 30;
     default:
       return 0;
   }
@@ -82,8 +84,8 @@ export const isKpiOnTarget = (kpi) => {
  * @returns {Object} Object with text and color properties
  */
 export const getProgressStatusText = (kpi) => {
-  // For Client Retention % or Punch List Creation
-  if (kpi.name === 'Client Retention %' || kpi.name === 'Punch List Creation') {
+  // For Client Retention % or Punchlist Creation
+  if (kpi.name === 'Client Retention %' || kpi.name === 'Punchlist Creation') {
     if (kpi.actual < 90) {
       return { text: "Below 90% target", color: "text-red-600" };
     } else if (kpi.actual === 90) {

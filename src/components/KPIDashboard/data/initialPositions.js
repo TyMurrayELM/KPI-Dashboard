@@ -14,7 +14,8 @@ import {
   KPI_FLEET_UPTIME_RATE,
   KPI_PREVENTATIVE_VS_REACTIVE,
   KPI_ACCIDENT_INCIDENT_RATE,
-  KPI_SAFETY_INCIDENTS_MAGNITUDE
+  KPI_SAFETY_INCIDENTS_MAGNITUDE,
+  KPI_IRRIGATION_BILLABLE_TIME
 } from '../utils/kpiConstants';
 
 /**
@@ -34,14 +35,15 @@ export const initialPositions = {
     ]
   },
   'branch-manager': {
-    title: 'Example Manager',
+    title: 'Maintenance Operations Manager',
     salary: 50000,
     bonusPercentage: 10,
     kpis: [
-      { ...KPI_CLIENT_RETENTION },
-      { ...KPI_PUNCH_LIST_CREATION },
-      { ...KPI_EXTRA_SERVICES },
-      { ...KPI_DIRECT_LABOR_MAINTENANCE }
+      { ...KPI_CLIENT_RETENTION, weight: 20 },
+      { ...KPI_PUNCH_LIST_CREATION, weight: 20 },
+      { ...KPI_EXTRA_SERVICES, weight: 20 },
+      { ...KPI_DIRECT_LABOR_MAINTENANCE, weight: 20 },
+      { ...KPI_IRRIGATION_BILLABLE_TIME, weight: 20 }
     ]
   },
   'client-specialist': {
@@ -77,8 +79,18 @@ export const initialPositions = {
       { ...KPI_PIPELINE_UPDATES_CURRENT }
     ]
   },
+  'quality-specialist': {
+    title: 'Quality Specialist',
+    salary: 50000,
+    bonusPercentage: 10,
+    kpis: [
+      { ...KPI_CLIENT_RETENTION },
+      { ...KPI_PUNCH_LIST_CREATION },
+      { ...KPI_PROPERTY_CHECKLIST_ITEM_COMPLETION }
+    ]
+  },
   'asset-risk-manager': {
-    title: 'Placeholder Manager',
+    title: 'Fleet & Safety Manager',
     salary: 30000,
     bonusPercentage: 10,
     kpis: [
@@ -99,5 +111,6 @@ export const defaultHeadcount = {
   'client-specialist': 7,
   'field-supervisor': 10,
   'specialist': 7,
+  'quality-specialist': 1,
   'asset-risk-manager': 1
 };

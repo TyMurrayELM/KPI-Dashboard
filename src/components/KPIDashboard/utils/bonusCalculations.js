@@ -22,7 +22,7 @@ export const calculateKpiBonus = (position, kpiIndex) => {
   const kpiTotalAvailable = totalBonus * kpiWeight; // Equal distribution of total bonus for each KPI
   
   // Special calculation for Retention % and Punch List Creation (both use same logic)
-  if (kpi.name === 'Client Retention %' || kpi.name === 'Punch List Creation') {
+  if (kpi.name === 'Client Retention %' || kpi.name === 'Punchlist Creation') {
     // Below target (90%)
     if (kpi.actual < 90) {
       return 0;
@@ -362,6 +362,32 @@ export const calculateKpiBonus = (position, kpiIndex) => {
       return baseAmount + additionalAmount;
     }
     // At or above target (95%)
+    else {
+      return kpiTotalAvailable; // 100% of KPI bonus
+    }
+  }
+  // Special calculation for Irrigation Billable Time
+  else if (kpi.name === 'Irrigation Billable Time') {
+    // Below minimum threshold (75%)
+    if (kpi.actual < 75) {
+      return 0; // 0% bonus
+    }
+    // At exactly 75%
+    else if (kpi.actual === 75) {
+      return kpiTotalAvailable * 0.5; // 50% of KPI bonus
+    }
+    // Between 75% and 85%
+    else if (kpi.actual > 75 && kpi.actual < 85) {
+      // Base 50% for hitting 75% threshold
+      const baseAmount = kpiTotalAvailable * 0.5;
+      // Calculate progress from 75% to 85% (0-100%)
+      const progressAboveThreshold = (kpi.actual - 75) / 10;
+      // Remaining 50% is prorated based on progress
+      const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveThreshold;
+      
+      return baseAmount + additionalAmount;
+    }
+    // At or above 85%
     else {
       return kpiTotalAvailable; // 100% of KPI bonus
     }

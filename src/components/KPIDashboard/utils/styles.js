@@ -1,55 +1,118 @@
 // src/components/KPIDashboard/utils/styles.js
 
 /**
- * Get tab background color based on position key
+ * Convert hex color to RGB for opacity adjustments
+ */
+const hexToRgb = (hex) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+};
+
+/**
+ * Lighten a hex color by a percentage
+ */
+const lightenColor = (hex, percent) => {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+  
+  const amt = Math.round(2.55 * percent);
+  const r = Math.min(255, rgb.r + amt);
+  const g = Math.min(255, rgb.g + amt);
+  const b = Math.min(255, rgb.b + amt);
+  
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+};
+
+/**
+ * Get tab background color based on position
+ * Now returns inline style object instead of Tailwind class
+ * @param {Object} position - The position object from database (with color property)
+ * @param {string} tabKey - The position key (fallback if no position object)
+ * @returns {Object} Inline style object for background color
+ */
+export const getTabColorStyle = (position, tabKey = null) => {
+  // If we have a position object with color from database, use it
+  if (position && position.color) {
+    return { backgroundColor: position.color };
+  }
+  
+  // Fallback to default colors if no database color
+  const defaultColors = {
+    'general-manager': '#dbeafe',
+    'branch-manager': '#d1fae5',
+    'client-specialist': '#fce7f3',
+    'field-supervisor': '#fef3c7',
+    'specialist': '#e0e7ff',
+    'asset-risk-manager': '#fed7aa',
+    'headcount': '#f3f4f6'
+  };
+  
+  return { backgroundColor: defaultColors[tabKey] || '#ffffff' };
+};
+
+/**
+ * Get tab background color as Tailwind class (for compatibility)
  * @param {string} tabKey - The position key
  * @returns {string} Tailwind CSS class for background color
  */
 export const getTabColor = (tabKey) => {
-  switch(tabKey) {
-    case 'general-manager':
-      return 'bg-blue-50';
-    case 'branch-manager':
-      return 'bg-green-50';
-    case 'client-specialist':
-      return 'bg-purple-50';
-    case 'field-supervisor':
-      return 'bg-amber-50';
-    case 'specialist':
-      return 'bg-cyan-50';
-    case 'asset-risk-manager':
-      return 'bg-red-50';
-    case 'headcount':
-      return 'bg-gray-50';
-    default:
-      return 'bg-white';
-  }
+  // This is kept for backward compatibility
+  // Returns empty string since we're using inline styles now
+  return '';
 };
 
 /**
- * Get header background color (more pronounced) based on position key
+ * Get header background color (darker shade) based on position
+ * @param {Object} position - The position object from database (with color property)
+ * @param {string} tabKey - The position key (fallback)
+ * @returns {Object} Inline style object for header background color
+ */
+export const getHeaderColorStyle = (position, tabKey = null) => {
+  let baseColor;
+  
+  // Get base color from position or fallback
+  if (position && position.color) {
+    baseColor = position.color;
+  } else {
+    const defaultColors = {
+      'general-manager': '#dbeafe',
+      'branch-manager': '#d1fae5',
+      'client-specialist': '#fce7f3',
+      'field-supervisor': '#fef3c7',
+      'specialist': '#e0e7ff',
+      'asset-risk-manager': '#fed7aa',
+      'headcount': '#f3f4f6'
+    };
+    baseColor = defaultColors[tabKey] || '#ffffff';
+  }
+  
+  // Darken the color by reducing RGB values slightly
+  const rgb = hexToRgb(baseColor);
+  if (rgb) {
+    const darkenAmount = 15;
+    const r = Math.max(0, rgb.r - darkenAmount);
+    const g = Math.max(0, rgb.g - darkenAmount);
+    const b = Math.max(0, rgb.b - darkenAmount);
+    const darkerColor = `rgb(${r}, ${g}, ${b})`;
+    return { backgroundColor: darkerColor };
+  }
+  
+  return { backgroundColor: baseColor };
+};
+
+/**
+ * Get header background color as Tailwind class (for compatibility)
  * @param {string} tabKey - The position key
  * @returns {string} Tailwind CSS class for header background color
  */
 export const getHeaderColor = (tabKey) => {
-  switch(tabKey) {
-    case 'general-manager':
-      return 'bg-blue-100';
-    case 'branch-manager':
-      return 'bg-green-100';
-    case 'client-specialist':
-      return 'bg-purple-100';
-    case 'field-supervisor':
-      return 'bg-amber-100';
-    case 'specialist':
-      return 'bg-cyan-100';
-    case 'asset-risk-manager':
-      return 'bg-red-100';
-    case 'headcount':
-      return 'bg-gray-100';
-    default:
-      return 'bg-white';
-  }
+  // This is kept for backward compatibility
+  // Returns empty string since we're using inline styles now
+  return '';
 };
 
 /**

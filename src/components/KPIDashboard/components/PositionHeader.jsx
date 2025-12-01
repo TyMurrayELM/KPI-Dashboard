@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { formatCurrency } from '../utils/formatters';
-import { getHeaderColor, getPerformanceStatusColor } from '../utils/styles';
+import { getPerformanceStatusColor } from '../utils/styles';
 import { getKpiSummary } from '../utils/kpiHelpers';
 import { calculateTotalBonus, calculateActualTotalBonus, calculateKpiBonus } from '../utils/bonusCalculations';
 
@@ -56,7 +56,7 @@ const PositionHeader = ({
   };
   
   return (
-    <div className={`p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10 ${getHeaderColor(activeTab)}`}>
+    <div className="bg-white p-4 rounded-lg shadow-md mb-6 sticky top-0 z-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div>
           <h3 className="text-xs md:text-lg font-semibold text-gray-800">Annual Salary</h3>
@@ -164,7 +164,7 @@ const PositionHeader = ({
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>Period: <span className="font-medium">Jan-Dec 2025</span></span>
+            <span>Period: <span className="font-medium">Jan-Dec 2026</span></span>
           </div>
         </div>
         
@@ -183,7 +183,7 @@ const PositionHeader = ({
               const percentage = Math.round((kpiBonus / maxKpiBonus) * 100);
               
               return (
-                <div key={index} className="bg-white p-2 rounded shadow-sm">
+                <div key={index} className="bg-gray-50 p-2 rounded shadow-sm border border-gray-200">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-600 truncate" title={kpi.name}>
                       {kpi.name}
