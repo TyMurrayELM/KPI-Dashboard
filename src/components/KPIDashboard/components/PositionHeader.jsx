@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { formatCurrency } from '../utils/formatters';
 import { getPerformanceStatusColor } from '../utils/styles';
 import { getKpiSummary } from '../utils/kpiHelpers';
-import { calculateTotalBonus, calculateActualTotalBonus, calculateKpiBonus } from '../utils/bonusCalculations';
 
 /**
  * Position Header Component
  * Displays salary, bonus info, KPI summary, and bonus breakdown
+ * 
+ * Now receives calculateTotalBonus, calculateActualTotalBonus, and calculateKpiBonus as props
+ * to use database-driven formulas instead of hardcoded calculations
  */
 const PositionHeader = ({
   activeTab,
@@ -16,7 +18,10 @@ const PositionHeader = ({
   handleSalaryChange,
   handleBonusPercentageChange,
   expandedBreakdown,
-  setExpandedBreakdown
+  setExpandedBreakdown,
+  calculateTotalBonus,
+  calculateActualTotalBonus,
+  calculateKpiBonus
 }) => {
   const summary = getKpiSummary(position);
   
@@ -88,7 +93,7 @@ const PositionHeader = ({
         <div>
           <h3 className="text-xs md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
           <p className="text-lg md:text-2xl font-bold text-green-600 mt-2">
-            {formatCurrency(calculateActualTotalBonus(position))}
+            {formatCurrency(calculateActualTotalBonus(position, activeTab))}
           </p>
         </div>
         <div>
@@ -178,7 +183,8 @@ const PositionHeader = ({
         >
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-4">
             {position.kpis.map((kpi, index) => {
-              const kpiBonus = calculateKpiBonus(position, index);
+              // Use the passed-in calculation function with activeTab for database formula lookup
+              const kpiBonus = calculateKpiBonus(position, index, activeTab);
               const maxKpiBonus = calculateTotalBonus(position) / position.kpis.length;
               const percentage = Math.round((kpiBonus / maxKpiBonus) * 100);
               

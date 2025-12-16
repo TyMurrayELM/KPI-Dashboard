@@ -142,7 +142,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
   };
 
   // Bonus calculation using database formulas
-  const calculateKpiBonus = (position, kpiIndex, positionKey) => {
+  const calculateKpiBonus = useCallback((position, kpiIndex, positionKey) => {
     const kpi = position.kpis[kpiIndex];
     const totalBonus = position.salary * (position.bonusPercentage / 100);
     const kpiWeight = 1 / position.kpis.length; // Equal weight
@@ -160,7 +160,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
 
     // Apply formula from database
     return applyBonusFormula(kpi, kpiTotalAvailable, formula);
-  };
+  }, [bonusFormulas]);
 
   const applyBonusFormula = (kpi, kpiTotalAvailable, formula) => {
     const { type, tiers, range_rules } = formula;
@@ -211,13 +211,13 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
     return position.salary * (position.bonusPercentage / 100);
   };
 
-  const calculateActualTotalBonus = (position, positionKey) => {
+  const calculateActualTotalBonus = useCallback((position, positionKey) => {
     let totalActualBonus = 0;
     position.kpis.forEach((kpi, index) => {
       totalActualBonus += calculateKpiBonus(position, index, positionKey);
     });
     return totalActualBonus;
-  };
+  }, [calculateKpiBonus]);
 
   // All your existing handler functions
   const handleSliderChange = (positionKey, kpiIndex, newValue) => {
@@ -484,6 +484,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
             handleBonusPercentageChange={handleBonusPercentageChange}
             expandedBreakdown={expandedBreakdown}
             setExpandedBreakdown={setExpandedBreakdown}
+            calculateTotalBonus={calculateTotalBonus}
+            calculateActualTotalBonus={calculateActualTotalBonus}
+            calculateKpiBonus={calculateKpiBonus}
           />
 
           <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
@@ -501,6 +504,8 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
                 handleDecrementKPI={handleDecrementKPI}
                 expandedSuccessFactors={expandedSuccessFactors}
                 toggleSuccessFactors={toggleSuccessFactors}
+                calculateKpiBonus={calculateKpiBonus}
+                calculateTotalBonus={calculateTotalBonus}
               />
             ))}
           </div>

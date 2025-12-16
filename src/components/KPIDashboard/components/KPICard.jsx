@@ -9,11 +9,13 @@ import {
   getProgressStatusText, 
   getSliderColorClass 
 } from '../utils/kpiHelpers';
-import { calculateTotalBonus, calculateKpiBonus } from '../utils/bonusCalculations';
 
 /**
  * Individual KPI Card Component
  * Displays a single KPI with slider, status, and bonus impact
+ * 
+ * Now receives calculateKpiBonus and calculateTotalBonus as props
+ * to use database-driven formulas instead of hardcoded calculations
  */
 const KPICard = ({ 
   kpi, 
@@ -24,9 +26,12 @@ const KPICard = ({
   handleIncrementKPI, 
   handleDecrementKPI, 
   expandedSuccessFactors, 
-  toggleSuccessFactors 
+  toggleSuccessFactors,
+  calculateKpiBonus,
+  calculateTotalBonus
 }) => {
-  const kpiBonus = calculateKpiBonus(position, index);
+  // Use the passed-in calculation function with positionKey for database formula lookup
+  const kpiBonus = calculateKpiBonus(position, index, positionKey);
   
   return (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
