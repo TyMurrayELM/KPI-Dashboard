@@ -64,6 +64,209 @@ const FORMULA_TEMPLATES = [
   }
 ];
 
+// Human-readable formula summary component
+const FormulaSummary = ({ config }) => {
+  const { tiers = [], range_rules = [] } = config;
+  
+  // Generate summary text
+  const generateSummary = () => {
+    const lines = [];
+    
+    // Sort tiers by threshold for logical ordering
+    const sortedTiers = [...tiers].sort((a, b) => a.threshold - b.threshold);
+    
+    // Find key thresholds
+    const zeroTier = sortedTiers.find(t => t.bonus_percentage === 0);
+    const fiftyTier = sortedTiers.find(t => t.bonus_percentage === 50);
+    const hundredTier = sortedTiers.find(t => t.bonus_percentage === 100);
+    
+    // Analyze the formula pattern
+    if (zeroTier && zeroTier.comparison === 'below') {
+      lines.push({
+        icon: '🚫',
+        text: `No bonus if achievement is below ${zeroTier.threshold}%`,
+        color: '#dc2626'
+      });
+    }
+    
+    if (fiftyTier && fiftyTier.exact_match) {
+      lines.push({
+        icon: '⚡',
+        text: `50% bonus when exactly at ${fiftyTier.threshold}%`,
+        color: '#ca8a04'
+      });
+    }
+    
+    // Check for range rules (scaling)
+    range_rules.forEach(rule => {
+      const direction = rule.scaling === 'proportional_inverse' ? 'lower' : 'higher';
+      const startBonus = rule.base_percentage;
+      const endBonus = rule.base_percentage + rule.additional_percentage;
+      
+      lines.push({
+        icon: '📈',
+        text: `Scales from ${startBonus}% to ${endBonus}% bonus between ${rule.min}% and ${rule.max}% achievement`,
+        color: '#2563eb'
+      });
+    });
+    
+    if (hundredTier) {
+      const condition = hundredTier.comparison === 'above_or_equal' ? 'at or above' : 
+                       hundredTier.comparison === 'above' ? 'above' : 'at';
+      lines.push({
+        icon: '✅',
+        text: `100% bonus when ${condition} ${hundredTier.threshold}%`,
+        color: '#16a34a'
+      });
+    }
+    
+    // If we couldn't parse specific patterns, show generic tier info
+    if (lines.length === 0) {
+      sortedTiers.forEach(tier => {
+        const condition = tier.exact_match ? 'exactly' :
+                         tier.comparison === 'below' ? 'below' :
+                         tier.comparison === 'above' ? 'above' :
+                         tier.comparison === 'below_or_equal' ? 'at or below' :
+                         tier.comparison === 'above_or_equal' ? 'at or above' : '';
+        lines.push({
+          icon: tier.bonus_percentage === 0 ? '🚫' : tier.bonus_percentage === 100 ? '✅' : '⚡',
+          text: `${tier.bonus_percentage}% bonus when ${condition} ${tier.threshold}%`,
+          color: tier.bonus_percentage === 0 ? '#dc2626' : tier.bonus_percentage === 100 ? '#16a34a' : '#ca8a04'
+        });
+      });
+    }
+    
+    return lines;
+  };
+  
+  // Calculate preview values
+  const calculatePreview = (value) => {
+    let bonusPercentage = 0;
+
+    for (const tier of tiers) {
+      if (tier.exact_match && value === tier.threshold) {
+        return tier.bonus_percentage;
+      } else if (tier.comparison === 'below' && value < tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'above' && value > tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'below_or_equal' && value <= tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'above_or_equal' && value >= tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      }
+    }
+
+    for (const rule of range_rules) {
+      if (value >= rule.min && value <= rule.max) {
+        const progress = (value - rule.min) / (rule.max - rule.min);
+        if (rule.scaling === 'proportional') {
+          bonusPercentage = rule.base_percentage + (rule.additional_percentage * progress);
+        } else if (rule.scaling === 'proportional_inverse') {
+          bonusPercentage = rule.base_percentage + (rule.additional_percentage * (1 - progress));
+        }
+        break;
+      }
+    }
+
+    return Math.round(bonusPercentage);
+  };
+
+  const summaryLines = generateSummary();
+  
+  // Get key preview values based on the formula
+  const previewValues = [];
+  const allThresholds = new Set([0, 50, 100]);
+  tiers.forEach(t => allThresholds.add(t.threshold));
+  range_rules.forEach(r => {
+    allThresholds.add(r.min);
+    allThresholds.add(r.max);
+    allThresholds.add(Math.round((r.min + r.max) / 2)); // midpoint
+  });
+  
+  // Sort and limit preview values
+  const sortedPreviews = Array.from(allThresholds).sort((a, b) => a - b).slice(0, 8);
+
+  return (
+    <div>
+      {/* Summary Box */}
+      <div style={{
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        padding: '16px',
+        marginBottom: '16px'
+      }}>
+        <h4 style={{ 
+          fontSize: '14px', 
+          fontWeight: '600', 
+          marginBottom: '12px',
+          color: '#334155'
+        }}>
+          How This Formula Works:
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {summaryLines.map((line, index) => (
+            <div key={index} style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              fontSize: '14px'
+            }}>
+              <span style={{ fontSize: '16px' }}>{line.icon}</span>
+              <span style={{ color: line.color, fontWeight: '500' }}>{line.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Quick Preview */}
+      <div style={{
+        background: '#f0fdf4',
+        border: '1px solid #bbf7d0',
+        borderRadius: '8px',
+        padding: '16px'
+      }}>
+        <h4 style={{ 
+          fontSize: '14px', 
+          fontWeight: '600', 
+          marginBottom: '12px',
+          color: '#166534'
+        }}>
+          Quick Preview:
+        </h4>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {sortedPreviews.map(val => (
+            <div key={val} style={{
+              padding: '6px 12px',
+              background: 'white',
+              borderRadius: '6px',
+              border: '1px solid #d1d5db',
+              textAlign: 'center',
+              minWidth: '80px'
+            }}>
+              <div style={{ fontSize: '11px', color: '#6b7280' }}>{val}% achieved</div>
+              <div style={{ 
+                fontSize: '14px', 
+                fontWeight: '600',
+                color: calculatePreview(val) >= 100 ? '#16a34a' : 
+                       calculatePreview(val) >= 50 ? '#ca8a04' : 
+                       calculatePreview(val) > 0 ? '#ea580c' : '#dc2626'
+              }}>
+                {calculatePreview(val)}% bonus
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const BonusFormulaConfig = () => {
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
@@ -465,22 +668,30 @@ const BonusFormulaConfig = () => {
 
           {!showEditor && formula && (
             <div>
-              <div style={{ marginBottom: '12px' }}>
-                <strong>Type:</strong> {formula.formula_config.type}
-              </div>
-              <div style={{ marginBottom: '12px' }}>
-                <strong>Configuration:</strong>
+              {/* Human-readable summary */}
+              <FormulaSummary config={formula.formula_config} />
+              
+              {/* Collapsible JSON for advanced users */}
+              <details style={{ marginTop: '16px' }}>
+                <summary style={{ 
+                  cursor: 'pointer', 
+                  fontSize: '13px', 
+                  color: '#6b7280',
+                  userSelect: 'none'
+                }}>
+                  View raw configuration (JSON)
+                </summary>
                 <pre style={{ 
                   background: '#f9fafb', 
                   padding: '12px', 
                   borderRadius: '4px', 
-                  fontSize: '13px',
+                  fontSize: '12px',
                   overflow: 'auto',
                   marginTop: '8px'
                 }}>
                   {JSON.stringify(formula.formula_config, null, 2)}
                 </pre>
-              </div>
+              </details>
             </div>
           )}
 
