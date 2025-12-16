@@ -4,6 +4,66 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 
+// Common formula templates
+const FORMULA_TEMPLATES = [
+  {
+    name: "Standard (90% threshold)",
+    description: "No bonus below 90%, 50% at 90%, scales to 100% at target",
+    tiers: [
+      { threshold: 90, bonus_percentage: 0, comparison: 'below' },
+      { threshold: 90, bonus_percentage: 50, exact_match: true },
+      { threshold: 100, bonus_percentage: 100, comparison: 'above_or_equal' }
+    ],
+    range_rules: [
+      { min: 90, max: 100, base_percentage: 50, additional_percentage: 50, scaling: 'proportional' }
+    ]
+  },
+  {
+    name: "Custom Threshold (e.g., 70%)",
+    description: "No bonus below 70%, 50% at 70%, scales to 100% at 80%",
+    tiers: [
+      { threshold: 70, bonus_percentage: 0, comparison: 'below' },
+      { threshold: 70, bonus_percentage: 50, exact_match: true },
+      { threshold: 80, bonus_percentage: 100, comparison: 'above_or_equal' }
+    ],
+    range_rules: [
+      { min: 70, max: 80, base_percentage: 50, additional_percentage: 50, scaling: 'proportional' }
+    ]
+  },
+  {
+    name: "Linear (Simple)",
+    description: "Bonus scales linearly from 0% to 100% based on achievement",
+    tiers: [
+      { threshold: 0, bonus_percentage: 0, comparison: 'below' },
+      { threshold: 100, bonus_percentage: 100, comparison: 'above_or_equal' }
+    ],
+    range_rules: [
+      { min: 0, max: 100, base_percentage: 0, additional_percentage: 100, scaling: 'proportional' }
+    ]
+  },
+  {
+    name: "Inverse (Lower is Better)",
+    description: "For metrics like labor costs where lower is better",
+    tiers: [
+      { threshold: 40, bonus_percentage: 0, comparison: 'above' },
+      { threshold: 40, bonus_percentage: 50, exact_match: true },
+      { threshold: 38, bonus_percentage: 100, comparison: 'below_or_equal' }
+    ],
+    range_rules: [
+      { min: 38, max: 40, base_percentage: 50, additional_percentage: 50, scaling: 'proportional_inverse' }
+    ]
+  },
+  {
+    name: "All or Nothing",
+    description: "0% bonus below target, 100% at or above target",
+    tiers: [
+      { threshold: 100, bonus_percentage: 0, comparison: 'below' },
+      { threshold: 100, bonus_percentage: 100, comparison: 'above_or_equal' }
+    ],
+    range_rules: []
+  }
+];
+
 const BonusFormulaConfig = () => {
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
@@ -15,14 +75,8 @@ const BonusFormulaConfig = () => {
   
   // Formula editing state
   const [formulaType, setFormulaType] = useState('tiered');
-  const [tiers, setTiers] = useState([
-    { threshold: 90, bonus_percentage: 0, comparison: 'below' },
-    { threshold: 90, bonus_percentage: 50, exact_match: true },
-    { threshold: 100, bonus_percentage: 100, comparison: 'above_or_equal' }
-  ]);
-  const [rangeRules, setRangeRules] = useState([
-    { min: 90, max: 100, base_percentage: 50, additional_percentage: 50, scaling: 'proportional' }
-  ]);
+  const [tiers, setTiers] = useState([]);
+  const [rangeRules, setRangeRules] = useState([]);
 
   useEffect(() => {
     fetchRoles();
@@ -96,7 +150,7 @@ const BonusFormulaConfig = () => {
         .eq('kpi_id', selectedRoleKpi.kpi_id)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = not found, which is ok
+      if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
         setFormula(data);
@@ -119,14 +173,13 @@ const BonusFormulaConfig = () => {
 
   const resetEditor = () => {
     setFormulaType('tiered');
-    setTiers([
-      { threshold: 90, bonus_percentage: 0, comparison: 'below' },
-      { threshold: 90, bonus_percentage: 50, exact_match: true },
-      { threshold: 100, bonus_percentage: 100, comparison: 'above_or_equal' }
-    ]);
-    setRangeRules([
-      { min: 90, max: 100, base_percentage: 50, additional_percentage: 50, scaling: 'proportional' }
-    ]);
+    setTiers([]);
+    setRangeRules([]);
+  };
+
+  const applyTemplate = (template) => {
+    setTiers([...template.tiers]);
+    setRangeRules([...template.range_rules]);
   };
 
   const handleSaveFormula = async () => {
@@ -143,7 +196,6 @@ const BonusFormulaConfig = () => {
 
     try {
       if (formula) {
-        // Update existing formula
         const { error } = await supabase
           .from('bonus_formulas')
           .update({ formula_config: formulaConfig })
@@ -151,7 +203,6 @@ const BonusFormulaConfig = () => {
 
         if (error) throw error;
       } else {
-        // Create new formula
         const { error } = await supabase
           .from('bonus_formulas')
           .insert([{
@@ -195,13 +246,19 @@ const BonusFormulaConfig = () => {
   };
 
   const addTier = () => {
-    setTiers([...tiers, { threshold: 0, bonus_percentage: 0, comparison: 'equal' }]);
+    setTiers([...tiers, { threshold: 0, bonus_percentage: 0, comparison: 'below' }]);
   };
 
   const updateTier = (index, field, value) => {
     const newTiers = [...tiers];
     if (field === 'exact_match') {
       newTiers[index][field] = value;
+      if (value) {
+        delete newTiers[index].comparison;
+      }
+    } else if (field === 'comparison') {
+      newTiers[index][field] = value;
+      delete newTiers[index].exact_match;
     } else {
       newTiers[index][field] = field.includes('percentage') || field === 'threshold' 
         ? parseFloat(value) || 0 
@@ -236,15 +293,61 @@ const BonusFormulaConfig = () => {
     setRangeRules(rangeRules.filter((_, i) => i !== index));
   };
 
+  // Calculate preview bonus for a given achievement value
+  const calculatePreviewBonus = (achievementValue) => {
+    if (tiers.length === 0 && rangeRules.length === 0) return 0;
+    
+    let bonusPercentage = 0;
+
+    // Check tiers first
+    for (const tier of tiers) {
+      if (tier.exact_match && achievementValue === tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'below' && achievementValue < tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'above' && achievementValue > tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'below_or_equal' && achievementValue <= tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      } else if (tier.comparison === 'above_or_equal' && achievementValue >= tier.threshold) {
+        bonusPercentage = tier.bonus_percentage;
+        break;
+      }
+    }
+
+    // Check range rules for interpolation
+    for (const rule of rangeRules) {
+      if (achievementValue >= rule.min && achievementValue <= rule.max) {
+        const progress = (achievementValue - rule.min) / (rule.max - rule.min);
+        
+        if (rule.scaling === 'proportional') {
+          bonusPercentage = rule.base_percentage + (rule.additional_percentage * progress);
+        } else if (rule.scaling === 'proportional_inverse') {
+          bonusPercentage = rule.base_percentage + (rule.additional_percentage * (1 - progress));
+        }
+        break;
+      }
+    }
+
+    return Math.round(bonusPercentage);
+  };
+
   if (loading) {
     return <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>;
   }
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '8px' }}>
         Bonus Formula Configuration
       </h2>
+      <p style={{ color: '#6b7280', marginBottom: '24px', fontSize: '14px' }}>
+        Define how bonus amounts are calculated based on KPI achievement levels.
+      </p>
 
       {/* Role Selector */}
       <div style={{ marginBottom: '16px' }}>
@@ -390,31 +493,100 @@ const BonusFormulaConfig = () => {
           {/* Formula Editor */}
           {showEditor && (
             <div>
-              {/* Formula Type */}
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Formula Type:
-                </label>
-                <select
-                  value={formulaType}
-                  onChange={(e) => setFormulaType(e.target.value)}
-                  style={{
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                >
-                  <option value="tiered">Tiered (normal)</option>
-                  <option value="inverse_tiered">Inverse Tiered (lower is better)</option>
-                  <option value="linear">Linear</option>
-                  <option value="inverse_linear">Inverse Linear</option>
-                </select>
+              {/* Quick Start Templates */}
+              <div style={{ 
+                marginBottom: '24px', 
+                padding: '16px', 
+                background: '#f0f9ff', 
+                border: '1px solid #bae6fd', 
+                borderRadius: '8px' 
+              }}>
+                <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#0369a1' }}>
+                  📋 Quick Start - Choose a Template
+                </h4>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
+                  Click a template to auto-fill the formula, then customize as needed:
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {FORMULA_TEMPLATES.map((template, index) => (
+                    <button
+                      key={index}
+                      onClick={() => applyTemplate(template)}
+                      style={{
+                        padding: '8px 12px',
+                        background: 'white',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      title={template.description}
+                    >
+                      {template.name}
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              {/* How It Works Explanation */}
+              <div style={{ 
+                marginBottom: '24px', 
+                padding: '16px', 
+                background: '#fefce8', 
+                border: '1px solid #fde047', 
+                borderRadius: '8px' 
+              }}>
+                <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#854d0e' }}>
+                  💡 How Formulas Work
+                </h4>
+                <ul style={{ fontSize: '13px', color: '#713f12', margin: 0, paddingLeft: '20px' }}>
+                  <li style={{ marginBottom: '4px' }}><strong>Tiers</strong> define fixed bonus percentages at specific thresholds (e.g., "0% bonus if below 70%")</li>
+                  <li style={{ marginBottom: '4px' }}><strong>Range Rules</strong> create smooth scaling between thresholds (e.g., "scale from 50% to 100% between 70-80%")</li>
+                  <li>The system checks tiers first, then applies range rules for values within a range</li>
+                </ul>
+              </div>
+
+              {/* Live Preview */}
+              {(tiers.length > 0 || rangeRules.length > 0) && (
+                <div style={{ 
+                  marginBottom: '24px', 
+                  padding: '16px', 
+                  background: '#f0fdf4', 
+                  border: '1px solid #86efac', 
+                  borderRadius: '8px' 
+                }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#166534' }}>
+                    📊 Live Preview - Bonus at Different Achievement Levels
+                  </h4>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                    {[0, 50, 60, 70, 75, 80, 85, 90, 95, 100].map(val => (
+                      <div key={val} style={{
+                        padding: '8px 12px',
+                        background: 'white',
+                        borderRadius: '4px',
+                        textAlign: 'center',
+                        minWidth: '70px',
+                        border: '1px solid #d1d5db'
+                      }}>
+                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{val}% achieved</div>
+                        <div style={{ 
+                          fontSize: '16px', 
+                          fontWeight: '600',
+                          color: calculatePreviewBonus(val) >= 100 ? '#16a34a' : 
+                                 calculatePreviewBonus(val) >= 50 ? '#ca8a04' : '#dc2626'
+                        }}>
+                          {calculatePreviewBonus(val)}% bonus
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Tiers Section */}
               <div style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <h4 style={{ fontSize: '16px', fontWeight: '600' }}>Threshold Tiers</h4>
                   <button
                     onClick={addTier}
@@ -430,20 +602,30 @@ const BonusFormulaConfig = () => {
                     + Add Tier
                   </button>
                 </div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
+                  Define fixed bonus percentages at specific achievement levels. Use "Exact Match" for precise values, or comparisons like "below" for ranges.
+                </p>
+
+                {tiers.length === 0 && (
+                  <div style={{ padding: '16px', background: '#f9fafb', borderRadius: '4px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
+                    No tiers defined. Click "+ Add Tier" or choose a template above.
+                  </div>
+                )}
 
                 {tiers.map((tier, index) => (
                   <div key={index} style={{
                     display: 'grid',
-                    gridTemplateColumns: '120px 120px 150px 80px 40px',
+                    gridTemplateColumns: '1fr 1fr 1fr 80px 40px',
                     gap: '12px',
                     marginBottom: '12px',
                     padding: '12px',
                     background: '#f9fafb',
-                    borderRadius: '4px'
+                    borderRadius: '4px',
+                    alignItems: 'end'
                   }}>
                     <div>
                       <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Threshold
+                        Achievement Value
                       </label>
                       <input
                         type="number"
@@ -451,17 +633,46 @@ const BonusFormulaConfig = () => {
                         onChange={(e) => updateTier(index, 'threshold', e.target.value)}
                         style={{
                           width: '100%',
-                          padding: '6px 8px',
+                          padding: '8px',
                           border: '1px solid #d1d5db',
                           borderRadius: '4px',
-                          fontSize: '13px'
+                          fontSize: '14px',
+                          background: 'white'
                         }}
                       />
                     </div>
-
                     <div>
                       <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Bonus %
+                        Condition
+                      </label>
+                      <select
+                        value={tier.exact_match ? 'exact_match' : tier.comparison || 'below'}
+                        onChange={(e) => {
+                          if (e.target.value === 'exact_match') {
+                            updateTier(index, 'exact_match', true);
+                          } else {
+                            updateTier(index, 'comparison', e.target.value);
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                          background: 'white'
+                        }}
+                      >
+                        <option value="exact_match">Exactly equals</option>
+                        <option value="below">Below this value</option>
+                        <option value="above">Above this value</option>
+                        <option value="below_or_equal">At or below</option>
+                        <option value="above_or_equal">At or above</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+                        Bonus % Earned
                       </label>
                       <input
                         type="number"
@@ -469,61 +680,28 @@ const BonusFormulaConfig = () => {
                         onChange={(e) => updateTier(index, 'bonus_percentage', e.target.value)}
                         style={{
                           width: '100%',
-                          padding: '6px 8px',
+                          padding: '8px',
                           border: '1px solid #d1d5db',
                           borderRadius: '4px',
-                          fontSize: '13px'
+                          fontSize: '14px',
+                          background: 'white'
                         }}
                       />
                     </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Comparison
-                      </label>
-                      <select
-                        value={tier.exact_match ? 'exact' : tier.comparison || 'equal'}
-                        onChange={(e) => {
-                          if (e.target.value === 'exact') {
-                            updateTier(index, 'exact_match', true);
-                            const newTiers = [...tiers];
-                            delete newTiers[index].comparison;
-                            setTiers(newTiers);
-                          } else {
-                            const newTiers = [...tiers];
-                            delete newTiers[index].exact_match;
-                            setTiers(newTiers);
-                            updateTier(index, 'comparison', e.target.value);
-                          }
-                        }}
-                        style={{
-                          width: '100%',
-                          padding: '6px 8px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          fontSize: '13px'
-                        }}
-                      >
-                        <option value="exact">Exact Match</option>
-                        <option value="below">Below</option>
-                        <option value="above">Above</option>
-                        <option value="below_or_equal">Below or Equal</option>
-                        <option value="above_or_equal">Above or Equal</option>
-                      </select>
+                    <div style={{ fontSize: '12px', color: '#6b7280', paddingBottom: '8px' }}>
+                      %
                     </div>
-
-                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <div>
                       <button
                         onClick={() => removeTier(index)}
                         style={{
-                          padding: '6px',
+                          padding: '8px 12px',
                           background: '#fee2e2',
-                          border: '1px solid #fca5a5',
                           color: '#991b1b',
+                          border: 'none',
                           borderRadius: '4px',
                           fontSize: '13px',
-                          cursor: 'pointer',
-                          width: '100%'
+                          cursor: 'pointer'
                         }}
                       >
                         ×
@@ -535,8 +713,8 @@ const BonusFormulaConfig = () => {
 
               {/* Range Rules Section */}
               <div style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h4 style={{ fontSize: '16px', fontWeight: '600' }}>Range Rules (Interpolation)</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <h4 style={{ fontSize: '16px', fontWeight: '600' }}>Scaling Ranges</h4>
                   <button
                     onClick={addRangeRule}
                     style={{
@@ -551,126 +729,140 @@ const BonusFormulaConfig = () => {
                     + Add Range
                   </button>
                 </div>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
+                  Create smooth bonus scaling between two values. Example: "Between 70% and 80% achievement, scale bonus from 50% to 100%"
+                </p>
+
+                {rangeRules.length === 0 && (
+                  <div style={{ padding: '16px', background: '#f9fafb', borderRadius: '4px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
+                    No scaling ranges defined. Add one to create smooth transitions between thresholds.
+                  </div>
+                )}
 
                 {rangeRules.map((rule, index) => (
                   <div key={index} style={{
-                    display: 'grid',
-                    gridTemplateColumns: '100px 100px 100px 120px 150px 40px',
-                    gap: '12px',
-                    marginBottom: '12px',
-                    padding: '12px',
+                    padding: '16px',
                     background: '#f9fafb',
-                    borderRadius: '4px'
+                    borderRadius: '4px',
+                    marginBottom: '12px'
                   }}>
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Min
-                      </label>
-                      <input
-                        type="number"
-                        value={rule.min}
-                        onChange={(e) => updateRangeRule(index, 'min', e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '6px 8px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          fontSize: '13px'
-                        }}
-                      />
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'repeat(5, 1fr) 40px', 
+                      gap: '12px',
+                      alignItems: 'end'
+                    }}>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+                          From (Min)
+                        </label>
+                        <input
+                          type="number"
+                          value={rule.min}
+                          onChange={(e) => updateRangeRule(index, 'min', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            background: 'white'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+                          To (Max)
+                        </label>
+                        <input
+                          type="number"
+                          value={rule.max}
+                          onChange={(e) => updateRangeRule(index, 'max', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            background: 'white'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+                          Starting Bonus %
+                        </label>
+                        <input
+                          type="number"
+                          value={rule.base_percentage}
+                          onChange={(e) => updateRangeRule(index, 'base_percentage', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            background: 'white'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+                          Additional Bonus %
+                        </label>
+                        <input
+                          type="number"
+                          value={rule.additional_percentage}
+                          onChange={(e) => updateRangeRule(index, 'additional_percentage', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            background: 'white'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
+                          Direction
+                        </label>
+                        <select
+                          value={rule.scaling}
+                          onChange={(e) => updateRangeRule(index, 'scaling', e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            background: 'white'
+                          }}
+                        >
+                          <option value="proportional">Higher = Better</option>
+                          <option value="proportional_inverse">Lower = Better</option>
+                        </select>
+                      </div>
+                      <div>
+                        <button
+                          onClick={() => removeRangeRule(index)}
+                          style={{
+                            padding: '8px 12px',
+                            background: '#fee2e2',
+                            color: '#991b1b',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
                     </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Max
-                      </label>
-                      <input
-                        type="number"
-                        value={rule.max}
-                        onChange={(e) => updateRangeRule(index, 'max', e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '6px 8px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          fontSize: '13px'
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Base %
-                      </label>
-                      <input
-                        type="number"
-                        value={rule.base_percentage}
-                        onChange={(e) => updateRangeRule(index, 'base_percentage', e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '6px 8px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          fontSize: '13px'
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Additional %
-                      </label>
-                      <input
-                        type="number"
-                        value={rule.additional_percentage}
-                        onChange={(e) => updateRangeRule(index, 'additional_percentage', e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '6px 8px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          fontSize: '13px'
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>
-                        Scaling
-                      </label>
-                      <select
-                        value={rule.scaling}
-                        onChange={(e) => updateRangeRule(index, 'scaling', e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '6px 8px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          fontSize: '13px'
-                        }}
-                      >
-                        <option value="proportional">Proportional</option>
-                        <option value="proportional_inverse">Proportional Inverse</option>
-                        <option value="linear">Linear</option>
-                      </select>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                      <button
-                        onClick={() => removeRangeRule(index)}
-                        style={{
-                          padding: '6px',
-                          background: '#fee2e2',
-                          border: '1px solid #fca5a5',
-                          color: '#991b1b',
-                          borderRadius: '4px',
-                          fontSize: '13px',
-                          cursor: 'pointer',
-                          width: '100%'
-                        }}
-                      >
-                        ×
-                      </button>
+                    <div style={{ marginTop: '8px', fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>
+                      → Between {rule.min}% and {rule.max}% achievement: bonus scales from {rule.base_percentage}% to {rule.base_percentage + rule.additional_percentage}%
                     </div>
                   </div>
                 ))}
