@@ -3,26 +3,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../config/supabaseClient';
 
-// Keep all your existing utility imports
-import { 
-  formatCurrency, 
-  formatSalaryForDisplay, 
-  formatKPIValue 
+// Utility imports
+import {
+  formatCurrency,
+  formatSalaryForDisplay,
+  formatKPIValue
 } from './KPIDashboard/utils/formatters';
 
-import { 
+import {
   sliderStyles,
-  getPerformanceStatusColor 
+  getPerformanceStatusColor
 } from './KPIDashboard/utils/styles';
 
 import {
   getMinValueForKPI,
+  getQuarterFloorForKPI,
+  getAnnualMinValueForKPI,
   getMaxValueForKPI,
+  getAnnualMaxValueForKPI,
   isKpiOnTarget,
   getProgressStatusText,
   getSliderColorClass,
   getKpiSummary
 } from './KPIDashboard/utils/kpiHelpers';
+
+import { getKpiPeriodConfig } from './KPIDashboard/data/kpiPeriodConfigs';
+import {
+  computePeriodBonusMax,
+  calculateQuarterBonus,
+  calculateAnnualBonus,
+} from './KPIDashboard/utils/bonusCalculations';
 
 // Keep your existing components
 import KPICard from './KPIDashboard/components/KPICard';
@@ -96,19 +106,54 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
       const transformedPositions = {};
       const formulaMap = {};
 
-      rolesData.forEach(role => {
-        // Transform KPIs for this role
+      // Only show roles marked as visible
+      const visibleRoles = rolesData.filter(role => role.is_visible !== false);
+
+      visibleRoles.forEach(role => {
+        // Transform KPIs for this role, expanding with period data
         const kpis = role.role_kpis
           .sort((a, b) => a.display_order - b.display_order)
-          .map(rk => ({
-            name: rk.kpi.name,
-            description: rk.kpi.description,
-            target: rk.target_value,
-            actual: rk.target_value, // Start at target
-            weight: rk.weight,
-            isInverse: rk.kpi.is_inverse,
-            successFactors: rk.kpi.success_factors || []
-          }));
+          .map(rk => {
+            const config = getKpiPeriodConfig(rk.kpi.name);
+            const annualTarget = rk.target_value;
+
+            // Build quarter objects
+            const qFloor = getQuarterFloorForKPI(rk.kpi.name);
+            const qTarget = config.quarterlyTarget != null
+              ? config.quarterlyTarget
+              : config.targetType === 'rate' ? annualTarget : annualTarget / 4;
+            const quarters = config.quarters.map(q => ({
+              id: q.id,
+              period: q.period,
+              payDate: q.payDate,
+              target: qTarget,
+              actual: qFloor,
+            }));
+
+            return {
+              name: rk.kpi.name,
+              description: rk.kpi.description,
+              target: annualTarget,
+              actual: 0, // will be derived from quarters
+              weight: rk.weight,
+              isInverse: rk.kpi.is_inverse,
+              scope: rk.scope || 'individual',
+              successFactors: rk.kpi.success_factors || [],
+              successGuide: rk.kpi.success_guide || '',
+              // Period fields
+              hasPeriods: true,
+              unit: config.unit,
+              stepSize: config.stepSize,
+              targetType: config.targetType,
+              bonusSplit: config.bonusSplit,
+              annualPayDate: config.annualPayDate,
+              quarters,
+              annual: {
+                target: annualTarget,
+                actual: getAnnualMinValueForKPI(rk.kpi.name),
+              },
+            };
+          });
 
         transformedPositions[role.key] = {
           title: role.name,
@@ -141,26 +186,53 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
     }
   };
 
-  // Bonus calculation using database formulas
+  // Bonus calculation using period-based proportional model
+  const calculateKpiBonusForPeriods = useCallback((position, kpiIndex) => {
+    const kpi = position.kpis[kpiIndex];
+    const { perQuarter, annual: annualMax } = computePeriodBonusMax(
+      position, kpi.weight, kpi.bonusSplit
+    );
+
+    // Sum quarterly bonuses
+    let quarterlyTotal = 0;
+    const quarterBonuses = {};
+    for (const q of kpi.quarters) {
+      const qBonus = calculateQuarterBonus(q, kpi.isInverse, perQuarter, kpi.name);
+      quarterBonuses[q.id] = qBonus;
+      quarterlyTotal += qBonus;
+    }
+
+    // Annual bonus
+    const annualBonus = calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, kpi.name);
+
+    return {
+      quarterBonuses,
+      quarterlyTotal,
+      annualBonus,
+      total: quarterlyTotal + annualBonus,
+      perQuarterMax: perQuarter,
+      annualMax,
+    };
+  }, []);
+
+  // Legacy-compatible wrapper that returns just the total number
   const calculateKpiBonus = useCallback((position, kpiIndex, positionKey) => {
     const kpi = position.kpis[kpiIndex];
+    if (kpi.hasPeriods) {
+      return calculateKpiBonusForPeriods(position, kpiIndex).total;
+    }
+    // Fallback for any non-period KPIs (shouldn't happen with current setup)
     const totalBonus = position.salary * (position.bonusPercentage / 100);
-    const kpiWeight = 1 / position.kpis.length; // Equal weight
+    const kpiWeight = 1 / position.kpis.length;
     const kpiTotalAvailable = totalBonus * kpiWeight;
-
-    // Get formula from database
     const formulaKey = `${positionKey}-${kpi.name}`;
     const formula = bonusFormulas[formulaKey];
-
     if (!formula) {
-      // Fallback: simple percentage calculation
       const achievementPercentage = Math.min(100, (kpi.actual / kpi.target) * 100) / 100;
       return kpiTotalAvailable * achievementPercentage;
     }
-
-    // Apply formula from database
     return applyBonusFormula(kpi, kpiTotalAvailable, formula);
-  }, [bonusFormulas]);
+  }, [bonusFormulas, calculateKpiBonusForPeriods]);
 
   const applyBonusFormula = (kpi, kpiTotalAvailable, formula) => {
     const { type, tiers, range_rules } = formula;
@@ -219,14 +291,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
     return totalActualBonus;
   }, [calculateKpiBonus]);
 
-  // All your existing handler functions
-  const handleSliderChange = (positionKey, kpiIndex, newValue) => {
-    setPositions(prevPositions => {
-      const newPositions = { ...prevPositions };
-      newPositions[positionKey].kpis[kpiIndex].actual = parseInt(newValue, 10);
-      return newPositions;
-    });
-  };
+  // --- Handlers ---
 
   const handleSalaryChange = (positionKey, newSalary) => {
     const numericValue = newSalary.replace(/[^0-9.]/g, '');
@@ -248,51 +313,77 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
   const toggleSuccessFactors = (positionKey, kpiIndex) => {
     setExpandedSuccessFactors(prev => {
       const key = `${positionKey}-${kpiIndex}`;
-      return {
-        ...prev,
-        [key]: !prev[key]
-      };
+      return { ...prev, [key]: !prev[key] };
     });
   };
 
-  const handleIncrementKPI = (positionKey, kpiIndex) => {
+  // Quarter-level change: set a specific quarter's actual value
+  const handleQuarterChange = (positionKey, kpiIndex, quarterId, newValue) => {
     setPositions(prevPositions => {
       const newPositions = JSON.parse(JSON.stringify(prevPositions));
       const kpi = newPositions[positionKey].kpis[kpiIndex];
-      
-      let max = 100;
-      if (kpi.name === 'Direct Labor Maintenance %') max = 45;
-      else if (kpi.name === 'Extra Services') max = 110;
-      else if (kpi.name === 'Total Gross Margin % on Completed Jobs') max = 80;
-      else if (kpi.name === 'LV Maintenance Growth') max = 10;
-      else if (kpi.name === 'Fleet Uptime Rate') max = 100;
-      else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') max = 100;
-      else if (kpi.name === 'Accident/Incident Rate') max = 15;
-      else if (kpi.name === 'Safety Incidents Magnitude') max = 20;
-      
-      const newValue = Math.min(max, parseInt(kpi.actual) + 1);
-      kpi.actual = newValue;
-      
+      const quarter = kpi.quarters.find(q => q.id === quarterId);
+      if (quarter) {
+        quarter.actual = newValue;
+      }
       return newPositions;
     });
   };
 
-  const handleDecrementKPI = (positionKey, kpiIndex) => {
+  const handleQuarterIncrement = (positionKey, kpiIndex, quarterId) => {
     setPositions(prevPositions => {
       const newPositions = JSON.parse(JSON.stringify(prevPositions));
       const kpi = newPositions[positionKey].kpis[kpiIndex];
-      
-      let min = 0;
-      if (kpi.name === 'Direct Labor Maintenance %') min = 25;
-      else if (kpi.name === 'Client Retention %' || kpi.name === 'Punch List Creation' || kpi.name === 'Extra Services') min = 50;
-      else if (kpi.name === 'Total Gross Margin % on Completed Jobs') min = 40;
-      else if (kpi.name === 'Property Checklist Item Completion') min = 50;
-      else if (kpi.name === 'Fleet Uptime Rate') min = 85;
-      else if (kpi.name === 'Preventative vs. Reactive Maintenance Ratio') min = 50;
-      
-      const newValue = Math.max(min, parseInt(kpi.actual) - 1);
+      const quarter = kpi.quarters.find(q => q.id === quarterId);
+      if (quarter) {
+        const max = getMaxValueForKPI(kpi.name);
+        quarter.actual = Math.min(max, quarter.actual + kpi.stepSize);
+      }
+      return newPositions;
+    });
+  };
+
+  const handleQuarterDecrement = (positionKey, kpiIndex, quarterId) => {
+    setPositions(prevPositions => {
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
+      const kpi = newPositions[positionKey].kpis[kpiIndex];
+      const quarter = kpi.quarters.find(q => q.id === quarterId);
+      if (quarter) {
+        const qFloor = getQuarterFloorForKPI(kpi.name);
+        quarter.actual = Math.max(qFloor, quarter.actual - kpi.stepSize);
+      }
+      return newPositions;
+    });
+  };
+
+  const handleAnnualChange = (positionKey, kpiIndex, newValue) => {
+    setPositions(prevPositions => {
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
+      const kpi = newPositions[positionKey].kpis[kpiIndex];
+      kpi.annual.actual = newValue;
       kpi.actual = newValue;
-      
+      return newPositions;
+    });
+  };
+
+  const handleAnnualIncrement = (positionKey, kpiIndex) => {
+    setPositions(prevPositions => {
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
+      const kpi = newPositions[positionKey].kpis[kpiIndex];
+      const max = getAnnualMaxValueForKPI(kpi.name);
+      kpi.annual.actual = Math.min(max, kpi.annual.actual + kpi.stepSize);
+      kpi.actual = kpi.annual.actual;
+      return newPositions;
+    });
+  };
+
+  const handleAnnualDecrement = (positionKey, kpiIndex) => {
+    setPositions(prevPositions => {
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
+      const kpi = newPositions[positionKey].kpis[kpiIndex];
+      const min = getAnnualMinValueForKPI(kpi.name);
+      kpi.annual.actual = Math.max(min, kpi.annual.actual - kpi.stepSize);
+      kpi.actual = kpi.annual.actual;
       return newPositions;
     });
   };
@@ -487,6 +578,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
             calculateTotalBonus={calculateTotalBonus}
             calculateActualTotalBonus={calculateActualTotalBonus}
             calculateKpiBonus={calculateKpiBonus}
+            calculateKpiBonusForPeriods={calculateKpiBonusForPeriods}
           />
 
           <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>
@@ -499,12 +591,16 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
                 index={index}
                 position={positions[activeTab]}
                 positionKey={activeTab}
-                handleSliderChange={handleSliderChange}
-                handleIncrementKPI={handleIncrementKPI}
-                handleDecrementKPI={handleDecrementKPI}
+                handleQuarterChange={handleQuarterChange}
+                handleQuarterIncrement={handleQuarterIncrement}
+                handleQuarterDecrement={handleQuarterDecrement}
+                handleAnnualChange={handleAnnualChange}
+                handleAnnualIncrement={handleAnnualIncrement}
+                handleAnnualDecrement={handleAnnualDecrement}
                 expandedSuccessFactors={expandedSuccessFactors}
                 toggleSuccessFactors={toggleSuccessFactors}
                 calculateKpiBonus={calculateKpiBonus}
+                calculateKpiBonusForPeriods={calculateKpiBonusForPeriods}
                 calculateTotalBonus={calculateTotalBonus}
               />
             ))}

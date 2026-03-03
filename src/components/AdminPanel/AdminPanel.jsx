@@ -3,23 +3,17 @@
 "use client"
 
 import React, { useState } from 'react';
-import KPIManagement from './KPIManagement';
-import RoleManagement from './RoleManagement';
-import RoleKPIAssignment from './RoleKPIAssignment';
-import BonusFormulaConfig from './BonusFormulaConfig';
 import UserManagement from './UserManagement';
 import HeadcountManagement from './HeadcountManagement';
+import RolesAndKPIs from './RolesAndKPIs';
 
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState('roles-kpis');
 
   const tabs = [
     { id: 'users', label: 'Manage Users', component: UserManagement },
     { id: 'headcount', label: 'Headcount & Planning', component: HeadcountManagement },
-    { id: 'kpis', label: 'Manage KPIs', component: KPIManagement },
-    { id: 'roles', label: 'Manage Roles', component: RoleManagement },
-    { id: 'assignments', label: 'Assign KPIs to Roles', component: RoleKPIAssignment },
-    { id: 'formulas', label: 'Bonus Formulas', component: BonusFormulaConfig }
+    { id: 'roles-kpis', label: 'Roles & KPIs', component: RolesAndKPIs },
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;
@@ -31,12 +25,12 @@ const AdminPanel = () => {
           Admin Panel
         </h1>
         <p style={{ color: '#666', fontSize: '16px' }}>
-          Manage users, headcount planning, KPIs, roles, assignments, and bonus formulas
+          Manage users, headcount planning, roles, and KPI configurations
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div style={{ 
+      <div style={{
         borderBottom: '2px solid #e5e7eb',
         marginBottom: '32px',
         display: 'flex',

@@ -15,8 +15,8 @@ export const getMinValueForKPI = (kpiName) => {
       return 25;
     case 'Client Retention %':
     case 'Punchlist Creation':  // Updated from Visit Note Creation
-    case 'Extra Services':
-      return 50;
+    case 'Extra Services Revenue':
+      return 80;
     case 'Total Gross Margin % on Completed Jobs':
       return 40;
     case 'Property Checklist Item Completion':
@@ -36,6 +36,35 @@ export const getMinValueForKPI = (kpiName) => {
 };
 
 /**
+ * Get the floor value for quarterly sliders — the value below which
+ * the slider cannot go. Only non-zero for KPIs whose bar range starts above 0.
+ * @param {string} kpiName
+ * @returns {number}
+ */
+export const getQuarterFloorForKPI = (kpiName) => {
+  switch(kpiName) {
+    case 'Extra Services Revenue':
+      return 80;
+    default:
+      return 0;
+  }
+};
+
+/**
+ * Get minimum value for KPI annual slider. Falls back to getMinValueForKPI.
+ * @param {string} kpiName
+ * @returns {number}
+ */
+export const getAnnualMinValueForKPI = (kpiName) => {
+  switch(kpiName) {
+    case 'Net Maintenance Growth':
+      return 10;
+    default:
+      return getMinValueForKPI(kpiName);
+  }
+};
+
+/**
  * Get maximum value for KPI sliders based on KPI type
  * @param {string} kpiName - The name of the KPI
  * @returns {number} Maximum value for the slider
@@ -44,11 +73,13 @@ export const getMaxValueForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Direct Labor Maintenance %':
       return 45;
-    case 'Extra Services':
-      return 110;
+    case 'Extra Services Revenue':
+      return 140;
     case 'Total Gross Margin % on Completed Jobs':
       return 80;
     case 'LV Maintenance Growth':
+      return 10;
+    case 'Net Maintenance Growth':
       return 10;
     case 'Fleet Uptime Rate':
       return 100;
@@ -64,11 +95,33 @@ export const getMaxValueForKPI = (kpiName) => {
 };
 
 /**
+ * Get maximum value for KPI annual slider. Falls back to getMaxValueForKPI.
+ * @param {string} kpiName
+ * @returns {number}
+ */
+export const getAnnualMaxValueForKPI = (kpiName) => {
+  switch(kpiName) {
+    case 'Net Maintenance Growth':
+      return 30;
+    default:
+      return getMaxValueForKPI(kpiName);
+  }
+};
+
+/**
  * Determine if a KPI is on target or better
  * @param {Object} kpi - The KPI object
  * @returns {boolean} True if KPI meets or exceeds target
  */
 export const isKpiOnTarget = (kpi) => {
+  // When KPI has period data, check annual actual vs annual target
+  if (kpi.hasPeriods && kpi.annual) {
+    if (kpi.isInverse) {
+      return kpi.annual.actual <= kpi.annual.target;
+    }
+    return kpi.annual.actual >= kpi.annual.target;
+  }
+
   if (kpi.isInverse) {
     // For inverse KPIs (lower is better), on target means actual <= target
     return kpi.actual <= kpi.target;
@@ -101,7 +154,7 @@ export const getProgressStatusText = (kpi) => {
   }
   
   // For Extra Services
-  else if (kpi.name === 'Extra Services') {
+  else if (kpi.name === 'Extra Services Revenue') {
     if (kpi.actual < 100) {
       return { text: "Below 100% target (0% bonus)", color: "text-red-600" };
     } else if (kpi.actual === 100) {

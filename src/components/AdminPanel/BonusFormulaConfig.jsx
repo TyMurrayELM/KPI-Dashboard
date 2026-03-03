@@ -267,35 +267,41 @@ const FormulaSummary = ({ config }) => {
   );
 };
 
-const BonusFormulaConfig = () => {
+const BonusFormulaConfig = ({ embedded, onClose }) => {
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
   const [roleKpis, setRoleKpis] = useState([]);
   const [selectedRoleKpi, setSelectedRoleKpi] = useState(null);
   const [formula, setFormula] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!embedded);
   const [showEditor, setShowEditor] = useState(false);
-  
+
   // Formula editing state
   const [formulaType, setFormulaType] = useState('tiered');
   const [tiers, setTiers] = useState([]);
   const [rangeRules, setRangeRules] = useState([]);
 
-  useEffect(() => {
-    fetchRoles();
-  }, []);
+  // In embedded mode, use passed-in values directly
+  const effectiveRoleId = embedded ? embedded.roleId : selectedRole?.id;
+  const effectiveRoleKpi = embedded ? embedded.roleKpi : selectedRoleKpi;
 
   useEffect(() => {
-    if (selectedRole) {
+    if (!embedded) {
+      fetchRoles();
+    }
+  }, [embedded]);
+
+  useEffect(() => {
+    if (!embedded && selectedRole) {
       fetchRoleKpis();
     }
-  }, [selectedRole]);
+  }, [embedded, selectedRole]);
 
   useEffect(() => {
-    if (selectedRoleKpi) {
+    if (effectiveRoleKpi) {
       fetchFormula();
     }
-  }, [selectedRoleKpi]);
+  }, [effectiveRoleKpi?.id]);
 
   const fetchRoles = async () => {
     try {
@@ -307,7 +313,7 @@ const BonusFormulaConfig = () => {
 
       if (error) throw error;
       setRoles(data || []);
-      
+
       if (data?.length > 0) {
         setSelectedRole(data[0]);
       }
@@ -332,7 +338,7 @@ const BonusFormulaConfig = () => {
 
       if (error) throw error;
       setRoleKpis(data || []);
-      
+
       if (data?.length > 0) {
         setSelectedRoleKpi(data[0]);
       } else {
@@ -349,8 +355,8 @@ const BonusFormulaConfig = () => {
       const { data, error } = await supabase
         .from('bonus_formulas')
         .select('*')
-        .eq('role_id', selectedRole.id)
-        .eq('kpi_id', selectedRoleKpi.kpi_id)
+        .eq('role_id', effectiveRoleId)
+        .eq('kpi_id', effectiveRoleKpi.kpi_id)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
@@ -386,7 +392,7 @@ const BonusFormulaConfig = () => {
   };
 
   const handleSaveFormula = async () => {
-    if (!selectedRoleKpi) {
+    if (!effectiveRoleKpi) {
       alert('Please select a KPI');
       return;
     }
@@ -409,8 +415,8 @@ const BonusFormulaConfig = () => {
         const { error } = await supabase
           .from('bonus_formulas')
           .insert([{
-            role_id: selectedRole.id,
-            kpi_id: selectedRoleKpi.kpi_id,
+            role_id: effectiveRoleId,
+            kpi_id: effectiveRoleKpi.kpi_id,
             formula_config: formulaConfig
           }]);
 
@@ -420,6 +426,7 @@ const BonusFormulaConfig = () => {
       alert('Formula saved successfully!');
       setShowEditor(false);
       fetchFormula();
+      onClose?.();
     } catch (err) {
       alert(`Error saving formula: ${err.message}`);
       console.error('Error:', err);
@@ -428,7 +435,7 @@ const BonusFormulaConfig = () => {
 
   const handleDeleteFormula = async () => {
     if (!formula) return;
-    
+
     if (!window.confirm('Delete this bonus formula?')) return;
 
     try {
@@ -442,6 +449,7 @@ const BonusFormulaConfig = () => {
       alert('Formula deleted successfully!');
       setFormula(null);
       resetEditor();
+      onClose?.();
     } catch (err) {
       alert(`Error deleting formula: ${err.message}`);
       console.error('Error:', err);
@@ -545,79 +553,84 @@ const BonusFormulaConfig = () => {
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '8px' }}>
-        Bonus Formula Configuration
-      </h2>
-      <p style={{ color: '#6b7280', marginBottom: '24px', fontSize: '14px' }}>
-        Define how bonus amounts are calculated based on KPI achievement levels.
-      </p>
+      {/* Header and selectors — only in standalone mode */}
+      {!embedded && (
+        <>
+          <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '8px' }}>
+            Bonus Formula Configuration
+          </h2>
+          <p style={{ color: '#6b7280', marginBottom: '24px', fontSize: '14px' }}>
+            Define how bonus amounts are calculated based on KPI achievement levels.
+          </p>
 
-      {/* Role Selector */}
-      <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '15px' }}>
-          Select Role:
-        </label>
-        <select
-          value={selectedRole?.id || ''}
-          onChange={(e) => {
-            const role = roles.find(r => r.id === e.target.value);
-            setSelectedRole(role);
-            setShowEditor(false);
-          }}
-          style={{
-            padding: '10px 16px',
-            fontSize: '15px',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            minWidth: '300px',
-            background: 'white'
-          }}
-        >
-          {roles.map(role => (
-            <option key={role.id} value={role.id}>{role.name}</option>
-          ))}
-        </select>
-      </div>
+          {/* Role Selector */}
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '15px' }}>
+              Select Role:
+            </label>
+            <select
+              value={selectedRole?.id || ''}
+              onChange={(e) => {
+                const role = roles.find(r => r.id === e.target.value);
+                setSelectedRole(role);
+                setShowEditor(false);
+              }}
+              style={{
+                padding: '10px 16px',
+                fontSize: '15px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                minWidth: '300px',
+                background: 'white'
+              }}
+            >
+              {roles.map(role => (
+                <option key={role.id} value={role.id}>{role.name}</option>
+              ))}
+            </select>
+          </div>
 
-      {/* KPI Selector */}
-      {selectedRole && roleKpis.length > 0 && (
-        <div style={{ marginBottom: '32px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '15px' }}>
-            Select KPI:
-          </label>
-          <select
-            value={selectedRoleKpi?.id || ''}
-            onChange={(e) => {
-              const rk = roleKpis.find(rk => rk.id === e.target.value);
-              setSelectedRoleKpi(rk);
-              setShowEditor(false);
-            }}
-            style={{
-              padding: '10px 16px',
-              fontSize: '15px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              minWidth: '400px',
-              background: 'white'
-            }}
-          >
-            {roleKpis.map(rk => (
-              <option key={rk.id} value={rk.id}>
-                {rk.kpi?.name} (Target: {rk.target_value})
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+          {/* KPI Selector */}
+          {selectedRole && roleKpis.length > 0 && (
+            <div style={{ marginBottom: '32px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '15px' }}>
+                Select KPI:
+              </label>
+              <select
+                value={selectedRoleKpi?.id || ''}
+                onChange={(e) => {
+                  const rk = roleKpis.find(rk => rk.id === e.target.value);
+                  setSelectedRoleKpi(rk);
+                  setShowEditor(false);
+                }}
+                style={{
+                  padding: '10px 16px',
+                  fontSize: '15px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  minWidth: '400px',
+                  background: 'white'
+                }}
+              >
+                {roleKpis.map(rk => (
+                  <option key={rk.id} value={rk.id}>
+                    {rk.kpi?.name} (Target: {rk.target_value})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-      {selectedRole && roleKpis.length === 0 && (
-        <div style={{ padding: '20px', background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: '6px', marginBottom: '24px' }}>
-          No KPIs assigned to this role. Please assign KPIs first in the "Assign KPIs to Roles" tab.
-        </div>
+          {selectedRole && roleKpis.length === 0 && (
+            <div style={{ padding: '20px', background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: '6px', marginBottom: '24px' }}>
+              No KPIs assigned to this role. Please assign KPIs first in the "Assign KPIs to Roles" tab.
+            </div>
+          )}
+        </>
       )}
 
       {/* Current Formula Display / Editor */}
-      {selectedRoleKpi && (
+      {effectiveRoleKpi && (
         <div style={{
           background: 'white',
           border: '1px solid #e5e7eb',
@@ -626,7 +639,7 @@ const BonusFormulaConfig = () => {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h3 style={{ fontSize: '18px', fontWeight: '600' }}>
-              Formula for: {selectedRoleKpi.kpi?.name}
+              Formula for: {effectiveRoleKpi.kpi?.name}
             </h3>
             <div style={{ display: 'flex', gap: '12px' }}>
               {!showEditor && (

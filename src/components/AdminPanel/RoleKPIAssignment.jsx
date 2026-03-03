@@ -16,7 +16,8 @@ const RoleKPIAssignment = () => {
     kpi_id: '',
     target_value: '',
     weight: 25,
-    display_order: 1
+    display_order: 1,
+    scope: 'individual'
   });
 
   // Fetch roles and KPIs
@@ -70,11 +71,9 @@ const RoleKPIAssignment = () => {
       if (error) throw error;
 
       setRoleKpis(data || []);
-      
-      // Calculate available KPIs (not yet assigned)
-      const assignedKpiIds = data?.map(rk => rk.kpi_id) || [];
-      const available = kpis.filter(k => !assignedKpiIds.includes(k.id));
-      setAvailableKpis(available);
+
+      // All KPIs are available (same KPI can be assigned multiple times with different scopes)
+      setAvailableKpis(kpis);
     } catch (err) {
       console.error('Error fetching role KPIs:', err);
       alert(`Error: ${err.message}`);
@@ -92,6 +91,7 @@ const RoleKPIAssignment = () => {
           target_value: parseFloat(formData.target_value),
           weight: parseFloat(formData.weight),
           display_order: parseInt(formData.display_order),
+          scope: formData.scope,
           is_active: true
         }]);
 
@@ -129,7 +129,13 @@ const RoleKPIAssignment = () => {
   const handleUpdateRoleKpi = async (roleKpiId, field, value) => {
     try {
       const updateData = {};
-      updateData[field] = field === 'is_active' ? value : parseFloat(value);
+      if (field === 'is_active') {
+        updateData[field] = value;
+      } else if (field === 'scope') {
+        updateData[field] = value;
+      } else {
+        updateData[field] = parseFloat(value);
+      }
 
       const { error } = await supabase
         .from('role_kpis')
@@ -150,7 +156,8 @@ const RoleKPIAssignment = () => {
       kpi_id: '',
       target_value: '',
       weight: 25,
-      display_order: (roleKpis.length + 1)
+      display_order: (roleKpis.length + 1),
+      scope: 'individual'
     });
   };
 
@@ -229,7 +236,7 @@ const RoleKPIAssignment = () => {
               </h3>
               
               <form onSubmit={handleAddKpi}>
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
                       KPI *
@@ -311,6 +318,28 @@ const RoleKPIAssignment = () => {
                       }}
                     />
                   </div>
+
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                      Scope
+                    </label>
+                    <select
+                      value={formData.scope}
+                      onChange={(e) => setFormData({...formData, scope: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        fontSize: '14px'
+                      }}
+                    >
+                      <option value="individual">Individual</option>
+                      <option value="region-phoenix">Region - Phoenix</option>
+                      <option value="region-lasvegas">Region - Las Vegas</option>
+                      <option value="company">Company</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -391,6 +420,9 @@ const RoleKPIAssignment = () => {
                       Weight
                     </th>
                     <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+                      Scope
+                    </th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
                       Active
                     </th>
                     <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
@@ -448,6 +480,24 @@ const RoleKPIAssignment = () => {
                             fontSize: '13px'
                           }}
                         />
+                      </td>
+                      <td style={{ padding: '12px', fontSize: '14px' }}>
+                        <select
+                          value={rk.scope || 'individual'}
+                          onChange={(e) => handleUpdateRoleKpi(rk.id, 'scope', e.target.value)}
+                          style={{
+                            padding: '4px 8px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            background: 'white'
+                          }}
+                        >
+                          <option value="individual">Individual</option>
+                          <option value="region-phoenix">Region - Phoenix</option>
+                          <option value="region-lasvegas">Region - Las Vegas</option>
+                          <option value="company">Company</option>
+                        </select>
                       </td>
                       <td style={{ padding: '12px', fontSize: '14px' }}>
                         <input

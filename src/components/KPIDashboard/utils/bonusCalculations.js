@@ -48,7 +48,7 @@ export const calculateKpiBonus = (position, kpiIndex) => {
     }
   }
   // Special calculation for Extra Services
-  else if (kpi.name === 'Extra Services') {
+  else if (kpi.name === 'Extra Services Revenue') {
     // Below target (100%) - 0% bonus
     if (kpi.actual < 100) {
       return 0;
@@ -147,6 +147,32 @@ export const calculateKpiBonus = (position, kpiIndex) => {
       // Remaining 50% is prorated based on progress
       const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveTarget;
       
+      return baseAmount + additionalAmount;
+    }
+    // At or above 6%
+    else {
+      return kpiTotalAvailable; // 100% of KPI bonus
+    }
+  }
+  // Special calculation for Net Maintenance Growth
+  else if (kpi.name === 'Net Maintenance Growth') {
+    // Below minimum threshold (4%)
+    if (kpi.actual < 4) {
+      return 0; // 0% bonus
+    }
+    // At target exactly (4%)
+    else if (kpi.actual === 4) {
+      return kpiTotalAvailable * 0.5; // 50% of KPI bonus
+    }
+    // Between 4% and 6%
+    else if (kpi.actual > 4 && kpi.actual < 6) {
+      // Base 50% for hitting target
+      const baseAmount = kpiTotalAvailable * 0.5;
+      // Calculate progress from 4% to 6%
+      const progressAboveTarget = (kpi.actual - 4) / 2;
+      // Remaining 50% is prorated based on progress
+      const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveTarget;
+
       return baseAmount + additionalAmount;
     }
     // At or above 6%
@@ -409,10 +435,134 @@ export const calculateKpiBonus = (position, kpiIndex) => {
  */
 export const calculateActualTotalBonus = (position) => {
   let totalActualBonus = 0;
-  
+
   position.kpis.forEach((kpi, index) => {
     totalActualBonus += calculateKpiBonus(position, index);
   });
-  
+
   return totalActualBonus;
+};
+
+// --- Period-based bonus functions (quarterly/annual) ---
+
+/**
+ * Compute the max bonus available per quarter and for the annual period.
+ * @param {Object} position - { salary, bonusPercentage }
+ * @param {number} kpiWeight - The KPI's weight as a percentage (e.g. 20 for 20%)
+ * @param {Object} bonusSplit - { quarterly: 0.5, annual: 0.5 }
+ * @returns {{ perQuarter: number, annual: number }}
+ */
+export const computePeriodBonusMax = (position, kpiWeight, bonusSplit) => {
+  const totalBonus = position.salary * (position.bonusPercentage / 100);
+  const kpiBonusAvailable = totalBonus * (kpiWeight / 100);
+  const perQuarter = (kpiBonusAvailable * bonusSplit.quarterly) / 4;
+  const annual = kpiBonusAvailable * bonusSplit.annual;
+  return { perQuarter, annual };
+};
+
+/**
+ * Threshold-based bonus formulas keyed by KPI name.
+ * Each entry: { threshold, cap } where:
+ *   - below threshold: 0% bonus
+ *   - at threshold: 50% bonus
+ *   - between threshold and cap: scales linearly from 50% to 100%
+ *   - at/above cap: 100% bonus
+ */
+const PERIOD_THRESHOLD_FORMULAS = {
+  'Net Maintenance Growth': { quarterly: { allOrNothing: 4 }, annual: { proportional: true, threshold: 16 } },
+  'LV Maintenance Growth':  { quarterly: { threshold: 3, cap: 6 }, annual: { threshold: 3, cap: 6 } },
+  'Extra Services Revenue':         { quarterly: { threshold: 100, cap: 120 }, annual: { threshold: 100, cap: 120, uncapped: true } },
+};
+
+/**
+ * Apply a threshold-based bonus formula.
+ * @param {number} actual
+ * @param {{ threshold: number, cap: number }} formula
+ * @param {number} bonusMax
+ * @returns {number} bonus earned
+ */
+const applyThresholdFormula = (actual, formula, bonusMax, target) => {
+  // All-or-nothing: full bonus at threshold, $0 below
+  if (formula.allOrNothing != null) {
+    return actual >= formula.allOrNothing ? bonusMax : 0;
+  }
+  // Simple proportional: actual/target * bonusMax, uncapped
+  if (formula.proportional) {
+    if (formula.threshold != null && actual < formula.threshold) return 0;
+    return target > 0 ? (actual / target) * bonusMax : 0;
+  }
+  const { threshold, cap } = formula;
+  if (actual < threshold) return 0;
+  if (actual >= cap && !formula.uncapped) return bonusMax;
+  // Between threshold and cap (or beyond if uncapped): 50% base + scale remaining 50%
+  const base = bonusMax * 0.5;
+  const progress = (actual - threshold) / (cap - threshold);
+  return base + (bonusMax * 0.5) * progress;
+};
+
+/**
+ * Calculate proportional bonus for a single quarter.
+ * @param {{ actual: number, target: number }} quarter
+ * @param {boolean} isInverse - true when lower is better
+ * @param {number} bonusMaxPerQuarter - max $ available for this quarter
+ * @param {string} [kpiName] - KPI name for threshold-based formulas
+ * @returns {number} bonus earned
+ */
+export const calculateQuarterBonus = (quarter, isInverse, bonusMaxPerQuarter, kpiName) => {
+  const { actual, target } = quarter;
+  if (target === 0) return 0;
+
+  // Use threshold formula if one exists for this KPI
+  const thresholdConfig = kpiName && PERIOD_THRESHOLD_FORMULAS[kpiName];
+  if (thresholdConfig) {
+    return applyThresholdFormula(actual, thresholdConfig.quarterly, bonusMaxPerQuarter, target);
+  }
+
+  if (isInverse) {
+    // At or below target -> full bonus; above -> scale down proportionally
+    if (actual <= target) return bonusMaxPerQuarter;
+    // Scale down: the further above target, the less bonus
+    const ratio = target / actual;
+    return Math.max(0, bonusMaxPerQuarter * ratio);
+  } else {
+    // Above direction: proportional up to 100%
+    const ratio = Math.min(1, actual / target);
+    return bonusMaxPerQuarter * ratio;
+  }
+};
+
+/**
+ * Calculate proportional bonus for the annual period.
+ * @param {{ actual: number, target: number }} annual
+ * @param {boolean} isInverse
+ * @param {number} bonusMaxAnnual
+ * @param {string} [kpiName] - KPI name for threshold-based formulas
+ * @returns {number}
+ */
+export const calculateAnnualBonus = (annual, isInverse, bonusMaxAnnual, kpiName) => {
+  const { actual, target } = annual;
+
+  // Use threshold formula if one exists for this KPI
+  const thresholdConfig = kpiName && PERIOD_THRESHOLD_FORMULAS[kpiName];
+  if (thresholdConfig) {
+    return applyThresholdFormula(actual, thresholdConfig.annual, bonusMaxAnnual, target);
+  }
+
+  return calculateQuarterBonus(annual, isInverse, bonusMaxAnnual);
+};
+
+/**
+ * Derive the annual actual from quarter actuals.
+ * @param {Object} kpi - must have kpi.quarters[] with .actual, and kpi.annualAggregation
+ * @returns {number}
+ */
+export const deriveAnnualActual = (kpi) => {
+  const quarters = kpi.quarters || [];
+  if (kpi.annualAggregation === 'sum') {
+    return quarters.reduce((sum, q) => sum + (q.actual || 0), 0);
+  }
+  // 'average' — average of non-zero quarters
+  const nonZero = quarters.filter(q => q.actual !== 0 && q.actual != null);
+  if (nonZero.length === 0) return 0;
+  return nonZero.reduce((sum, q) => sum + q.actual, 0) / nonZero.length;
 };

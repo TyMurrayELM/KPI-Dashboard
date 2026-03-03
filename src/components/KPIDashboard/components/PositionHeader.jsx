@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { formatCurrency } from '../utils/formatters';
 import { getPerformanceStatusColor } from '../utils/styles';
 import { getKpiSummary } from '../utils/kpiHelpers';
+import { computePeriodBonusMax, calculateQuarterBonus, calculateAnnualBonus } from '../utils/bonusCalculations';
 
 /**
  * Position Header Component
@@ -21,9 +22,29 @@ const PositionHeader = ({
   setExpandedBreakdown,
   calculateTotalBonus,
   calculateActualTotalBonus,
-  calculateKpiBonus
+  calculateKpiBonus,
+  calculateKpiBonusForPeriods
 }) => {
   const summary = getKpiSummary(position);
+
+  // Compute per-quarter and annual bonus totals across all KPIs
+  const quarterTotals = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 };
+  const quarterMaxes = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 };
+  let totalAnnualBonus = 0;
+  let totalAnnualMax = 0;
+  position.kpis.forEach(kpi => {
+    if (kpi.hasPeriods) {
+      const { perQuarter, annual: annualMax } = computePeriodBonusMax(
+        position, kpi.weight, kpi.bonusSplit
+      );
+      totalAnnualMax += annualMax;
+      (kpi.quarters || []).forEach(q => {
+        quarterTotals[q.id] = (quarterTotals[q.id] || 0) + calculateQuarterBonus(q, kpi.isInverse, perQuarter, kpi.name);
+        quarterMaxes[q.id] = (quarterMaxes[q.id] || 0) + perQuarter;
+      });
+      totalAnnualBonus += calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, kpi.name);
+    }
+  });
   
   // State for formatted salary display
   const [displaySalary, setDisplaySalary] = useState(position.salary.toLocaleString('en-US'));
@@ -92,15 +113,35 @@ const PositionHeader = ({
         </div>
         <div>
           <h3 className="text-xs md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
-          <p className="text-lg md:text-2xl font-bold text-green-600 mt-2">
+          <p className="text-lg md:text-2xl font-bold text-green-600 mt-1">
             {formatCurrency(calculateActualTotalBonus(position, activeTab))}
           </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+            {['Q1','Q2','Q3','Q4'].map(qId => (
+              <span key={qId} className="text-xs text-gray-500">
+                {qId} <span className="font-medium text-green-600">{formatCurrency(quarterTotals[qId])}</span>
+              </span>
+            ))}
+            <span className="text-xs text-gray-500">
+              YE <span className="font-medium text-blue-600">{formatCurrency(totalAnnualBonus)}</span>
+            </span>
+          </div>
         </div>
         <div>
           <h3 className="text-xs md:text-lg font-semibold text-gray-800">Available Bonus</h3>
-          <p className="text-lg md:text-2xl font-bold text-blue-600 mt-2">
+          <p className="text-lg md:text-2xl font-bold text-blue-600 mt-1">
             {formatCurrency(calculateTotalBonus(position))}
           </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+            {['Q1','Q2','Q3','Q4'].map(qId => (
+              <span key={qId} className="text-xs text-gray-500">
+                {qId} <span className="font-medium text-gray-600">{formatCurrency(quarterMaxes[qId])}</span>
+              </span>
+            ))}
+            <span className="text-xs text-gray-500">
+              YE <span className="font-medium text-gray-600">{formatCurrency(totalAnnualMax)}</span>
+            </span>
+          </div>
         </div>
       </div>
       
@@ -183,11 +224,19 @@ const PositionHeader = ({
         >
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-4">
             {position.kpis.map((kpi, index) => {
-              // Use the passed-in calculation function with activeTab for database formula lookup
               const kpiBonus = calculateKpiBonus(position, index, activeTab);
-              const maxKpiBonus = calculateTotalBonus(position) / position.kpis.length;
-              const percentage = Math.round((kpiBonus / maxKpiBonus) * 100);
-              
+              // Compute max from period-based bonus model
+              let maxKpiBonus;
+              if (kpi.hasPeriods) {
+                const { perQuarter, annual } = computePeriodBonusMax(
+                  position, kpi.weight, kpi.bonusSplit
+                );
+                maxKpiBonus = perQuarter * 4 + annual;
+              } else {
+                maxKpiBonus = calculateTotalBonus(position) / position.kpis.length;
+              }
+              const percentage = maxKpiBonus > 0 ? Math.round((kpiBonus / maxKpiBonus) * 100) : 0;
+
               return (
                 <div key={index} className="bg-gray-50 p-2 rounded shadow-sm border border-gray-200">
                   <div className="flex justify-between items-center">
@@ -195,21 +244,21 @@ const PositionHeader = ({
                       {kpi.name}
                     </span>
                     <span className={`text-xs font-bold ${
-                      percentage >= 90 ? 'text-green-600' : 
-                      percentage >= 50 ? 'text-yellow-600' : 
+                      percentage >= 90 ? 'text-green-600' :
+                      percentage >= 50 ? 'text-yellow-600' :
                       'text-red-600'
                     }`}>
                       {formatCurrency(kpiBonus)}
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-                    <div 
+                    <div
                       className={`h-1.5 rounded-full ${
                         percentage >= 90 ? 'bg-green-500' :
                         percentage >= 50 ? 'bg-yellow-500' :
                         'bg-red-500'
                       }`}
-                      style={{ width: `${percentage}%` }}
+                      style={{ width: `${Math.min(100, percentage)}%` }}
                     ></div>
                   </div>
                 </div>

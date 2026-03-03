@@ -33,12 +33,8 @@ export const formatKPIValue = (kpi, valueType = 'actual') => {
   const value = kpi[valueType];
   
   // Handle special KPI types
-  if (kpi.name === 'LV Maintenance Growth') {
+  if (kpi.name === 'LV Maintenance Growth' || kpi.name === 'Net Maintenance Growth') {
     return `${value}%`;
-  }
-  
-  if (kpi.name === 'Extra Services') {
-    return formatCurrency(value);
   }
   
   // Default percentage formatting
@@ -62,4 +58,17 @@ export const formatPercentage = (value, decimals = 0) => {
  */
 export const formatNumber = (num) => {
   return new Intl.NumberFormat('en-US').format(num);
+};
+
+/**
+ * Format a KPI actual value based on its unit
+ * @param {number} value - The value to format
+ * @param {string} unit - '%' or '$'
+ * @returns {string} Formatted value (e.g. "4%" or "$25,000")
+ */
+export const formatKPIActual = (value, unit) => {
+  if (unit === '$') {
+    return formatCurrency(value);
+  }
+  return `${value}%`;
 };

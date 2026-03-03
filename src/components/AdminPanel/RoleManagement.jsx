@@ -177,6 +177,22 @@ const RoleManagement = () => {
     resetForm();
   };
 
+  // Toggle role visibility
+  const handleToggleVisibility = async (role) => {
+    try {
+      const { error } = await supabase
+        .from('roles')
+        .update({ is_visible: !role.is_visible })
+        .eq('id', role.id);
+
+      if (error) throw error;
+      fetchRoles();
+    } catch (err) {
+      alert(`Error toggling visibility: ${err.message}`);
+      console.error('Error toggling visibility:', err);
+    }
+  };
+
   // Format currency
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
@@ -486,6 +502,9 @@ const RoleManagement = () => {
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
                 Color
               </th>
+              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+                Visible
+              </th>
               <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
                 Actions
               </th>
@@ -494,7 +513,7 @@ const RoleManagement = () => {
           <tbody>
             {roles.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={9} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
                   No roles found. Create your first role to get started.
                 </td>
               </tr>
@@ -527,6 +546,35 @@ const RoleManagement = () => {
                       border: '1px solid #d1d5db',
                       borderRadius: '4px'
                     }} />
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'center' }}>
+                    <button
+                      onClick={() => handleToggleVisibility(role)}
+                      title={role.is_visible !== false ? 'Click to hide from dashboard' : 'Click to show on dashboard'}
+                      style={{
+                        width: '44px',
+                        height: '24px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        transition: 'background 0.2s',
+                        background: role.is_visible !== false ? '#22c55e' : '#d1d5db',
+                      }}
+                    >
+                      <span style={{
+                        display: 'block',
+                        width: '18px',
+                        height: '18px',
+                        borderRadius: '50%',
+                        background: 'white',
+                        position: 'absolute',
+                        top: '3px',
+                        transition: 'left 0.2s',
+                        left: role.is_visible !== false ? '23px' : '3px',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                      }} />
+                    </button>
                   </td>
                   <td style={{ padding: '12px', textAlign: 'right' }}>
                     <button
