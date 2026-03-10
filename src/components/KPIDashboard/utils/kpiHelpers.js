@@ -12,13 +12,15 @@
 export const getMinValueForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Direct Labor Maintenance %':
-      return 25;
+      return 35;
     case 'Client Retention %':
     case 'Punchlist Creation':  // Updated from Visit Note Creation
     case 'Extra Services Revenue':
       return 80;
     case 'Total Gross Margin % on Completed Jobs':
-      return 40;
+      return 50;
+    case 'Net Controllable Income Goal':
+      return 80;
     case 'Property Checklist Item Completion':
       return 50;
     case 'Fleet Uptime Rate':
@@ -44,6 +46,12 @@ export const getMinValueForKPI = (kpiName) => {
 export const getQuarterFloorForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Extra Services Revenue':
+      return 80;
+    case 'Direct Labor Maintenance %':
+      return 35;
+    case 'Total Gross Margin % on Completed Jobs':
+      return 50;
+    case 'Net Controllable Income Goal':
       return 80;
     default:
       return 0;
@@ -72,11 +80,13 @@ export const getAnnualMinValueForKPI = (kpiName) => {
 export const getMaxValueForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Direct Labor Maintenance %':
-      return 45;
+      return 50;
     case 'Extra Services Revenue':
       return 140;
     case 'Total Gross Margin % on Completed Jobs':
-      return 80;
+      return 70;
+    case 'Net Controllable Income Goal':
+      return 130;
     case 'LV Maintenance Growth':
       return 10;
     case 'Net Maintenance Growth':
@@ -103,6 +113,8 @@ export const getAnnualMaxValueForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Net Maintenance Growth':
       return 30;
+    case 'Net Controllable Income Goal':
+      return 130;
     default:
       return getMaxValueForKPI(kpiName);
   }

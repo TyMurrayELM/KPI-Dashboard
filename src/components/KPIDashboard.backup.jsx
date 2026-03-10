@@ -127,14 +127,14 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
               period: q.period,
               payDate: q.payDate,
               target: qTarget,
-              actual: qFloor,
+              actual: qTarget,
             }));
 
             return {
               name: rk.kpi.name,
               description: rk.kpi.description,
               target: annualTarget,
-              actual: 0, // will be derived from quarters
+              actual: annualTarget,
               weight: rk.weight,
               isInverse: rk.kpi.is_inverse,
               scope: rk.scope || 'individual',
@@ -150,7 +150,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
               quarters,
               annual: {
                 target: annualTarget,
-                actual: getAnnualMinValueForKPI(rk.kpi.name),
+                actual: annualTarget,
               },
             };
           });
@@ -173,6 +173,106 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
             }
           });
       });
+
+      // Inject hardcoded KPIs into Arbor Manager
+      const arborKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Arbor Manager'
+      );
+      if (arborKey) {
+        const buildKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 25, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[arborKey].kpis = [
+          { ...buildKpi('Net Maintenance Growth', '', 16, 'company'), weight: 34 },
+          { ...buildKpi('Extra Services Revenue', '', 120, 'company'), formulaKey: 'Extra Services Revenue (Arbor)', weight: 33 },
+          { ...buildKpi('Net Controllable Income Goal',
+            'Percentage of Arbor Net Controllable Income goal achieved. Annual target for Phoenix Arbor is $3.5M.',
+            100, 'region-phoenix'), dollarTarget: 3500000, weight: 33 },
+        ];
+      }
+
+      // Inject hardcoded "Net Controllable Income Goal" KPI into Maintenance Operations Manager
+      const maintOpsKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Senior Manager of Maintenance Operations'
+      );
+      if (maintOpsKey) {
+        const nciConfig = getKpiPeriodConfig('Net Controllable Income Goal');
+        const nciQFloor = getQuarterFloorForKPI('Net Controllable Income Goal');
+        const nciQuarters = nciConfig.quarters.map(q => ({
+          id: q.id, period: q.period, payDate: q.payDate,
+          target: 100, actual: 100,
+        }));
+        const nciKpi = {
+          name: 'Net Controllable Income Goal',
+          description: 'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
+          target: 100,
+          actual: 100,
+          weight: 25,
+          isInverse: false,
+          scope: 'region-phoenix',
+          successFactors: [],
+          successGuide: '',
+          hasPeriods: true,
+          unit: nciConfig.unit,
+          stepSize: nciConfig.stepSize,
+          targetType: nciConfig.targetType,
+          bonusSplit: nciConfig.bonusSplit,
+          annualPayDate: nciConfig.annualPayDate,
+          quarters: nciQuarters,
+          annual: { target: 100, actual: 100 },
+          dollarTarget: 2150000,
+        };
+        // Insert after Direct Labor Maintenance %
+        const dlIdx = transformedPositions[maintOpsKey].kpis.findIndex(
+          k => k.name === 'Direct Labor Maintenance %'
+        );
+        const insertIdx = dlIdx >= 0 ? dlIdx + 1 : transformedPositions[maintOpsKey].kpis.length;
+        transformedPositions[maintOpsKey].kpis.splice(insertIdx, 0, nciKpi);
+        // Remove Total Gross Margin % on Completed Jobs
+        transformedPositions[maintOpsKey].kpis = transformedPositions[maintOpsKey].kpis.filter(
+          k => k.name !== 'Total Gross Margin % on Completed Jobs'
+        );
+      }
+
+      // Modify Client Success Manager: remove Net Maintenance Growth, duplicate Extra Services Revenue for Company
+      const csmKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Client Success Manager'
+      );
+      if (csmKey) {
+        const kpis = transformedPositions[csmKey].kpis;
+        // Remove the first Net Maintenance Growth (keep only one from DB)
+        const nmgIdx = kpis.findIndex(k => k.name === 'Net Maintenance Growth');
+        if (nmgIdx >= 0) kpis.splice(nmgIdx, 1);
+        // Duplicate Extra Services Revenue for Company scope
+        const esrIdx = kpis.findIndex(k => k.name === 'Extra Services Revenue');
+        if (esrIdx >= 0) {
+          const companyEsr = JSON.parse(JSON.stringify(kpis[esrIdx]));
+          companyEsr.scope = 'company';
+          kpis.splice(esrIdx, 0, companyEsr);
+        }
+        // Reorder: all Net Maintenance Growth first, then everything else
+        const nmgKpis = kpis.filter(k => k.name === 'Net Maintenance Growth');
+        const otherKpis = kpis.filter(k => k.name !== 'Net Maintenance Growth');
+        transformedPositions[csmKey].kpis = [...nmgKpis, ...otherKpis];
+      }
 
       setRoles(rolesData);
       setPositions(transformedPositions);
@@ -197,13 +297,15 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
     let quarterlyTotal = 0;
     const quarterBonuses = {};
     for (const q of kpi.quarters) {
-      const qBonus = calculateQuarterBonus(q, kpi.isInverse, perQuarter, kpi.name);
+      const formulaKey = kpi.formulaKey || kpi.name;
+      const qBonus = calculateQuarterBonus(q, kpi.isInverse, perQuarter, formulaKey);
       quarterBonuses[q.id] = qBonus;
       quarterlyTotal += qBonus;
     }
 
     // Annual bonus
-    const annualBonus = calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, kpi.name);
+    const formulaKey = kpi.formulaKey || kpi.name;
+    const annualBonus = calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, formulaKey);
 
     return {
       quarterBonuses,
@@ -314,6 +416,15 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
     setExpandedSuccessFactors(prev => {
       const key = `${positionKey}-${kpiIndex}`;
       return { ...prev, [key]: !prev[key] };
+    });
+  };
+
+  // Weight change: update a KPI's weight value
+  const handleWeightChange = (positionKey, kpiIndex, newWeight) => {
+    setPositions(prevPositions => {
+      const newPositions = JSON.parse(JSON.stringify(prevPositions));
+      newPositions[positionKey].kpis[kpiIndex].weight = newWeight;
+      return newPositions;
     });
   };
 
@@ -602,6 +713,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
                 calculateKpiBonus={calculateKpiBonus}
                 calculateKpiBonusForPeriods={calculateKpiBonusForPeriods}
                 calculateTotalBonus={calculateTotalBonus}
+                onWeightChange={handleWeightChange}
               />
             ))}
           </div>

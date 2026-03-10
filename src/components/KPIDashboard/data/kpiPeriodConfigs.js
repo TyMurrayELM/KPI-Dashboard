@@ -31,7 +31,16 @@ const KPI_OVERRIDES = {
     stepSize: 1,
     targetType: 'rate',
   },
-  // Direct Labor Maintenance % — inverse is already handled by is_inverse in DB
+  'Direct Labor Maintenance %': {
+    unit: '%',
+    stepSize: 1,
+    targetType: 'rate',
+  },
+  'Net Controllable Income Goal': {
+    unit: '%',
+    stepSize: 1,
+    targetType: 'rate',
+  },
   // Gross Margin, Client Retention, etc. — defaults work fine
 };
 

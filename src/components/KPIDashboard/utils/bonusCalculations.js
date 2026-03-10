@@ -49,83 +49,34 @@ export const calculateKpiBonus = (position, kpiIndex) => {
   }
   // Special calculation for Extra Services
   else if (kpi.name === 'Extra Services Revenue') {
-    // Below target (100%) - 0% bonus
-    if (kpi.actual < 100) {
+    // $0 below 120%, full bonus at 120%+
+    if (kpi.actual < 120) {
       return 0;
     }
-    // At target exactly (100%)
-    else if (kpi.actual === 100) {
-      return kpiTotalAvailable * 0.5; // 50% of KPI bonus
-    }
-    // Between target and 110%
-    else if (kpi.actual > 100 && kpi.actual <= 110) {
-      // Base 50% for hitting target
-      const baseAmount = kpiTotalAvailable * 0.5;
-      // Calculate progress from 100% to 110% (0-100%)
-      const progressAboveTarget = (kpi.actual - 100) / 10;
-      // Remaining 50% is prorated based on progress
-      const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveTarget;
-      
-      return baseAmount + additionalAmount;
-    }
-    // Above 110%
-    else {
-      return kpiTotalAvailable; // 100% of KPI bonus
-    }
+    return kpiTotalAvailable;
   }
   // Special calculation for Total Gross Margin % on Completed Jobs
+  // All-or-nothing at 60%: $0 below, full bonus at 60%+, no increase above
   else if (kpi.name === 'Total Gross Margin % on Completed Jobs') {
-    // Below minimum target (60%)
     if (kpi.actual < 60) {
       return 0;
     }
-    // At minimum target exactly (60%)
-    else if (kpi.actual === 60) {
-      return kpiTotalAvailable * 0.5; // 50% of KPI bonus
-    }
-    // Between 60% and 70%
-    else if (kpi.actual > 60 && kpi.actual < 70) {
-      // Base 50% for hitting minimum target
-      const baseAmount = kpiTotalAvailable * 0.5;
-      // Calculate progress from 60% to 70% (0-100%)
-      const progressAboveTarget = (kpi.actual - 60) / 10;
-      // Remaining 50% is prorated based on progress
-      const additionalAmount = (kpiTotalAvailable * 0.5) * progressAboveTarget;
-      
-      return baseAmount + additionalAmount;
-    }
-    // At or above 70%
-    else {
-      return kpiTotalAvailable; // 100% of KPI bonus
-    }
+    return kpiTotalAvailable;
+  }
+  // Special calculation for Net Controllable Income Goal
+  // $0 below 100%, at 100%+ scales linearly (110% = 110% of bonus)
+  else if (kpi.name === 'Net Controllable Income Goal') {
+    if (kpi.actual < 100) return 0;
+    return kpiTotalAvailable * (kpi.actual / 100);
   }
   // Special calculation for Direct Labor Maintenance %
   else if (kpi.name === 'Direct Labor Maintenance %') {
-    // For this KPI, lower is better
-    // Target is 40%, full bonus at 38% or below
-    
-    // Above target (worse performance)
-    if (kpi.actual > 40) {
+    // For this KPI, lower is better — all-or-nothing at 40%
+    // At or below 40%: full bonus; above 40%: $0
+    if (kpi.actual <= 40) {
+      return kpiTotalAvailable;
+    } else {
       return 0;
-    }
-    // At target exactly (40%)
-    else if (kpi.actual === 40) {
-      return kpiTotalAvailable * 0.5; // 50% of KPI bonus
-    }
-    // Between 38% and 40%
-    else if (kpi.actual > 38 && kpi.actual < 40) {
-      // Base 50% for hitting target
-      const baseAmount = kpiTotalAvailable * 0.5;
-      // Calculate progress from 40% to 38% (0-100%)
-      const progressBelowTarget = (40 - kpi.actual) / 2;
-      // Remaining 50% is prorated based on progress
-      const additionalAmount = (kpiTotalAvailable * 0.5) * progressBelowTarget;
-      
-      return baseAmount + additionalAmount;
-    }
-    // At or below 38%
-    else {
-      return kpiTotalAvailable; // 100% of KPI bonus
     }
   }
   // Special calculation for LV Maintenance Growth
@@ -471,7 +422,11 @@ export const computePeriodBonusMax = (position, kpiWeight, bonusSplit) => {
 const PERIOD_THRESHOLD_FORMULAS = {
   'Net Maintenance Growth': { quarterly: { allOrNothing: 4 }, annual: { proportional: true, threshold: 16 } },
   'LV Maintenance Growth':  { quarterly: { threshold: 3, cap: 6 }, annual: { threshold: 3, cap: 6 } },
-  'Extra Services Revenue':         { quarterly: { threshold: 100, cap: 120 }, annual: { threshold: 100, cap: 120, uncapped: true } },
+  'Extra Services Revenue':         { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
+  'Direct Labor Maintenance %':     { quarterly: { allOrNothingInverse: 40 }, annual: { allOrNothingInverse: 40 } },
+  'Total Gross Margin % on Completed Jobs': { quarterly: { allOrNothing: 60 }, annual: { allOrNothing: 60 } },
+  'Net Controllable Income Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
+  'Extra Services Revenue (Arbor)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
 };
 
 /**
@@ -486,10 +441,15 @@ const applyThresholdFormula = (actual, formula, bonusMax, target) => {
   if (formula.allOrNothing != null) {
     return actual >= formula.allOrNothing ? bonusMax : 0;
   }
-  // Simple proportional: actual/target * bonusMax, uncapped
+  // All-or-nothing inverse: full bonus at or below threshold, $0 above (lower is better)
+  if (formula.allOrNothingInverse != null) {
+    return actual <= formula.allOrNothingInverse ? bonusMax : 0;
+  }
+  // Simple proportional: actual/target * bonusMax
   if (formula.proportional) {
     if (formula.threshold != null && actual < formula.threshold) return 0;
-    return target > 0 ? (actual / target) * bonusMax : 0;
+    const raw = target > 0 ? (actual / target) * bonusMax : 0;
+    return formula.cap != null ? Math.min(raw, bonusMax) : raw;
   }
   const { threshold, cap } = formula;
   if (actual < threshold) return 0;

@@ -39,6 +39,15 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
     } else if (kpiName === 'Extra Services Revenue') {
       // pct = (actual - 80) / (140 - 80) * 100
       raw = 80 + ratio * (140 - 80);
+    } else if (kpiName === 'Direct Labor Maintenance %') {
+      // Left-to-right: left = 35% (best), right = 50% (worst)
+      raw = 35 + ratio * (50 - 35);
+    } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
+      // 50-70 range, left = 50%, right = 70%
+      raw = 50 + ratio * (70 - 50);
+    } else if (kpiName === 'Net Controllable Income Goal') {
+      // 80-130 range
+      raw = 80 + ratio * (130 - 80);
     } else if (isInverse) {
       raw = min + (1 - ratio) * (max - min);
     } else {
@@ -78,6 +87,15 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
     }
   } else if (kpiName === 'Extra Services Revenue') {
     pct = actual <= 80 ? 0 : Math.min(100, ((actual - 80) / (140 - 80)) * 100);
+  } else if (kpiName === 'Direct Labor Maintenance %') {
+    // Left-to-right: 35% (left) to 50% (right), bar shows position in range
+    pct = actual <= 35 ? 0 : Math.min(100, ((actual - 35) / (50 - 35)) * 100);
+  } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
+    // 50-70 range
+    pct = actual <= 50 ? 0 : Math.min(100, ((actual - 50) / (70 - 50)) * 100);
+  } else if (kpiName === 'Net Controllable Income Goal') {
+    // 80-130 range, uncapped visually at 130
+    pct = actual <= 80 ? 0 : Math.min(100, ((actual - 80) / (130 - 80)) * 100);
   } else if (isInverse) {
     pct = actual <= target ? 100 : Math.max(0, (target / actual) * 100);
   } else {
@@ -87,12 +105,21 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
   let barColor;
   if (kpiName === 'Net Maintenance Growth') {
     if (variant === 'annual') {
-      barColor = actual >= 24 ? 'bg-green-500' : actual >= 16 ? 'bg-yellow-400' : actual > 10 ? 'bg-red-300' : 'bg-gray-300';
+      barColor = actual >= 16 ? 'bg-green-500' : actual > 10 ? 'bg-red-300' : 'bg-gray-300';
     } else {
-      barColor = actual >= 6 ? 'bg-green-500' : actual >= 4 ? 'bg-yellow-400' : actual > 0 ? 'bg-red-300' : 'bg-gray-300';
+      barColor = actual >= 4 ? 'bg-green-500' : actual > 0 ? 'bg-red-300' : 'bg-gray-300';
     }
   } else if (kpiName === 'Extra Services Revenue') {
     barColor = actual >= 120 ? 'bg-green-500' : actual >= 100 ? 'bg-yellow-400' : actual > 80 ? 'bg-red-300' : 'bg-gray-300';
+  } else if (kpiName === 'Direct Labor Maintenance %') {
+    // Lower is better: green at 40% or below, red above 40%
+    barColor = actual <= 40 ? 'bg-green-500' : 'bg-red-400';
+  } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
+    // All-or-nothing at 60%
+    barColor = actual >= 60 ? 'bg-green-500' : actual > 50 ? 'bg-red-300' : 'bg-gray-300';
+  } else if (kpiName === 'Net Controllable Income Goal') {
+    // Linear: green at 100%+, yellow 90-100%, red below 90%
+    barColor = actual >= 100 ? 'bg-green-500' : actual >= 90 ? 'bg-yellow-400' : actual > 80 ? 'bg-red-300' : 'bg-gray-300';
   } else if (variant === 'annual') {
     barColor = pct >= 100 ? 'bg-blue-500' : pct > 0 ? 'bg-blue-300' : 'bg-gray-300';
   } else {
@@ -138,8 +165,11 @@ const KPICard = ({
   toggleSuccessFactors,
   calculateKpiBonus,
   calculateKpiBonusForPeriods,
-  calculateTotalBonus
+  calculateTotalBonus,
+  onWeightChange
 }) => {
+  const [editingWeight, setEditingWeight] = useState(false);
+  const [weightInput, setWeightInput] = useState(String(kpi.weight));
   const [guideExpanded, setGuideExpanded] = useState(false);
   const periodBonus = calculateKpiBonusForPeriods(position, index);
   const { perQuarter: perQuarterMax, annual: annualMax } = computePeriodBonusMax(
@@ -167,7 +197,7 @@ const KPICard = ({
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
-      {/* Header: Title + Total Earned */}
+      {/* Header: Title + Total Bonus */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 mr-4">
           <div className="flex items-center gap-2 flex-wrap">
@@ -175,17 +205,43 @@ const KPICard = ({
             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${scope.bg} ${scope.text} ${scope.border}`}>
               {scope.label}
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-gray-100 text-gray-700 border-gray-200" title="Weighting of KPI">
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-gray-100 text-gray-700 border-gray-200 ${onWeightChange ? 'cursor-pointer hover:bg-gray-200' : ''}`}
+              title="Weighting of KPI"
+              onClick={() => { if (onWeightChange) { setWeightInput(String(kpi.weight)); setEditingWeight(true); } }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.477 6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L5 10.274zm10 0l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L15 10.274z" clipRule="evenodd" />
               </svg>
-              {kpi.weight}%
+              {editingWeight ? (
+                <input
+                  type="number"
+                  className="w-10 bg-white border border-gray-300 rounded text-xs text-center py-0 px-0.5 focus:outline-none focus:border-blue-400"
+                  value={weightInput}
+                  autoFocus
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setWeightInput(e.target.value)}
+                  onBlur={() => {
+                    const val = parseFloat(weightInput);
+                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                      onWeightChange(positionKey, index, val);
+                    }
+                    setEditingWeight(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') { e.target.blur(); }
+                    if (e.key === 'Escape') { setEditingWeight(false); }
+                  }}
+                />
+              ) : (
+                <>{kpi.weight}%</>
+              )}
             </span>
           </div>
           <p className="text-sm text-gray-600 mt-1">{kpi.description}</p>
         </div>
         <div className="text-right flex-shrink-0">
-          <p className="text-xs text-gray-500">Total Earned</p>
+          <p className="text-xs text-gray-500">Total Bonus</p>
           <p className={`text-lg font-bold ${periodBonus.total > 0 ? 'text-green-600' : 'text-gray-400'}`}>
             {formatCurrency(periodBonus.total)}
           </p>
@@ -193,12 +249,13 @@ const KPICard = ({
         </div>
       </div>
 
-      {/* Quarterly Payments */}
+      {/* Quarter-based Incentives */}
       <div className="mb-3">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Quarterly Payments</span>
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Quarter-based Incentives</span>
           <span className="text-xs text-gray-500">
             Target: {formatKPIActual(kpi.quarters[0]?.target, kpi.unit)}
+            {kpi.dollarTarget && <span className="ml-1 text-gray-500">({formatCurrency(kpi.dollarTarget / 4)})</span>}
             {kpi.isInverse && <span className="ml-1 text-gray-400">(lower is better)</span>}
           </span>
         </div>
@@ -214,8 +271,8 @@ const KPICard = ({
               <div key={q.id} className="grid grid-cols-12 gap-2 items-center px-3 py-2">
                 {/* Period label */}
                 <div className="col-span-2 sm:col-span-2">
-                  <span className="text-xs font-medium text-gray-700">{q.id}</span>
-                  <span className="text-xs text-gray-400 ml-1 hidden sm:inline">{q.period}</span>
+                  <span className="text-xs font-medium text-black">{q.id}</span>
+                  <span className="text-xs text-black ml-1 hidden sm:inline">{q.period}</span>
                 </div>
 
                 {/* Progress bar — now draggable */}
@@ -234,7 +291,7 @@ const KPICard = ({
 
                 {/* Actual value + target */}
                 <div className="col-span-2 sm:col-span-2 flex items-center justify-center gap-1">
-                  <span className={`text-xs font-medium ${onTarget ? 'text-green-600' : q.actual > 0 ? 'text-gray-800' : 'text-gray-400'}`}>
+                  <span className={`text-xs font-medium ${onTarget ? 'text-green-600' : 'text-black'}`}>
                     {formatKPIActual(q.actual, kpi.unit)}
                   </span>
                   <span className="inline-flex items-center text-xs text-orange-500" title="Target">
@@ -243,6 +300,7 @@ const KPICard = ({
                     </svg>
                     {formatKPIActual(q.target, kpi.unit)}
                   </span>
+                  {kpi.dollarTarget && <span className="text-xs text-gray-500">({formatCurrency(kpi.dollarTarget / 4)})</span>}
                 </div>
 
                 {/* +/- buttons */}
@@ -263,10 +321,10 @@ const KPICard = ({
 
                 {/* Bonus earned / available + check */}
                 <div className="col-span-3 sm:col-span-3 flex items-center justify-end space-x-1">
-                  <span className={`text-xs font-medium ${qBonus > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                  <span className={`text-xs font-medium ${qBonus > 0 ? 'text-green-600' : 'text-black'}`}>
                     {formatCurrency(qBonus)}
                   </span>
-                  <span className="text-xs text-gray-400">/ {formatCurrency(perQuarterMax)}</span>
+                  <span className="text-xs text-black">/ {formatCurrency(perQuarterMax)}</span>
                   {onTarget && q.actual > 0 && <CheckIcon />}
                 </div>
               </div>
@@ -275,13 +333,12 @@ const KPICard = ({
         </div>
       </div>
 
-      {/* Year-End / Annual Payment */}
+      {/* Full Year-Performance */}
       <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-3 mb-3">
         <div className="grid grid-cols-12 gap-2 items-center">
           {/* Label */}
           <div className="col-span-2 sm:col-span-2">
-            <span className="text-xs font-medium text-blue-700">Annual</span>
-            <span className="text-xs text-blue-400 ml-1 hidden sm:inline">Year-End</span>
+            <span className="text-xs font-medium text-blue-800">Full Year-Performance</span>
           </div>
 
           {/* Progress bar — now draggable */}
@@ -301,7 +358,7 @@ const KPICard = ({
 
           {/* Actual value + target */}
           <div className="col-span-2 sm:col-span-2 flex items-center justify-center gap-1">
-            <span className={`text-xs font-medium ${isAnnualOnTarget() && kpi.annual.actual > 0 ? 'text-blue-700' : 'text-gray-500'}`}>
+            <span className={`text-xs font-medium ${isAnnualOnTarget() && kpi.annual.actual > 0 ? 'text-blue-800' : 'text-blue-800'}`}>
               {formatKPIActual(kpi.annual.actual, kpi.unit)}
             </span>
             <span className="inline-flex items-center text-xs text-orange-500" title="Target">
@@ -310,6 +367,7 @@ const KPICard = ({
               </svg>
               {formatKPIActual(kpi.annual.target, kpi.unit)}
             </span>
+            {kpi.dollarTarget && <span className="text-xs text-gray-500 ml-1">({formatCurrency(kpi.dollarTarget)})</span>}
           </div>
 
           {/* +/- buttons */}
@@ -330,12 +388,12 @@ const KPICard = ({
 
           {/* Bonus / available + pay date */}
           <div className="col-span-3 sm:col-span-3 flex items-center justify-end space-x-1">
-            <span className={`text-xs font-medium ${periodBonus.annualBonus > 0 ? 'text-blue-700' : 'text-gray-400'}`}>
+            <span className={`text-xs font-medium ${periodBonus.annualBonus > 0 ? 'text-blue-800' : 'text-blue-800'}`}>
               {formatCurrency(periodBonus.annualBonus)}
             </span>
-            <span className="text-xs text-blue-400">/ {formatCurrency(annualMax)}</span>
+            <span className="text-xs text-blue-800">/ {formatCurrency(annualMax)}</span>
             {isAnnualOnTarget() && kpi.annual.actual > 0 && <CheckIcon />}
-            <span className="text-xs text-blue-400 hidden sm:inline ml-1">{kpi.annualPayDate}</span>
+            <span className="text-xs text-blue-800 hidden sm:inline ml-1">{kpi.annualPayDate}</span>
           </div>
         </div>
       </div>

@@ -112,6 +112,22 @@ const PositionHeader = ({
           </div>
         </div>
         <div>
+          <h3 className="text-xs md:text-lg font-semibold text-gray-800">Target Bonus</h3>
+          <p className="text-lg md:text-2xl font-bold text-blue-600 mt-1">
+            {formatCurrency(calculateTotalBonus(position))}
+          </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+            {['Q1','Q2','Q3','Q4'].map(qId => (
+              <span key={qId} className="text-xs text-gray-500">
+                {qId} <span className="font-medium text-gray-600">{formatCurrency(quarterMaxes[qId])}</span>
+              </span>
+            ))}
+            <span className="text-xs text-gray-500">
+              YE <span className="font-medium text-gray-600">{formatCurrency(totalAnnualMax)}</span>
+            </span>
+          </div>
+        </div>
+        <div>
           <h3 className="text-xs md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
           <p className="text-lg md:text-2xl font-bold text-green-600 mt-1">
             {formatCurrency(calculateActualTotalBonus(position, activeTab))}
@@ -124,22 +140,6 @@ const PositionHeader = ({
             ))}
             <span className="text-xs text-gray-500">
               YE <span className="font-medium text-blue-600">{formatCurrency(totalAnnualBonus)}</span>
-            </span>
-          </div>
-        </div>
-        <div>
-          <h3 className="text-xs md:text-lg font-semibold text-gray-800">Available Bonus</h3>
-          <p className="text-lg md:text-2xl font-bold text-blue-600 mt-1">
-            {formatCurrency(calculateTotalBonus(position))}
-          </p>
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
-            {['Q1','Q2','Q3','Q4'].map(qId => (
-              <span key={qId} className="text-xs text-gray-500">
-                {qId} <span className="font-medium text-gray-600">{formatCurrency(quarterMaxes[qId])}</span>
-              </span>
-            ))}
-            <span className="text-xs text-gray-500">
-              YE <span className="font-medium text-gray-600">{formatCurrency(totalAnnualMax)}</span>
             </span>
           </div>
         </div>
