@@ -209,6 +209,41 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
         ];
       }
 
+      // Inject hardcoded KPIs into Spray Manager (same structure as Arbor Manager)
+      const sprayKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Spray Manager'
+      );
+      if (sprayKey) {
+        const buildSprayKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 25, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[sprayKey].kpis = [
+          { ...buildSprayKpi('Net Maintenance Growth', '', 16, 'company'), weight: 34 },
+          { ...buildSprayKpi('Extra Services Revenue', '', 120, 'company'), formulaKey: 'Extra Services Revenue (Spray)', weight: 33 },
+          { ...buildSprayKpi('Net Controllable Income Goal',
+            'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $940K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
+            100, 'region-phoenix'), dollarTarget: 940000, weight: 33 },
+        ];
+      }
+
       // Inject hardcoded "Net Controllable Income Goal" KPI into Maintenance Operations Manager
       const maintOpsKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Senior Manager of Maintenance Operations'

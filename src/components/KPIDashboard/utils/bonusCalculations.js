@@ -427,6 +427,7 @@ const PERIOD_THRESHOLD_FORMULAS = {
   'Total Gross Margin % on Completed Jobs': { quarterly: { allOrNothing: 60 }, annual: { allOrNothing: 60 } },
   'Net Controllable Income Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
   'Extra Services Revenue (Arbor)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
+  'Extra Services Revenue (Spray)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
 };
 
 /**
