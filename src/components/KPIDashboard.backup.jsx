@@ -382,6 +382,39 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
         ];
       }
 
+      // Inject hardcoded KPIs into Client Success Specialist (fully hardcoded, ignores DB assignments)
+      const cssKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Client Success Specialist'
+      );
+      if (cssKey) {
+        const buildCssKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 33, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[cssKey].kpis = [
+          { ...buildCssKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 34 },
+          { ...buildCssKpi('Client Retention %', '', 100, 'individual'), weight: 33 },
+          { ...buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 33 },
+        ];
+      }
+
       setRoles(rolesData);
       setPositions(transformedPositions);
       setBonusFormulas(formulaMap);
