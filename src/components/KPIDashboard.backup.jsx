@@ -244,47 +244,40 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
         ];
       }
 
-      // Inject hardcoded "Net Controllable Income Goal" KPI into Maintenance Operations Manager
+      // Inject hardcoded KPIs into Senior Manager of Maintenance Operations (fully hardcoded, ignores DB assignments)
       const maintOpsKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Senior Manager of Maintenance Operations'
       );
       if (maintOpsKey) {
-        const nciConfig = getKpiPeriodConfig('Net Controllable Income Goal');
-        const nciQFloor = getQuarterFloorForKPI('Net Controllable Income Goal');
-        const nciQuarters = nciConfig.quarters.map(q => ({
-          id: q.id, period: q.period, payDate: q.payDate,
-          target: 100, actual: 100,
-        }));
-        const nciKpi = {
-          name: 'Net Controllable Income Goal',
-          description: 'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
-          target: 100,
-          actual: 100,
-          weight: 25,
-          isInverse: false,
-          scope: 'region-phoenix',
-          successFactors: [],
-          successGuide: '',
-          hasPeriods: true,
-          unit: nciConfig.unit,
-          stepSize: nciConfig.stepSize,
-          targetType: nciConfig.targetType,
-          bonusSplit: nciConfig.bonusSplit,
-          annualPayDate: nciConfig.annualPayDate,
-          quarters: nciQuarters,
-          annual: { target: 100, actual: 100 },
-          dollarTarget: 2150000,
+        const buildSrMaintOpsKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 25, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
         };
-        // Insert after Direct Labor Maintenance %
-        const dlIdx = transformedPositions[maintOpsKey].kpis.findIndex(
-          k => k.name === 'Direct Labor Maintenance %'
-        );
-        const insertIdx = dlIdx >= 0 ? dlIdx + 1 : transformedPositions[maintOpsKey].kpis.length;
-        transformedPositions[maintOpsKey].kpis.splice(insertIdx, 0, nciKpi);
-        // Remove Total Gross Margin % on Completed Jobs
-        transformedPositions[maintOpsKey].kpis = transformedPositions[maintOpsKey].kpis.filter(
-          k => k.name !== 'Total Gross Margin % on Completed Jobs'
-        );
+
+        transformedPositions[maintOpsKey].kpis = [
+          { ...buildSrMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          { ...buildSrMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
+          { ...buildSrMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true }), weight: 25 },
+          { ...buildSrMaintOpsKpi('Net Controllable Income Goal',
+            'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
+            100, 'region-phoenix', { dollarTarget: 2150000 }), weight: 25 },
+        ];
       }
 
       // Inject hardcoded KPIs into Maintenance Operations Manager (same pattern as Arbor/Spray Manager)
