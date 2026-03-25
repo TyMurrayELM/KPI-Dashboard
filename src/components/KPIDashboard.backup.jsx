@@ -348,6 +348,40 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         ];
       }
 
+      // Inject hardcoded KPIs into Maintenance Field Supervisor (same as Maintenance Quality Specialist)
+      const mfsKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Maintenance Field Supervisor'
+      );
+      if (mfsKey) {
+        const buildMfsKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 33, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[mfsKey].kpis = [
+          { ...buildMfsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          { ...buildMfsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
+          { ...buildMfsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
+          { ...buildMfsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
+        ];
+      }
+
       // Inject hardcoded KPIs into Client Success Manager (fully hardcoded, ignores DB assignments)
       const csmKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Client Success Manager'

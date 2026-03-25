@@ -43,7 +43,7 @@ const UserManagement = () => {
       // Fetch all roles for the assignment dropdown
       const { data: rolesData, error: rolesError } = await supabase
         .from('roles')
-        .select('key, name')
+        .select('key, name, color')
         .order('display_order');
 
       if (rolesError) throw rolesError;
@@ -313,7 +313,8 @@ const UserManagement = () => {
                     padding: '8px 12px',
                     border: '1px solid #d1d5db',
                     borderRadius: '4px',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    background: 'white'
                   }}
                 />
               </div>
@@ -323,19 +324,21 @@ const UserManagement = () => {
                   Annual Salary
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="salary"
-                  value={formData.salary}
-                  onChange={handleInputChange}
-                  placeholder="50000"
-                  min="0"
-                  step="1000"
+                  value={formData.salary ? Number(formData.salary).toLocaleString() : ''}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                    setFormData(prev => ({ ...prev, salary: raw }));
+                  }}
+                  placeholder="50,000"
                   style={{
                     width: '100%',
                     padding: '8px 12px',
                     border: '1px solid #d1d5db',
                     borderRadius: '4px',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    background: 'white'
                   }}
                 />
               </div>
@@ -524,18 +527,16 @@ const UserManagement = () => {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px' }}>
                       <span style={{ color: '#6b7280', fontSize: '13px' }}>$</span>
                       <input
-                        type="number"
-                        value={user.salary || ''}
+                        type="text"
+                        value={user.salary ? Number(user.salary).toLocaleString() : ''}
                         placeholder="—"
-                        min="0"
-                        step="1000"
-                        onChange={async (e) => {
-                          const newSalary = e.target.value ? parseFloat(e.target.value) : null;
-                          // Optimistic UI update
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/[^0-9]/g, '');
+                          const newSalary = raw ? parseFloat(raw) : null;
                           setUsers(prev => prev.map(u => u.id === user.id ? { ...u, salary: newSalary } : u));
                         }}
-                        onBlur={async (e) => {
-                          const newSalary = e.target.value ? parseFloat(e.target.value) : null;
+                        onBlur={async () => {
+                          const newSalary = user.salary || null;
                           const { error } = await supabase
                             .from('allowed_users')
                             .update({ salary: newSalary, updated_at: new Date().toISOString() })
@@ -563,13 +564,14 @@ const UserManagement = () => {
                         {user.user_roles.map(ur => {
                           const role = roles.find(r => r.key === ur.role_key);
                           return (
-                            <span 
+                            <span
                               key={ur.role_key}
                               style={{
                                 padding: '2px 8px',
-                                background: '#f3f4f6',
+                                background: role?.color || '#f3f4f6',
                                 borderRadius: '4px',
-                                fontSize: '12px'
+                                fontSize: '12px',
+                                fontWeight: '500'
                               }}
                             >
                               {role?.name || ur.role_key}
