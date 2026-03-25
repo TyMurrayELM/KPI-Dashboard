@@ -80,13 +80,15 @@ export const initialPositions = {
     ]
   },
   'quality-specialist': {
-    title: 'Quality Specialist',
+    title: 'Maintenance Quality Specialist',
     salary: 50000,
     bonusPercentage: 10,
     kpis: [
-      { ...KPI_CLIENT_RETENTION },
-      { ...KPI_PUNCH_LIST_CREATION },
-      { ...KPI_PROPERTY_CHECKLIST_ITEM_COMPLETION }
+      { ...KPI_CLIENT_RETENTION, weight: 20 },
+      { ...KPI_PUNCH_LIST_CREATION, weight: 20 },
+      { ...KPI_EXTRA_SERVICES, weight: 20 },
+      { ...KPI_DIRECT_LABOR_MAINTENANCE, weight: 20 },
+      { ...KPI_IRRIGATION_BILLABLE_TIME, weight: 20 }
     ]
   },
   'asset-risk-manager': {
