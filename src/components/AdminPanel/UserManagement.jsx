@@ -458,27 +458,27 @@ const UserManagement = () => {
         overflow: 'hidden'
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead style={{ background: '#f9fafb' }}>
+          <thead style={{ background: '#1e3a5f' }}>
             <tr>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Name
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Email
               </th>
-              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Admin
               </th>
-              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Active
               </th>
-              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Salary
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Assigned Roles
               </th>
-              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Actions
               </th>
             </tr>
