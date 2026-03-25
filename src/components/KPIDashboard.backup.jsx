@@ -355,26 +355,38 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
         ];
       }
 
-      // Modify Client Success Manager: remove Net Maintenance Growth, duplicate Extra Services Revenue for Company
+      // Inject hardcoded KPIs into Client Success Manager (fully hardcoded, ignores DB assignments)
       const csmKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Client Success Manager'
       );
       if (csmKey) {
-        const kpis = transformedPositions[csmKey].kpis;
-        // Remove the first Net Maintenance Growth (keep only one from DB)
-        const nmgIdx = kpis.findIndex(k => k.name === 'Net Maintenance Growth');
-        if (nmgIdx >= 0) kpis.splice(nmgIdx, 1);
-        // Duplicate Extra Services Revenue for Company scope
-        const esrIdx = kpis.findIndex(k => k.name === 'Extra Services Revenue');
-        if (esrIdx >= 0) {
-          const companyEsr = JSON.parse(JSON.stringify(kpis[esrIdx]));
-          companyEsr.scope = 'company';
-          kpis.splice(esrIdx, 0, companyEsr);
-        }
-        // Reorder: all Net Maintenance Growth first, then everything else
-        const nmgKpis = kpis.filter(k => k.name === 'Net Maintenance Growth');
-        const otherKpis = kpis.filter(k => k.name !== 'Net Maintenance Growth');
-        transformedPositions[csmKey].kpis = [...nmgKpis, ...otherKpis];
+        const buildCsmKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 25, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[csmKey].kpis = [
+          { ...buildCsmKpi('Net Maintenance Growth', '', 16, 'company'), weight: 25 },
+          { ...buildCsmKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          { ...buildCsmKpi('Extra Services Revenue', '', 120, 'company'), weight: 25 },
+          { ...buildCsmKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
+        ];
       }
 
       setRoles(rolesData);
