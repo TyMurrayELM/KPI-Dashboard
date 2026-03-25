@@ -428,6 +428,7 @@ const PERIOD_THRESHOLD_FORMULAS = {
   'Net Controllable Income Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
   'Extra Services Revenue (Arbor)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
   'Extra Services Revenue (Spray)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
+  'Client Retention %': { quarterly: { allOrNothingAtTarget: true }, annual: { baseThreshold: 90, scalePerPoint: 0.1 } },
 };
 
 /**
@@ -438,6 +439,17 @@ const PERIOD_THRESHOLD_FORMULAS = {
  * @returns {number} bonus earned
  */
 const applyThresholdFormula = (actual, formula, bonusMax, target) => {
+  // All-or-nothing at the quarter's own target value (used for cascading targets like Client Retention %)
+  if (formula.allOrNothingAtTarget) {
+    return actual >= target ? bonusMax : 0;
+  }
+  // Base threshold with positive scaling: 100% at baseThreshold, +scalePerPoint per point above
+  // e.g. baseThreshold 90, scalePerPoint 0.1: 90% = 100%, 91% = 110%, 95% = 150%, 100% = 200%
+  if (formula.baseThreshold != null && formula.scalePerPoint != null) {
+    if (actual < formula.baseThreshold) return 0;
+    const pointsAbove = actual - formula.baseThreshold;
+    return bonusMax * (1 + pointsAbove * formula.scalePerPoint);
+  }
   // All-or-nothing: full bonus at threshold, $0 below
   if (formula.allOrNothing != null) {
     return actual >= formula.allOrNothing ? bonusMax : 0;

@@ -122,12 +122,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
             const qTarget = config.quarterlyTarget != null
               ? config.quarterlyTarget
               : config.targetType === 'rate' ? annualTarget : annualTarget / 4;
-            const quarters = config.quarters.map(q => ({
+            const quarters = config.quarters.map((q, qi) => ({
               id: q.id,
               period: q.period,
               payDate: q.payDate,
-              target: qTarget,
-              actual: qTarget,
+              target: config.quarterlyTargets ? config.quarterlyTargets[qi] : qTarget,
+              actual: config.quarterlyTargets ? config.quarterlyTargets[qi] : qTarget,
             }));
 
             return {
@@ -285,6 +285,40 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
         transformedPositions[maintOpsKey].kpis = transformedPositions[maintOpsKey].kpis.filter(
           k => k.name !== 'Total Gross Margin % on Completed Jobs'
         );
+      }
+
+      // Inject hardcoded KPIs into Maintenance Operations Manager (same pattern as Arbor/Spray Manager)
+      const maintOpsMgrKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Maintenance Operations Manager'
+      );
+      if (maintOpsMgrKey) {
+        const buildMaintOpsKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 33, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[maintOpsMgrKey].kpis = [
+          { ...buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          { ...buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
+          { ...buildMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
+          { ...buildMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
+        ];
       }
 
       // Modify Client Success Manager: remove Net Maintenance Growth, duplicate Extra Services Revenue for Company

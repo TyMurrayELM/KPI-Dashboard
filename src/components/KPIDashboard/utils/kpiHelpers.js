@@ -53,6 +53,8 @@ export const getQuarterFloorForKPI = (kpiName) => {
       return 50;
     case 'Net Controllable Income Goal':
       return 80;
+    case 'Client Retention %':
+      return 80;
     default:
       return 0;
   }

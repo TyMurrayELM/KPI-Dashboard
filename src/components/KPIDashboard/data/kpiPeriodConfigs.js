@@ -41,6 +41,12 @@ const KPI_OVERRIDES = {
     stepSize: 1,
     targetType: 'rate',
   },
+  'Client Retention %': {
+    unit: '%',
+    stepSize: 0.5,
+    targetType: 'rate',
+    quarterlyTargets: [97.5, 95, 92.5, 90],  // Q1–Q4 cascading thresholds
+  },
   // Gross Margin, Client Retention, etc. — defaults work fine
 };
 
