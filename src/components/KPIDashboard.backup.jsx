@@ -38,7 +38,7 @@ import {
 import KPICard from './KPIDashboard/components/KPICard';
 import PositionHeader from './KPIDashboard/components/PositionHeader';
 
-const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
+const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null }) => {
   const [activeTab, setActiveTab] = useState(null);
   
   // Data from Supabase
@@ -413,6 +413,13 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [] }) => {
           { ...buildCssKpi('Client Retention %', '', 100, 'individual'), weight: 33 },
           { ...buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 33 },
         ];
+      }
+
+      // Override salary with user's personal salary for non-admins
+      if (!isAdmin && userSalary != null) {
+        Object.keys(transformedPositions).forEach(key => {
+          transformedPositions[key].salary = userSalary;
+        });
       }
 
       setRoles(rolesData);

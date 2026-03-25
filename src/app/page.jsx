@@ -88,7 +88,8 @@ export default function Home() {
       setUser(session.user);
       setUserAccess({
         isAdmin: allowedUser.is_admin,
-        allowedRoles: allowedRoles
+        allowedRoles: allowedRoles,
+        salary: allowedUser.salary
       });
       setLoading(false);
     };
@@ -340,9 +341,10 @@ export default function Home() {
         </div>
       </nav>
 
-      <KPIDashboard 
-        isAdmin={userAccess?.isAdmin} 
-        allowedRoles={userAccess?.allowedRoles} 
+      <KPIDashboard
+        isAdmin={userAccess?.isAdmin}
+        allowedRoles={userAccess?.allowedRoles}
+        userSalary={userAccess?.salary}
       />
     </main>
   );

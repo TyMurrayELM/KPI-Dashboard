@@ -13,6 +13,7 @@ const UserManagement = () => {
   const [formData, setFormData] = useState({
     email: '',
     name: '',
+    salary: '',
     is_admin: false,
     is_active: true,
     assigned_roles: []
@@ -85,6 +86,7 @@ const UserManagement = () => {
         .insert([{
           email: formData.email.toLowerCase().trim(),
           name: formData.name,
+          salary: formData.salary ? parseFloat(formData.salary) : null,
           is_admin: formData.is_admin,
           is_active: formData.is_active
         }])
@@ -125,6 +127,7 @@ const UserManagement = () => {
         .from('allowed_users')
         .update({
           name: formData.name,
+          salary: formData.salary ? parseFloat(formData.salary) : null,
           is_admin: formData.is_admin,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()
@@ -192,6 +195,7 @@ const UserManagement = () => {
     setFormData({
       email: user.email,
       name: user.name || '',
+      salary: user.salary || '',
       is_admin: user.is_admin,
       is_active: user.is_active,
       assigned_roles: user.user_roles?.map(r => r.role_key) || []
@@ -203,6 +207,7 @@ const UserManagement = () => {
     setFormData({
       email: '',
       name: '',
+      salary: '',
       is_admin: false,
       is_active: true,
       assigned_roles: []
@@ -264,7 +269,7 @@ const UserManagement = () => {
           </h3>
           
           <form onSubmit={editingUser ? handleUpdate : handleCreate}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
                   Email Address *
@@ -303,6 +308,28 @@ const UserManagement = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="John Smith"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                  Annual Salary
+                </label>
+                <input
+                  type="number"
+                  name="salary"
+                  value={formData.salary}
+                  onChange={handleInputChange}
+                  placeholder="50000"
+                  min="0"
+                  step="1000"
                   style={{
                     width: '100%',
                     padding: '8px 12px',
@@ -445,6 +472,9 @@ const UserManagement = () => {
               <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
                 Active
               </th>
+              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
+                Salary
+              </th>
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: '#6b7280' }}>
                 Assigned Roles
               </th>
@@ -456,7 +486,7 @@ const UserManagement = () => {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={7} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
                   No users found. Add your first user to get started.
                 </td>
               </tr>
@@ -489,6 +519,9 @@ const UserManagement = () => {
                     ) : (
                       <span style={{ color: '#dc2626' }}>✗</span>
                     )}
+                  </td>
+                  <td style={{ padding: '12px', fontSize: '14px', textAlign: 'right', color: '#374151' }}>
+                    {user.salary ? `$${Number(user.salary).toLocaleString()}` : '—'}
                   </td>
                   <td style={{ padding: '12px', fontSize: '13px' }}>
                     {user.user_roles && user.user_roles.length > 0 ? (
