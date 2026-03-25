@@ -521,7 +521,41 @@ const UserManagement = () => {
                     )}
                   </td>
                   <td style={{ padding: '12px', fontSize: '14px', textAlign: 'right', color: '#374151' }}>
-                    {user.salary ? `$${Number(user.salary).toLocaleString()}` : '—'}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px' }}>
+                      <span style={{ color: '#6b7280', fontSize: '13px' }}>$</span>
+                      <input
+                        type="number"
+                        value={user.salary || ''}
+                        placeholder="—"
+                        min="0"
+                        step="1000"
+                        onChange={async (e) => {
+                          const newSalary = e.target.value ? parseFloat(e.target.value) : null;
+                          // Optimistic UI update
+                          setUsers(prev => prev.map(u => u.id === user.id ? { ...u, salary: newSalary } : u));
+                        }}
+                        onBlur={async (e) => {
+                          const newSalary = e.target.value ? parseFloat(e.target.value) : null;
+                          const { error } = await supabase
+                            .from('allowed_users')
+                            .update({ salary: newSalary, updated_at: new Date().toISOString() })
+                            .eq('id', user.id);
+                          if (error) {
+                            alert(`Error updating salary: ${error.message}`);
+                            fetchData();
+                          }
+                        }}
+                        style={{
+                          width: '90px',
+                          padding: '4px 8px',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '4px',
+                          fontSize: '13px',
+                          textAlign: 'right',
+                          background: 'white'
+                        }}
+                      />
+                    </div>
                   </td>
                   <td style={{ padding: '12px', fontSize: '13px' }}>
                     {user.user_roles && user.user_roles.length > 0 ? (
