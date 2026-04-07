@@ -206,9 +206,10 @@ const KPICard = ({
   let scope = scopeConfig[kpi.scope] || scopeConfig.individual;
   // For Maintenance Operations Manager, "Individual" Net Maintenance Growth and
   // Direct Labor Maintenance % are actually branch-level KPIs.
+  const branchPositions = ['Maintenance Operations Manager', 'Maintenance Quality Specialist'];
   const isBranchKpi =
     kpi.scope === 'individual' &&
-    position?.title === 'Maintenance Operations Manager' &&
+    branchPositions.includes(position?.title) &&
     (kpi.name === 'Net Maintenance Growth' || kpi.name === 'Direct Labor Maintenance %');
   if (isBranchKpi) {
     const branchColors = {

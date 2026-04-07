@@ -413,14 +413,36 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.annual = { ...k.annual, actual: 4.2 };
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildMqsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
+          (() => {
+            const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'individual');
+            const branchQ1Values = {
+              'Phoenix - North': -3.7,
+              'Phoenix - SouthEast': -12.9,
+              'Phoenix - SouthWest': 8.8,
+            };
+            if (userBranch && branchQ1Values[userBranch] != null) {
+              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
+            }
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], branchQ1Values };
+          })(),
           (() => {
             const k = buildMqsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
             k.annual = { ...k.annual, actual: 88.3 };
             return { ...k, weight: 20, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildMqsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
+          (() => {
+            const k = buildMqsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
+            const branchQ1Values = {
+              'Phoenix - North': 33.4,
+              'Phoenix - SouthEast': 35.4,
+              'Phoenix - SouthWest': 31,
+            };
+            if (userBranch && branchQ1Values[userBranch] != null) {
+              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
+            }
+            return { ...k, weight: 30, lockedQuarters: ['Q1'], branchQ1Values };
+          })(),
         ];
       }
 

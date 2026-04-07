@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 
 const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest'];
-const BRANCH_ROLE_NAME = 'Maintenance Operations Manager';
+const BRANCH_ROLE_NAMES = ['Maintenance Operations Manager', 'Maintenance Quality Specialist'];
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -25,8 +25,10 @@ const UserManagement = () => {
 
   // Helper: does this set of role keys include the Maintenance Operations Manager role?
   const hasBranchRole = (roleKeys) => {
-    const branchRoleKey = roles.find(r => r.name === BRANCH_ROLE_NAME)?.key;
-    return branchRoleKey ? roleKeys.includes(branchRoleKey) : false;
+    const branchRoleKeys = roles
+      .filter(r => BRANCH_ROLE_NAMES.includes(r.name))
+      .map(r => r.key);
+    return branchRoleKeys.some(k => roleKeys.includes(k));
   };
 
   useEffect(() => {
