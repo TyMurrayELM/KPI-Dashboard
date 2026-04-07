@@ -46,8 +46,8 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
       // pct = (actual - 80) / (140 - 80) * 100
       raw = 80 + ratio * (140 - 80);
     } else if (kpiName === 'Direct Labor Maintenance %') {
-      // Left-to-right: left = 35% (best), right = 50% (worst)
-      raw = 35 + ratio * (50 - 35);
+      // Left-to-right: left = 33% (best), right = 50% (worst)
+      raw = 33 + ratio * (50 - 33);
     } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
       // 50-70 range, left = 50%, right = 70%
       raw = 50 + ratio * (70 - 50);
@@ -94,8 +94,8 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
   } else if (kpiName === 'Extra Services Revenue') {
     pct = actual <= 80 ? 0 : Math.min(100, ((actual - 80) / (140 - 80)) * 100);
   } else if (kpiName === 'Direct Labor Maintenance %') {
-    // Left-to-right: 35% (left) to 50% (right), bar shows position in range
-    pct = actual <= 35 ? 0 : Math.min(100, ((actual - 35) / (50 - 35)) * 100);
+    // Left-to-right: 33% (left) to 50% (right), bar shows position in range
+    pct = actual <= 33 ? 0 : Math.min(100, ((actual - 33) / (50 - 33)) * 100);
   } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
     // 50-70 range
     pct = actual <= 50 ? 0 : Math.min(100, ((actual - 50) / (70 - 50)) * 100);

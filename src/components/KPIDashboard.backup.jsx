@@ -288,7 +288,11 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
           { ...buildSrMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
-          { ...buildSrMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true }), weight: 25 },
+          (() => {
+            const k = buildSrMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
+            k.quarters[0] = { ...k.quarters[0], actual: 33 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
           { ...buildSrMaintOpsKpi('Net Controllable Income Goal',
             'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
             100, 'region-phoenix', { dollarTarget: 2150000 }), weight: 25 },
