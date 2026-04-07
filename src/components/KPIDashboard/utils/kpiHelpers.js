@@ -12,7 +12,7 @@
 export const getMinValueForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Direct Labor Maintenance %':
-      return 33;
+      return 30;
     case 'Client Retention %':
     case 'Punchlist Creation':  // Updated from Visit Note Creation
     case 'Extra Services Revenue':
@@ -48,13 +48,15 @@ export const getQuarterFloorForKPI = (kpiName) => {
     case 'Extra Services Revenue':
       return 80;
     case 'Direct Labor Maintenance %':
-      return 33;
+      return 30;
     case 'Total Gross Margin % on Completed Jobs':
       return 50;
     case 'Net Controllable Income Goal':
       return 80;
     case 'Client Retention %':
       return 80;
+    case 'Net Maintenance Growth':
+      return -15;
     default:
       return 0;
   }

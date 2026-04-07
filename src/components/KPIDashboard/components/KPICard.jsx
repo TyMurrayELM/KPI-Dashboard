@@ -39,15 +39,15 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
         // pct = (actual - 10) / (25 - 10) * 100
         raw = 10 + ratio * (25 - 10);
       } else {
-        // pct = actual / 10 * 100 (0-10 range)
-        raw = ratio * 10;
+        // Quarterly: -15% to 10% range
+        raw = -15 + ratio * (10 - -15);
       }
     } else if (kpiName === 'Extra Services Revenue') {
       // pct = (actual - 80) / (140 - 80) * 100
       raw = 80 + ratio * (140 - 80);
     } else if (kpiName === 'Direct Labor Maintenance %') {
-      // Left-to-right: left = 33% (best), right = 50% (worst)
-      raw = 33 + ratio * (50 - 33);
+      // Left-to-right: left = 30% (best), right = 50% (worst)
+      raw = 30 + ratio * (50 - 30);
     } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
       // 50-70 range, left = 50%, right = 70%
       raw = 50 + ratio * (70 - 50);
@@ -88,14 +88,14 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
     if (variant === 'annual') {
       pct = actual <= 10 ? 0 : Math.min(100, ((actual - 10) / (25 - 10)) * 100);
     } else {
-      // Quarterly: 0-10% range
-      pct = actual <= 0 ? 0 : Math.min(100, (actual / 10) * 100);
+      // Quarterly: -15% to 10% range
+      pct = actual <= -15 ? 0 : Math.min(100, ((actual - -15) / (10 - -15)) * 100);
     }
   } else if (kpiName === 'Extra Services Revenue') {
     pct = actual <= 80 ? 0 : Math.min(100, ((actual - 80) / (140 - 80)) * 100);
   } else if (kpiName === 'Direct Labor Maintenance %') {
-    // Left-to-right: 33% (left) to 50% (right), bar shows position in range
-    pct = actual <= 33 ? 0 : Math.min(100, ((actual - 33) / (50 - 33)) * 100);
+    // Left-to-right: 30% (left) to 50% (right), bar shows position in range
+    pct = actual <= 30 ? 0 : Math.min(100, ((actual - 30) / (50 - 30)) * 100);
   } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
     // 50-70 range
     pct = actual <= 50 ? 0 : Math.min(100, ((actual - 50) / (70 - 50)) * 100);
@@ -172,12 +172,15 @@ const KPICard = ({
   calculateKpiBonus,
   calculateKpiBonusForPeriods,
   calculateTotalBonus,
-  onWeightChange
+  onWeightChange,
+  userBranch,
+  isAdmin
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [editingWeight, setEditingWeight] = useState(false);
   const [weightInput, setWeightInput] = useState(String(kpi.weight));
   const [guideExpanded, setGuideExpanded] = useState(false);
+  const [previewBranch, setPreviewBranch] = useState(userBranch || null);
   const periodBonus = calculateKpiBonusForPeriods(position, index);
   const { perQuarter: perQuarterMax, annual: annualMax } = computePeriodBonusMax(
     position, kpi.weight, kpi.bonusSplit
@@ -200,7 +203,34 @@ const KPICard = ({
     'region-lasvegas':{ label: 'Region - Las Vegas',bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200' },
     individual:       { label: 'Individual',       bg: 'bg-green-100',  text: 'text-green-700',  border: 'border-green-200' },
   };
-  const scope = scopeConfig[kpi.scope] || scopeConfig.individual;
+  let scope = scopeConfig[kpi.scope] || scopeConfig.individual;
+  // For Maintenance Operations Manager, "Individual" Net Maintenance Growth and
+  // Direct Labor Maintenance % are actually branch-level KPIs.
+  const isBranchKpi =
+    kpi.scope === 'individual' &&
+    position?.title === 'Maintenance Operations Manager' &&
+    (kpi.name === 'Net Maintenance Growth' || kpi.name === 'Direct Labor Maintenance %');
+  if (isBranchKpi) {
+    const branchColors = {
+      'Phoenix - North':     { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' },
+      'Phoenix - SouthWest': { bg: 'bg-blue-100',  text: 'text-blue-700',  border: 'border-blue-200' },
+      'Phoenix - SouthEast': { bg: 'bg-red-100',   text: 'text-red-700',   border: 'border-red-200' },
+    };
+    const colors = branchColors[previewBranch] || { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' };
+    scope = {
+      label: previewBranch ? `Branch - ${previewBranch}` : 'Branch',
+      ...colors,
+    };
+  }
+  const branchOptions = kpi.branchQ1Values ? Object.keys(kpi.branchQ1Values) : [];
+  const canToggleBranch = isBranchKpi && isAdmin && branchOptions.length > 0;
+  const handleBranchSelect = (branch) => {
+    setPreviewBranch(branch);
+    const val = kpi.branchQ1Values?.[branch];
+    if (val != null && handleQuarterChange && kpi.quarters?.[0]) {
+      handleQuarterChange(positionKey, index, kpi.quarters[0].id, val);
+    }
+  };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
@@ -223,9 +253,23 @@ const KPICard = ({
               </svg>
               <h3 className="text-sm md:text-lg font-semibold text-gray-800">{kpi.name}</h3>
             </button>
-            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${scope.bg} ${scope.text} ${scope.border}`}>
-              {scope.label}
-            </span>
+            {canToggleBranch ? (
+              <select
+                value={previewBranch || ''}
+                onChange={(e) => handleBranchSelect(e.target.value)}
+                title="Switch branch (admin)"
+                className={`px-2 py-0.5 rounded text-xs font-medium border cursor-pointer ${scope.bg} ${scope.text} ${scope.border} focus:outline-none`}
+              >
+                {!previewBranch && <option value="">— Select branch —</option>}
+                {branchOptions.map(b => (
+                  <option key={b} value={b}>Branch - {b}</option>
+                ))}
+              </select>
+            ) : (
+              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${scope.bg} ${scope.text} ${scope.border}`}>
+                {scope.label}
+              </span>
+            )}
             <span
               className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-gray-100 text-gray-700 border-gray-200 ${onWeightChange ? 'cursor-pointer hover:bg-gray-200' : ''}`}
               title="Weighting of KPI"

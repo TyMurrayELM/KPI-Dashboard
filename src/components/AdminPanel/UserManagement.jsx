@@ -4,6 +4,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 
+const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest'];
+const BRANCH_ROLE_NAME = 'Maintenance Operations Manager';
+
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -14,10 +17,17 @@ const UserManagement = () => {
     email: '',
     name: '',
     salary: '',
+    branch: '',
     is_admin: false,
     is_active: true,
     assigned_roles: []
   });
+
+  // Helper: does this set of role keys include the Maintenance Operations Manager role?
+  const hasBranchRole = (roleKeys) => {
+    const branchRoleKey = roles.find(r => r.name === BRANCH_ROLE_NAME)?.key;
+    return branchRoleKey ? roleKeys.includes(branchRoleKey) : false;
+  };
 
   useEffect(() => {
     fetchData();
@@ -87,6 +97,7 @@ const UserManagement = () => {
           email: formData.email.toLowerCase().trim(),
           name: formData.name,
           salary: formData.salary ? parseFloat(formData.salary) : null,
+          branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
           is_admin: formData.is_admin,
           is_active: formData.is_active
         }])
@@ -128,6 +139,7 @@ const UserManagement = () => {
         .update({
           name: formData.name,
           salary: formData.salary ? parseFloat(formData.salary) : null,
+          branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
           is_admin: formData.is_admin,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()
@@ -196,6 +208,7 @@ const UserManagement = () => {
       email: user.email,
       name: user.name || '',
       salary: user.salary || '',
+      branch: user.branch || '',
       is_admin: user.is_admin,
       is_active: user.is_active,
       assigned_roles: user.user_roles?.map(r => r.role_key) || []
@@ -208,6 +221,7 @@ const UserManagement = () => {
       email: '',
       name: '',
       salary: '',
+      branch: '',
       is_admin: false,
       is_active: true,
       assigned_roles: []
@@ -344,6 +358,35 @@ const UserManagement = () => {
               </div>
             </div>
 
+            {hasBranchRole(formData.assigned_roles) && (
+              <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                  Branch
+                </label>
+                <select
+                  name="branch"
+                  value={formData.branch || ''}
+                  onChange={handleInputChange}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    background: 'white'
+                  }}
+                >
+                  <option value="">— Select branch —</option>
+                  {BRANCH_OPTIONS.map(b => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+                <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                  Used to scope branch-level KPIs for Maintenance Operations Manager.
+                </p>
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <input
@@ -479,6 +522,9 @@ const UserManagement = () => {
                 Salary
               </th>
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+                Branch
+              </th>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Assigned Roles
               </th>
               <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
@@ -489,7 +535,7 @@ const UserManagement = () => {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={8} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
                   No users found. Add your first user to get started.
                 </td>
               </tr>
@@ -557,6 +603,40 @@ const UserManagement = () => {
                         }}
                       />
                     </div>
+                  </td>
+                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                    {hasBranchRole(user.user_roles?.map(r => r.role_key) || []) ? (
+                      <select
+                        value={user.branch || ''}
+                        onChange={async (e) => {
+                          const newBranch = e.target.value || null;
+                          setUsers(prev => prev.map(u => u.id === user.id ? { ...u, branch: newBranch } : u));
+                          const { error } = await supabase
+                            .from('allowed_users')
+                            .update({ branch: newBranch, updated_at: new Date().toISOString() })
+                            .eq('id', user.id);
+                          if (error) {
+                            alert(`Error updating branch: ${error.message}`);
+                            fetchData();
+                          }
+                        }}
+                        style={{
+                          padding: '4px 8px',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '4px',
+                          fontSize: '13px',
+                          background: 'white',
+                          minWidth: '160px'
+                        }}
+                      >
+                        <option value="">— None —</option>
+                        {BRANCH_OPTIONS.map(b => (
+                          <option key={b} value={b}>{b}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '12px' }}>—</span>
+                    )}
                   </td>
                   <td style={{ padding: '12px', fontSize: '13px' }}>
                     {user.user_roles && user.user_roles.length > 0 ? (

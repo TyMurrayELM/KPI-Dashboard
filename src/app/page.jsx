@@ -89,7 +89,8 @@ export default function Home() {
       setUserAccess({
         isAdmin: allowedUser.is_admin,
         allowedRoles: allowedRoles,
-        salary: allowedUser.salary
+        salary: allowedUser.salary,
+        branch: allowedUser.branch
       });
       setLoading(false);
     };
@@ -345,6 +346,7 @@ export default function Home() {
         isAdmin={userAccess?.isAdmin}
         allowedRoles={userAccess?.allowedRoles}
         userSalary={userAccess?.salary}
+        userBranch={userAccess?.branch}
       />
     </main>
   );
