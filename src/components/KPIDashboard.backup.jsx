@@ -207,7 +207,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             k.annual = { ...k.annual, actual: 5.2 };
             return { ...k, weight: 34, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildKpi('Extra Services Revenue', '', 120, 'company'), formulaKey: 'Extra Services Revenue (Arbor)', weight: 33 },
+          (() => {
+            const k = buildKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 88 };
+            k.annual = { ...k.annual, actual: 88 };
+            return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1'] };
+          })(),
           { ...buildKpi('Net Controllable Income Goal',
             'Percentage of Arbor Net Controllable Income goal achieved. Annual target for Phoenix Arbor is $3.5M.',
             100, 'region-phoenix'), dollarTarget: 3500000, weight: 33 },
@@ -247,7 +252,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             k.annual = { ...k.annual, actual: 5.2 };
             return { ...k, weight: 34, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildSprayKpi('Extra Services Revenue', '', 120, 'company'), formulaKey: 'Extra Services Revenue (Spray)', weight: 33 },
+          (() => {
+            const k = buildSprayKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 88 };
+            k.annual = { ...k.annual, actual: 88 };
+            return { ...k, formulaKey: 'Extra Services Revenue (Spray)', weight: 33, lockedQuarters: ['Q1'] };
+          })(),
           { ...buildSprayKpi('Net Controllable Income Goal',
             'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $940K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
             100, 'region-phoenix'), dollarTarget: 940000, weight: 33 },
@@ -287,7 +297,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             k.annual = { ...k.annual, actual: 4.2 };
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildSrMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildSrMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
           (() => {
             const k = buildSrMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
             k.quarters[0] = { ...k.quarters[0], actual: 33 };
@@ -333,7 +348,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
           { ...buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
-          { ...buildMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
+          (() => {
+            const k = buildMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 20, lockedQuarters: ['Q1'] };
+          })(),
           { ...buildMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
         ];
       }
@@ -372,7 +392,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
           { ...buildMqsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
-          { ...buildMqsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
+          (() => {
+            const k = buildMqsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 20, lockedQuarters: ['Q1'] };
+          })(),
           { ...buildMqsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
         ];
       }
@@ -411,7 +436,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
           { ...buildMfsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
-          { ...buildMfsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
+          (() => {
+            const k = buildMfsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 20, lockedQuarters: ['Q1'] };
+          })(),
           { ...buildMfsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
         ];
       }
@@ -455,8 +485,18 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             k.annual = { ...k.annual, actual: 4.2 };
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildCsmKpi('Extra Services Revenue', '', 120, 'company'), weight: 25 },
-          { ...buildCsmKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildCsmKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 88 };
+            k.annual = { ...k.annual, actual: 88 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildCsmKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
         ];
       }
 
@@ -494,7 +534,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
             return { ...k, weight: 34, lockedQuarters: ['Q1'] };
           })(),
           { ...buildCssKpi('Client Retention %', '', 100, 'individual'), weight: 33 },
-          { ...buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 33 },
+          (() => {
+            const k = buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
         ];
       }
 
