@@ -201,7 +201,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[arborKey].kpis = [
-          { ...buildKpi('Net Maintenance Growth', '', 16, 'company'), weight: 34 },
+          (() => {
+            const k = buildKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.annual = { ...k.annual, actual: 5.2 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildKpi('Extra Services Revenue', '', 120, 'company'), formulaKey: 'Extra Services Revenue (Arbor)', weight: 33 },
           { ...buildKpi('Net Controllable Income Goal',
             'Percentage of Arbor Net Controllable Income goal achieved. Annual target for Phoenix Arbor is $3.5M.',
@@ -236,7 +241,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[sprayKey].kpis = [
-          { ...buildSprayKpi('Net Maintenance Growth', '', 16, 'company'), weight: 34 },
+          (() => {
+            const k = buildSprayKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.annual = { ...k.annual, actual: 5.2 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildSprayKpi('Extra Services Revenue', '', 120, 'company'), formulaKey: 'Extra Services Revenue (Spray)', weight: 33 },
           { ...buildSprayKpi('Net Controllable Income Goal',
             'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $940K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
@@ -271,7 +281,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[maintOpsKey].kpis = [
-          { ...buildSrMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildSrMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildSrMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
           { ...buildSrMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true }), weight: 25 },
           { ...buildSrMaintOpsKpi('Net Controllable Income Goal',
@@ -307,7 +322,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[maintOpsMgrKey].kpis = [
-          { ...buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
           { ...buildMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
           { ...buildMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
@@ -341,7 +361,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[mqsKey].kpis = [
-          { ...buildMqsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildMqsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
           { ...buildMqsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
           { ...buildMqsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
@@ -375,7 +400,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[mfsKey].kpis = [
-          { ...buildMfsKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildMfsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildMfsKpi('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
           { ...buildMfsKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 20 },
           { ...buildMfsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
@@ -409,8 +439,18 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[csmKey].kpis = [
-          { ...buildCsmKpi('Net Maintenance Growth', '', 16, 'company'), weight: 25 },
-          { ...buildCsmKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 25 },
+          (() => {
+            const k = buildCsmKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.annual = { ...k.annual, actual: 5.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
+          (() => {
+            const k = buildCsmKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildCsmKpi('Extra Services Revenue', '', 120, 'company'), weight: 25 },
           { ...buildCsmKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 25 },
         ];
@@ -443,7 +483,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null })
         };
 
         transformedPositions[cssKey].kpis = [
-          { ...buildCssKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), weight: 34 },
+          (() => {
+            const k = buildCssKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1'], lockedAnnual: true };
+          })(),
           { ...buildCssKpi('Client Retention %', '', 100, 'individual'), weight: 33 },
           { ...buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix'), weight: 33 },
         ];
