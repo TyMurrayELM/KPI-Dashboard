@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import UserManagement from './UserManagement';
+import UserKpiValues from './UserKpiValues';
 import HeadcountManagement from './HeadcountManagement';
 import RolesAndKPIs from './RolesAndKPIs';
 
@@ -12,6 +13,7 @@ const AdminPanel = () => {
 
   const tabs = [
     { id: 'users', label: 'Manage Users', component: UserManagement },
+    { id: 'user-kpi-values', label: 'User KPI Values', component: UserKpiValues },
     { id: 'headcount', label: 'Headcount & Planning', component: HeadcountManagement },
     { id: 'roles-kpis', label: 'Roles & KPIs', component: RolesAndKPIs },
   ];

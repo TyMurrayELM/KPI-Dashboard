@@ -349,6 +349,7 @@ export default function Home() {
         userSalary={userAccess?.salary}
         userBranch={userAccess?.branch}
         userDepartment={userAccess?.department}
+        userEmail={user?.email}
       />
     </main>
   );

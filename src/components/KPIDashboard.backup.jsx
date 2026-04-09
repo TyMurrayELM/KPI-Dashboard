@@ -38,7 +38,7 @@ import {
 import KPICard from './KPIDashboard/components/KPICard';
 import PositionHeader from './KPIDashboard/components/PositionHeader';
 
-const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null, userDepartment = null }) => {
+const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null, userDepartment = null, userEmail = null }) => {
   const [activeTab, setActiveTab] = useState(null);
   
   // Data from Supabase
@@ -101,6 +101,45 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         .select('*');
 
       if (formulasError) throw formulasError;
+
+      // Fetch per-user KPI actuals (Client Retention % per CSS user, etc.)
+      // Admins fetch everyone's so they can preview each user; non-admins fetch only their own.
+      const userActualsQuery = supabase
+        .from('user_kpi_actuals')
+        .select('user_email, kpi_name, period, actual, locked');
+      const { data: userActualsData, error: userActualsError } = isAdmin
+        ? await userActualsQuery
+        : await userActualsQuery.eq('user_email', userEmail || '');
+      if (userActualsError) throw userActualsError;
+
+      // Build map: { kpiName: { email: { name, Q1: {actual,locked}, ..., Annual: {...} } } }
+      const userActualsByKpi = {};
+      for (const row of userActualsData || []) {
+        if (!userActualsByKpi[row.kpi_name]) userActualsByKpi[row.kpi_name] = {};
+        if (!userActualsByKpi[row.kpi_name][row.user_email]) {
+          userActualsByKpi[row.kpi_name][row.user_email] = { email: row.user_email };
+        }
+        userActualsByKpi[row.kpi_name][row.user_email][row.period] = {
+          actual: row.actual,
+          locked: row.locked,
+        };
+      }
+
+      // For admins, also fetch CSS user names so the picker can show them
+      let cssUserOptions = [];
+      if (isAdmin) {
+        const cssRoleKey = (rolesData || []).find(r => r.name === 'Client Success Specialist')?.key;
+        if (cssRoleKey) {
+          const { data: cssUserRoles } = await supabase
+            .from('user_roles').select('user_email').eq('role_key', cssRoleKey);
+          const emails = [...new Set((cssUserRoles || []).map(r => r.user_email))];
+          if (emails.length > 0) {
+            const { data: cssUsers } = await supabase
+              .from('allowed_users').select('email, name').in('email', emails).order('name');
+            cssUserOptions = (cssUsers || []).map(u => ({ email: u.email, name: u.name || u.email }));
+          }
+        }
+      }
 
       // Transform data into the format your dashboard expects
       const transformedPositions = {};
@@ -591,7 +630,32 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.annual = { ...k.annual, actual: 4.2 };
             return { ...k, weight: 34, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildCssKpi('Client Retention %', '', 100, 'individual'), weight: 33 },
+          (() => {
+            const k = buildCssKpi('Client Retention %', '', 100, 'individual');
+            // Per-user actuals: non-admin → apply own values; admin → leave at default
+            // and let the in-card user picker swap values via handleQuarterChange.
+            const perUserMap = userActualsByKpi['Client Retention %'] || {};
+            const periodToQuarterIdx = { Q1: 0, Q2: 1, Q3: 2, Q4: 3 };
+            if (!isAdmin && userEmail && perUserMap[userEmail]) {
+              const v = perUserMap[userEmail];
+              ['Q1','Q2','Q3','Q4'].forEach(p => {
+                if (v[p]?.actual != null) {
+                  const i = periodToQuarterIdx[p];
+                  k.quarters[i] = { ...k.quarters[i], actual: v[p].actual };
+                }
+              });
+              if (v.Annual?.actual != null) {
+                k.annual = { ...k.annual, actual: v.Annual.actual };
+              }
+            }
+            return {
+              ...k,
+              weight: 33,
+              lockedQuarters: ['Q1'],
+              userValues: perUserMap,
+              userOptions: cssUserOptions,
+            };
+          })(),
           (() => {
             const k = buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 88.3 };

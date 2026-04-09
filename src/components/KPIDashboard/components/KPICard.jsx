@@ -242,6 +242,27 @@ const KPICard = ({
   };
   const deptBadgeColors = departmentColors[positionDepartment] || { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-200' };
 
+  // Per-user KPI picker (admin-only). Mirrors the branch picker pattern.
+  // Driven by kpi.userOptions ([{email,name}]) and kpi.userValues
+  // ({ [email]: { Q1: {actual,locked}, ..., Annual: {...} } }).
+  const isPerUserKpi = isAdmin && Array.isArray(kpi.userOptions) && kpi.userOptions.length > 0;
+  const [previewUserEmail, setPreviewUserEmail] = useState(null);
+  const handleUserSelect = (email) => {
+    setPreviewUserEmail(email || null);
+    if (!email) return;
+    const v = (kpi.userValues || {})[email];
+    if (!v) return;
+    const periodToIdx = { Q1: 0, Q2: 1, Q3: 2, Q4: 3 };
+    ['Q1','Q2','Q3','Q4'].forEach(p => {
+      if (v[p]?.actual != null && handleQuarterChange && kpi.quarters?.[periodToIdx[p]]) {
+        handleQuarterChange(positionKey, index, kpi.quarters[periodToIdx[p]].id, v[p].actual);
+      }
+    });
+    if (v.Annual?.actual != null && handleAnnualChange) {
+      handleAnnualChange(positionKey, index, v.Annual.actual);
+    }
+  };
+
   const branchOptions = kpi.branchQ1Values ? Object.keys(kpi.branchQ1Values) : [];
   const canToggleBranch = isBranchKpi && isAdmin && branchOptions.length > 0;
   const handleBranchSelect = (branch) => {
@@ -289,6 +310,19 @@ const KPICard = ({
               <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${scope.bg} ${scope.text} ${scope.border}`}>
                 {scope.label}
               </span>
+            )}
+            {isPerUserKpi && (
+              <select
+                value={previewUserEmail || ''}
+                onChange={(e) => handleUserSelect(e.target.value)}
+                title="View as user (admin)"
+                className="px-2 py-0.5 rounded text-xs font-medium border bg-indigo-100 text-indigo-700 border-indigo-200 cursor-pointer focus:outline-none"
+              >
+                <option value="">— View as user —</option>
+                {kpi.userOptions.map(u => (
+                  <option key={u.email} value={u.email}>{u.name}</option>
+                ))}
+              </select>
             )}
             {isDepartmentKpi && (
               <span
