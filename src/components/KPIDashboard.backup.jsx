@@ -607,10 +607,10 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           const qTarget = config.quarterlyTarget != null
             ? config.quarterlyTarget
             : config.targetType === 'rate' ? target : target / 4;
-          const quarters = config.quarters.map(q => ({
-            id: q.id, period: q.period, payDate: q.payDate,
-            target: qTarget, actual: qTarget,
-          }));
+          const quarters = config.quarters.map((q, qi) => {
+            const t = config.quarterlyTargets ? config.quarterlyTargets[qi] : qTarget;
+            return { id: q.id, period: q.period, payDate: q.payDate, target: t, actual: t };
+          });
           return {
             name, description, target, actual: target,
             weight: 33, isInverse: false, scope,
