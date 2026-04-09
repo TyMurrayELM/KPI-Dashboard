@@ -174,6 +174,7 @@ const KPICard = ({
   calculateTotalBonus,
   onWeightChange,
   userBranch,
+  userDepartment,
   isAdmin
 }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -223,6 +224,24 @@ const KPICard = ({
       ...colors,
     };
   }
+  // Department badge for hard-coded department-scoped KPIs (e.g. Net Controllable Income Goal).
+  // Department is derived from the position title since these KPIs are hardcoded per role.
+  const positionDepartmentMap = {
+    'Arbor Manager': 'Arbor',
+    'Spray Manager': 'Spray',
+    'Senior Manager of Maintenance Operations': 'Enhancements',
+  };
+  const positionDepartment = positionDepartmentMap[position?.title] || null;
+  const isDepartmentKpi =
+    kpi.name === 'Net Controllable Income Goal' && positionDepartment != null;
+  const departmentColors = {
+    Arbor:        { bg: 'bg-green-100',  text: 'text-green-700',  border: 'border-green-200' },
+    Spray:        { bg: 'bg-red-100',    text: 'text-red-700',    border: 'border-red-200' },
+    Irrigation:   { bg: 'bg-sky-100',    text: 'text-sky-700',    border: 'border-sky-200' },
+    Enhancements: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' },
+  };
+  const deptBadgeColors = departmentColors[positionDepartment] || { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-200' };
+
   const branchOptions = kpi.branchQ1Values ? Object.keys(kpi.branchQ1Values) : [];
   const canToggleBranch = isBranchKpi && isAdmin && branchOptions.length > 0;
   const handleBranchSelect = (branch) => {
@@ -269,6 +288,14 @@ const KPICard = ({
             ) : (
               <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${scope.bg} ${scope.text} ${scope.border}`}>
                 {scope.label}
+              </span>
+            )}
+            {isDepartmentKpi && (
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${deptBadgeColors.bg} ${deptBadgeColors.text} ${deptBadgeColors.border}`}
+                title="Department scope for this KPI"
+              >
+                {`Department - ${positionDepartment}`}
               </span>
             )}
             <span

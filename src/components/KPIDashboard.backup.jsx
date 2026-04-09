@@ -38,7 +38,7 @@ import {
 import KPICard from './KPIDashboard/components/KPICard';
 import PositionHeader from './KPIDashboard/components/PositionHeader';
 
-const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null }) => {
+const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null, userDepartment = null }) => {
   const [activeTab, setActiveTab] = useState(null);
   
   // Data from Supabase
@@ -213,9 +213,13 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.annual = { ...k.annual, actual: 88 };
             return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildKpi('Net Controllable Income Goal',
-            'Percentage of Arbor Net Controllable Income goal achieved. Annual target for Phoenix Arbor is $3.5M.',
-            100, 'region-phoenix'), dollarTarget: 3500000, weight: 33 },
+          (() => {
+            const k = buildKpi('Net Controllable Income Goal',
+              'Percentage of Arbor Net Controllable Income goal achieved. Annual target for Phoenix Arbor is $3.5M.',
+              100, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 47 };
+            return { ...k, dollarTarget: 3500000, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
         ];
       }
 
@@ -258,9 +262,13 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.annual = { ...k.annual, actual: 88 };
             return { ...k, formulaKey: 'Extra Services Revenue (Spray)', weight: 33, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildSprayKpi('Net Controllable Income Goal',
-            'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $940K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
-            100, 'region-phoenix'), dollarTarget: 940000, weight: 33 },
+          (() => {
+            const k = buildSprayKpi('Net Controllable Income Goal',
+              'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $940K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
+              100, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 59 };
+            return { ...k, dollarTarget: 940000, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
         ];
       }
 
@@ -308,9 +316,15 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.quarters[0] = { ...k.quarters[0], actual: 33 };
             return { ...k, weight: 25, lockedQuarters: ['Q1'] };
           })(),
-          { ...buildSrMaintOpsKpi('Net Controllable Income Goal',
-            'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
-            100, 'region-phoenix', { dollarTarget: 2150000 }), weight: 25 },
+          (() => {
+            const k = buildSrMaintOpsKpi('Net Controllable Income Goal',
+              'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
+              100, 'region-phoenix', { dollarTarget: 2150000 });
+            // Q1 actual = $407,907 against Q1 goal of $2.15M / 4 = $537,500
+            const q1Actual = Math.round((407907 / (2150000 / 4)) * 100);
+            k.quarters[0] = { ...k.quarters[0], actual: q1Actual };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
         ];
       }
 
@@ -1035,6 +1049,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
                 calculateTotalBonus={calculateTotalBonus}
                 onWeightChange={handleWeightChange}
                 userBranch={userBranch}
+                userDepartment={userDepartment}
                 isAdmin={isAdmin}
               />
             ))}

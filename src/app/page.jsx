@@ -90,7 +90,8 @@ export default function Home() {
         isAdmin: allowedUser.is_admin,
         allowedRoles: allowedRoles,
         salary: allowedUser.salary,
-        branch: allowedUser.branch
+        branch: allowedUser.branch,
+        department: allowedUser.department
       });
       setLoading(false);
     };
@@ -347,6 +348,7 @@ export default function Home() {
         allowedRoles={userAccess?.allowedRoles}
         userSalary={userAccess?.salary}
         userBranch={userAccess?.branch}
+        userDepartment={userAccess?.department}
       />
     </main>
   );

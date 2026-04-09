@@ -6,6 +6,8 @@ import { supabase } from '../../config/supabaseClient';
 
 const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest'];
 const BRANCH_ROLE_NAMES = ['Maintenance Operations Manager', 'Maintenance Quality Specialist'];
+const DEPARTMENT_OPTIONS = ['Arbor', 'Spray', 'Irrigation', 'Enhancements'];
+const DEPARTMENT_ROLE_NAMES = ['Spray Manager', 'Arbor Manager', 'Senior Manager of Maintenance Operations'];
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +20,7 @@ const UserManagement = () => {
     name: '',
     salary: '',
     branch: '',
+    department: '',
     is_admin: false,
     is_active: true,
     assigned_roles: []
@@ -29,6 +32,14 @@ const UserManagement = () => {
       .filter(r => BRANCH_ROLE_NAMES.includes(r.name))
       .map(r => r.key);
     return branchRoleKeys.some(k => roleKeys.includes(k));
+  };
+
+  // Helper: does this set of role keys include a department-scoped role?
+  const hasDepartmentRole = (roleKeys) => {
+    const deptRoleKeys = roles
+      .filter(r => DEPARTMENT_ROLE_NAMES.includes(r.name))
+      .map(r => r.key);
+    return deptRoleKeys.some(k => roleKeys.includes(k));
   };
 
   useEffect(() => {
@@ -100,6 +111,7 @@ const UserManagement = () => {
           name: formData.name,
           salary: formData.salary ? parseFloat(formData.salary) : null,
           branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
+          department: hasDepartmentRole(formData.assigned_roles) ? (formData.department || null) : null,
           is_admin: formData.is_admin,
           is_active: formData.is_active
         }])
@@ -142,6 +154,7 @@ const UserManagement = () => {
           name: formData.name,
           salary: formData.salary ? parseFloat(formData.salary) : null,
           branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
+          department: hasDepartmentRole(formData.assigned_roles) ? (formData.department || null) : null,
           is_admin: formData.is_admin,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()
@@ -211,6 +224,7 @@ const UserManagement = () => {
       name: user.name || '',
       salary: user.salary || '',
       branch: user.branch || '',
+      department: user.department || '',
       is_admin: user.is_admin,
       is_active: user.is_active,
       assigned_roles: user.user_roles?.map(r => r.role_key) || []
@@ -224,6 +238,7 @@ const UserManagement = () => {
       name: '',
       salary: '',
       branch: '',
+      department: '',
       is_admin: false,
       is_active: true,
       assigned_roles: []
@@ -389,6 +404,35 @@ const UserManagement = () => {
               </div>
             )}
 
+            {hasDepartmentRole(formData.assigned_roles) && (
+              <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                  Department
+                </label>
+                <select
+                  name="department"
+                  value={formData.department || ''}
+                  onChange={handleInputChange}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    background: 'white'
+                  }}
+                >
+                  <option value="">— Select department —</option>
+                  {DEPARTMENT_OPTIONS.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                  Used to scope department-level KPIs (e.g. Net Controllable Income).
+                </p>
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <input
@@ -527,6 +571,9 @@ const UserManagement = () => {
                 Branch
               </th>
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+                Department
+              </th>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Assigned Roles
               </th>
               <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
@@ -537,7 +584,7 @@ const UserManagement = () => {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={9} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
                   No users found. Add your first user to get started.
                 </td>
               </tr>
@@ -634,6 +681,40 @@ const UserManagement = () => {
                         <option value="">— None —</option>
                         {BRANCH_OPTIONS.map(b => (
                           <option key={b} value={b}>{b}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '12px' }}>—</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                    {hasDepartmentRole(user.user_roles?.map(r => r.role_key) || []) ? (
+                      <select
+                        value={user.department || ''}
+                        onChange={async (e) => {
+                          const newDepartment = e.target.value || null;
+                          setUsers(prev => prev.map(u => u.id === user.id ? { ...u, department: newDepartment } : u));
+                          const { error } = await supabase
+                            .from('allowed_users')
+                            .update({ department: newDepartment, updated_at: new Date().toISOString() })
+                            .eq('id', user.id);
+                          if (error) {
+                            alert(`Error updating department: ${error.message}`);
+                            fetchData();
+                          }
+                        }}
+                        style={{
+                          padding: '4px 8px',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '4px',
+                          fontSize: '13px',
+                          background: 'white',
+                          minWidth: '140px'
+                        }}
+                      >
+                        <option value="">— None —</option>
+                        {DEPARTMENT_OPTIONS.map(d => (
+                          <option key={d} value={d}>{d}</option>
                         ))}
                       </select>
                     ) : (
