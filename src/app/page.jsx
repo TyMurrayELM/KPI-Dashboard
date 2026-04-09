@@ -15,6 +15,60 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [userAccess, setUserAccess] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Admin "View as" impersonation
+  const [allUsers, setAllUsers] = useState([]);            // [{ email, name }]
+  const [viewAsEmail, setViewAsEmail] = useState('');
+  const [viewAsAccess, setViewAsAccess] = useState(null);  // mirrors userAccess shape
+
+  // Load list of users for the View As picker once we know the viewer is admin
+  useEffect(() => {
+    if (!userAccess?.isAdmin) return;
+    (async () => {
+      const { data } = await supabase
+        .from('allowed_users')
+        .select('email, name, is_active')
+        .eq('is_active', true)
+        .order('name');
+      setAllUsers((data || []).map(u => ({ email: u.email, name: u.name || u.email })));
+    })();
+  }, [userAccess?.isAdmin]);
+
+  // When admin picks a user to view as, fetch their access profile
+  useEffect(() => {
+    if (!viewAsEmail) { setViewAsAccess(null); return; }
+    (async () => {
+      const { data: u } = await supabase
+        .from('allowed_users')
+        .select('*')
+        .eq('email', viewAsEmail)
+        .single();
+      if (!u) { setViewAsAccess(null); return; }
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role_key')
+        .eq('user_email', viewAsEmail);
+      setViewAsAccess({
+        isAdmin: false, // intentionally false so we see exactly what they see
+        allowedRoles: (roles || []).map(r => r.role_key),
+        salary: u.salary,
+        branch: u.branch,
+        department: u.department,
+        email: u.email,
+        name: u.name || u.email,
+      });
+    })();
+  }, [viewAsEmail]);
+
+  // Effective access — viewAs overrides when active
+  const effective = viewAsAccess || (userAccess && {
+    isAdmin: userAccess.isAdmin,
+    allowedRoles: userAccess.allowedRoles,
+    salary: userAccess.salary,
+    branch: userAccess.branch,
+    department: userAccess.department,
+    email: user?.email,
+    name: user?.email,
+  });
 
   useEffect(() => {
     const checkSessionAndAccess = async () => {
@@ -207,6 +261,51 @@ export default function Home() {
           
           {/* Right Side - User Menu */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* View As (admin only) */}
+            {userAccess?.isAdmin && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <label style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
+                  View as:
+                </label>
+                <select
+                  value={viewAsEmail}
+                  onChange={(e) => setViewAsEmail(e.target.value)}
+                  style={{
+                    padding: '6px 10px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    background: viewAsEmail ? '#fef3c7' : 'white',
+                    color: '#1e293b',
+                    minWidth: '180px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <option value="">— Self (Admin) —</option>
+                  {allUsers.map(u => (
+                    <option key={u.email} value={u.email}>{u.name}</option>
+                  ))}
+                </select>
+                {viewAsEmail && (
+                  <button
+                    onClick={() => setViewAsEmail('')}
+                    title="Exit view-as mode"
+                    style={{
+                      padding: '6px 10px',
+                      background: '#fee2e2',
+                      color: '#991b1b',
+                      border: '1px solid #fca5a5',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Exit
+                  </button>
+                )}
+              </div>
+            )}
             {/* Admin Button */}
             {userAccess?.isAdmin && (
               <Link 
@@ -343,13 +442,30 @@ export default function Home() {
         </div>
       </nav>
 
+      {viewAsAccess && (
+        <div style={{
+          background: '#fef3c7',
+          borderBottom: '1px solid #fcd34d',
+          color: '#78350f',
+          padding: '8px 32px',
+          fontSize: '13px',
+          fontWeight: '500',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+        }}>
+          <span>👁 Viewing as <strong>{viewAsAccess.name}</strong> ({viewAsAccess.email}) — admin features hidden</span>
+        </div>
+      )}
       <KPIDashboard
-        isAdmin={userAccess?.isAdmin}
-        allowedRoles={userAccess?.allowedRoles}
-        userSalary={userAccess?.salary}
-        userBranch={userAccess?.branch}
-        userDepartment={userAccess?.department}
-        userEmail={user?.email}
+        key={effective?.email || 'self'}
+        isAdmin={effective?.isAdmin}
+        allowedRoles={effective?.allowedRoles}
+        userSalary={effective?.salary}
+        userBranch={effective?.branch}
+        userDepartment={effective?.department}
+        userEmail={effective?.email}
       />
     </main>
   );
