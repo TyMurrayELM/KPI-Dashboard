@@ -665,6 +665,52 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into Arbor Sales Specialist (fully hardcoded, ignores DB assignments)
+      const salesSpecKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Arbor Sales Specialist'
+      );
+      if (salesSpecKey) {
+        const buildSalesSpecKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 50, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[salesSpecKey].kpis = [
+          (() => {
+            const k = buildSalesSpecKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildSalesSpecKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildSalesSpecKpi('Arbor Team Sales Goal', '', 100, 'region-phoenix');
+            return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
+        ];
+      }
+
       // Override salary with user's personal salary for non-admins
       if (!isAdmin && userSalary != null) {
         Object.keys(transformedPositions).forEach(key => {
