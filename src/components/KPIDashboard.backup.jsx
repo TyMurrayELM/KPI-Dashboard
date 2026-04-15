@@ -262,6 +262,55 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into Enhancement Manager (same structure as Arbor Manager)
+      const enhMgrKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Enhancement Manager'
+      );
+      if (enhMgrKey) {
+        const buildEnhMgrKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 25, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[enhMgrKey].kpis = [
+          (() => {
+            const k = buildEnhMgrKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.annual = { ...k.annual, actual: 5.2 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildEnhMgrKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 88 };
+            k.annual = { ...k.annual, actual: 88 };
+            return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildEnhMgrKpi('Net Controllable Income Goal',
+              'Percentage of Enhancements Net Controllable Income goal achieved. Annual target for Phoenix Enhancements is $2.15M.',
+              100, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 47 };
+            return { ...k, dollarTarget: 2150000, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
+        ];
+      }
+
       // Inject hardcoded KPIs into Spray Manager (same structure as Arbor Manager)
       const sprayKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Spray Manager'
@@ -706,6 +755,54 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           })(),
           (() => {
             const k = buildSalesSpecKpi('Arbor Team Sales Goal', '', 100, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 100 };
+            k.annual = { ...k.annual, actual: 100 };
+            return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
+        ];
+      }
+
+      // Inject hardcoded KPIs into Enhancement Sales Specialist (fully hardcoded, ignores DB assignments)
+      const enhSalesSpecKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Enhancement Sales Specialist'
+      );
+      if (enhSalesSpecKey) {
+        const buildEnhSalesSpecKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 50, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[enhSalesSpecKey].kpis = [
+          (() => {
+            const k = buildEnhSalesSpecKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 4.2 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildEnhSalesSpecKpi('Extra Services Revenue', '', 120, 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+            k.annual = { ...k.annual, actual: 88.3 };
+            return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildEnhSalesSpecKpi('Enhancement Team Sales Goal', '', 100, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 100 };
             k.annual = { ...k.annual, actual: 100 };
             return { ...k, weight: 33, lockedQuarters: ['Q1'] };
