@@ -7,6 +7,7 @@ import UserManagement from './UserManagement';
 import UserKpiValues from './UserKpiValues';
 import HeadcountManagement from './HeadcountManagement';
 import RolesAndKPIs from './RolesAndKPIs';
+import IncentiveSummary from './IncentiveSummary';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('roles-kpis');
@@ -16,6 +17,7 @@ const AdminPanel = () => {
     { id: 'user-kpi-values', label: 'User KPI Values', component: UserKpiValues },
     { id: 'headcount', label: 'Headcount & Planning', component: HeadcountManagement },
     { id: 'roles-kpis', label: 'Roles & KPIs', component: RolesAndKPIs },
+    { id: 'incentive-summary', label: 'Incentive Summary', component: IncentiveSummary },
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;
