@@ -13,6 +13,13 @@ import { computePeriodBonusMax, calculateQuarterBonus, calculateAnnualBonus } fr
  * Now receives calculateTotalBonus, calculateActualTotalBonus, and calculateKpiBonus as props
  * to use database-driven formulas instead of hardcoded calculations
  */
+const formatEligibilityDate = (iso) => {
+  if (!iso) return '';
+  const [y, m, d] = String(iso).split('-').map(Number);
+  if (!y || !m || !d) return '';
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 const PositionHeader = ({
   activeTab,
   position,
@@ -23,7 +30,8 @@ const PositionHeader = ({
   calculateTotalBonus,
   calculateActualTotalBonus,
   calculateKpiBonus,
-  calculateKpiBonusForPeriods
+  calculateKpiBonusForPeriods,
+  userEligibilityDate
 }) => {
   const summary = getKpiSummary(position);
 
@@ -205,12 +213,22 @@ const PositionHeader = ({
             </div>
           </div>
           
-          {/* Period indicator - hidden on mobile */}
-          <div className="hidden md:flex items-center text-xs bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200 text-blue-700 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span>Period: <span className="font-medium">Jan-Dec 2026</span></span>
+          {/* Eligibility + Period indicators - hidden on mobile */}
+          <div className="hidden md:flex items-center gap-2">
+            {userEligibilityDate && (
+              <div className="flex items-center text-xs bg-amber-50 px-3 py-1.5 rounded-md border border-amber-200 text-amber-700 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-500 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Eligible: <span className="font-medium">{formatEligibilityDate(userEligibilityDate)}</span></span>
+              </div>
+            )}
+            <div className="flex items-center text-xs bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200 text-blue-700 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Period: <span className="font-medium">Jan-Dec 2026</span></span>
+            </div>
           </div>
         </div>
         

@@ -38,7 +38,7 @@ import {
 import KPICard from './KPIDashboard/components/KPICard';
 import PositionHeader from './KPIDashboard/components/PositionHeader';
 
-const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null, userDepartment = null, userEmail = null }) => {
+const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null, userDepartment = null, userEmail = null, userEligibilityDate = null }) => {
   const [activeTab, setActiveTab] = useState(null);
   
   // Data from Supabase
@@ -1233,6 +1233,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             calculateActualTotalBonus={calculateActualTotalBonus}
             calculateKpiBonus={calculateKpiBonus}
             calculateKpiBonusForPeriods={calculateKpiBonusForPeriods}
+            userEligibilityDate={userEligibilityDate}
           />
 
           <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Key Performance Indicators</h2>

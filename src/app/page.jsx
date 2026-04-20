@@ -53,6 +53,7 @@ export default function Home() {
         salary: u.salary,
         branch: u.branch,
         department: u.department,
+        eligibility_date: u.eligibility_date,
         email: u.email,
         name: u.name || u.email,
       });
@@ -66,6 +67,7 @@ export default function Home() {
     salary: userAccess.salary,
     branch: userAccess.branch,
     department: userAccess.department,
+    eligibility_date: userAccess.eligibility_date,
     email: user?.email,
     name: user?.email,
   });
@@ -145,7 +147,8 @@ export default function Home() {
         allowedRoles: allowedRoles,
         salary: allowedUser.salary,
         branch: allowedUser.branch,
-        department: allowedUser.department
+        department: allowedUser.department,
+        eligibility_date: allowedUser.eligibility_date
       });
       setLoading(false);
     };
@@ -466,6 +469,7 @@ export default function Home() {
         userBranch={effective?.branch}
         userDepartment={effective?.department}
         userEmail={effective?.email}
+        userEligibilityDate={effective?.eligibility_date}
       />
     </main>
   );

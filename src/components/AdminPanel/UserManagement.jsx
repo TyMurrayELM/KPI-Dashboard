@@ -21,6 +21,7 @@ const UserManagement = () => {
     salary: '',
     branch: '',
     department: '',
+    eligibility_date: '',
     is_admin: false,
     is_active: true,
     assigned_roles: []
@@ -112,6 +113,7 @@ const UserManagement = () => {
           salary: formData.salary ? parseFloat(formData.salary) : null,
           branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
           department: hasDepartmentRole(formData.assigned_roles) ? (formData.department || null) : null,
+          eligibility_date: formData.eligibility_date || null,
           is_admin: formData.is_admin,
           is_active: formData.is_active
         }])
@@ -155,6 +157,7 @@ const UserManagement = () => {
           salary: formData.salary ? parseFloat(formData.salary) : null,
           branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
           department: hasDepartmentRole(formData.assigned_roles) ? (formData.department || null) : null,
+          eligibility_date: formData.eligibility_date || null,
           is_admin: formData.is_admin,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()
@@ -225,6 +228,7 @@ const UserManagement = () => {
       salary: user.salary || '',
       branch: user.branch || '',
       department: user.department || '',
+      eligibility_date: user.eligibility_date || '',
       is_admin: user.is_admin,
       is_active: user.is_active,
       assigned_roles: user.user_roles?.map(r => r.role_key) || []
@@ -239,6 +243,7 @@ const UserManagement = () => {
       salary: '',
       branch: '',
       department: '',
+      eligibility_date: '',
       is_admin: false,
       is_active: true,
       assigned_roles: []
@@ -373,6 +378,29 @@ const UserManagement = () => {
                   }}
                 />
               </div>
+            </div>
+
+            <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                Eligibility Date
+              </label>
+              <input
+                type="date"
+                name="eligibility_date"
+                value={formData.eligibility_date || ''}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  background: 'white'
+                }}
+              />
+              <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                Used for pro-rated payouts; shown on user dashboard. Leave blank for full eligibility.
+              </p>
             </div>
 
             {hasBranchRole(formData.assigned_roles) && (
@@ -574,6 +602,9 @@ const UserManagement = () => {
                 Department
               </th>
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+                Eligibility
+              </th>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Assigned Roles
               </th>
               <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
@@ -584,7 +615,7 @@ const UserManagement = () => {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={9} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={10} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
                   No users found. Add your first user to get started.
                 </td>
               </tr>
@@ -720,6 +751,34 @@ const UserManagement = () => {
                     ) : (
                       <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '12px' }}>—</span>
                     )}
+                  </td>
+                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                    <input
+                      type="date"
+                      value={user.eligibility_date || ''}
+                      onChange={(e) => {
+                        const newDate = e.target.value || null;
+                        setUsers(prev => prev.map(u => u.id === user.id ? { ...u, eligibility_date: newDate } : u));
+                      }}
+                      onBlur={async () => {
+                        const newDate = user.eligibility_date || null;
+                        const { error } = await supabase
+                          .from('allowed_users')
+                          .update({ eligibility_date: newDate, updated_at: new Date().toISOString() })
+                          .eq('id', user.id);
+                        if (error) {
+                          alert(`Error updating eligibility date: ${error.message}`);
+                          fetchData();
+                        }
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '4px',
+                        fontSize: '13px',
+                        background: 'white',
+                      }}
+                    />
                   </td>
                   <td style={{ padding: '12px', fontSize: '13px' }}>
                     {user.user_roles && user.user_roles.length > 0 ? (
