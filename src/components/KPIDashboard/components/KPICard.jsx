@@ -47,6 +47,8 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
       raw = 80 + ratio * (140 - 80);
     } else if (kpiName === 'Arbor Team Sales Goal' && variant === 'annual') {
       raw = ratio * 120;
+    } else if (kpiName === 'Enhancement Team Sales Goal') {
+      raw = ratio * 120;
     } else if (kpiName === 'Direct Labor Maintenance %') {
       // Left-to-right: left = 30% (best), right = 50% (worst)
       raw = 30 + ratio * (50 - 30);
@@ -97,6 +99,8 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
     pct = actual <= 80 ? 0 : Math.min(100, ((actual - 80) / (140 - 80)) * 100);
   } else if (kpiName === 'Arbor Team Sales Goal' && variant === 'annual') {
     pct = Math.min(100, (actual / 120) * 100);
+  } else if (kpiName === 'Enhancement Team Sales Goal') {
+    pct = Math.min(100, (actual / 120) * 100);
   } else if (kpiName === 'Direct Labor Maintenance %') {
     // Left-to-right: 30% (left) to 50% (right), bar shows position in range
     pct = actual <= 30 ? 0 : Math.min(100, ((actual - 30) / (50 - 30)) * 100);
@@ -130,7 +134,7 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
   } else if (kpiName === 'Net Controllable Income Goal') {
     // Linear: green at 100%+, yellow 90-100%, red below 90%
     barColor = actual >= 100 ? 'bg-green-500' : actual >= 90 ? 'bg-yellow-400' : actual > 80 ? 'bg-red-300' : 'bg-gray-300';
-  } else if (kpiName === 'Arbor Team Sales Goal') {
+  } else if (kpiName === 'Arbor Team Sales Goal' || kpiName === 'Enhancement Team Sales Goal') {
     barColor = actual >= 100 ? 'bg-green-500' : pct > 0 ? 'bg-yellow-400' : 'bg-gray-300';
   } else if (variant === 'annual') {
     barColor = pct >= 100 ? 'bg-blue-500' : pct > 0 ? 'bg-blue-300' : 'bg-gray-300';

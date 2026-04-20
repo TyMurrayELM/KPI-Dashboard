@@ -85,6 +85,8 @@ export const getMaxValueForKPI = (kpiName) => {
   switch(kpiName) {
     case 'Direct Labor Maintenance %':
       return 50;
+    case 'Enhancement Team Sales Goal':
+      return 120;
     case 'Extra Services Revenue':
       return 140;
     case 'Total Gross Margin % on Completed Jobs':
@@ -120,6 +122,7 @@ export const getAnnualMaxValueForKPI = (kpiName) => {
     case 'Net Controllable Income Goal':
       return 130;
     case 'Arbor Team Sales Goal':
+    case 'Enhancement Team Sales Goal':
       return 120;
     default:
       return getMaxValueForKPI(kpiName);

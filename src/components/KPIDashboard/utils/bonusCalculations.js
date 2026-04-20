@@ -429,6 +429,7 @@ const PERIOD_THRESHOLD_FORMULAS = {
   'Extra Services Revenue (Arbor)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
   'Extra Services Revenue (Spray)': { quarterly: { allOrNothing: 120 }, annual: { proportional: true, threshold: 120 } },
   'Arbor Team Sales Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
+  'Enhancement Team Sales Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
   'Client Retention %': { quarterly: { allOrNothingAtTarget: true }, annual: { baseThreshold: 90, scalePerPoint: 0.1 } },
 };
 
