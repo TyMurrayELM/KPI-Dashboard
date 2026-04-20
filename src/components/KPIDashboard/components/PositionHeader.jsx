@@ -13,11 +13,43 @@ import { computePeriodBonusMax, calculateQuarterBonus, calculateAnnualBonus } fr
  * Now receives calculateTotalBonus, calculateActualTotalBonus, and calculateKpiBonus as props
  * to use database-driven formulas instead of hardcoded calculations
  */
+const PERFORMANCE_YEAR = 2026;
+
+// [startMonth, endMonth] inclusive, 0-indexed
+const QUARTER_MONTHS = {
+  Q1: [0, 2],
+  Q2: [3, 5],
+  Q3: [6, 8],
+  Q4: [9, 11],
+};
+const YEAR_MONTHS = [0, 11];
+
 const formatEligibilityDate = (iso) => {
   if (!iso) return '';
   const [y, m, d] = String(iso).split('-').map(Number);
   if (!y || !m || !d) return '';
   return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+// Parse YYYY-MM-DD as a local-midnight Date (avoids UTC shift).
+const parseEligibilityDate = (iso) => {
+  if (!iso) return null;
+  const [y, m, d] = String(iso).split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+};
+
+// Fraction of a period's months the user is eligible for, counting the
+// eligibility-date's month as eligible (e.g. start Feb 15 → Q1 = 2/3 = 0.67).
+const getProrationFactor = (eligibilityDate, startMonth, endMonth) => {
+  if (!eligibilityDate) return 1;
+  const eligYear = eligibilityDate.getFullYear();
+  const eligMonth = eligibilityDate.getMonth();
+  if (eligYear < PERFORMANCE_YEAR) return 1;
+  if (eligYear > PERFORMANCE_YEAR) return 0;
+  if (eligMonth <= startMonth) return 1;
+  if (eligMonth > endMonth) return 0;
+  return (endMonth - eligMonth + 1) / (endMonth - startMonth + 1);
 };
 
 const PositionHeader = ({
@@ -53,6 +85,22 @@ const PositionHeader = ({
       totalAnnualBonus += calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, kpi.name);
     }
   });
+
+  // Compute pro-ration factors from eligibility date (null / on-or-before Jan 1 → no pro-ration)
+  const eligibilityDate = parseEligibilityDate(userEligibilityDate);
+  const quarterFactors = {
+    Q1: getProrationFactor(eligibilityDate, QUARTER_MONTHS.Q1[0], QUARTER_MONTHS.Q1[1]),
+    Q2: getProrationFactor(eligibilityDate, QUARTER_MONTHS.Q2[0], QUARTER_MONTHS.Q2[1]),
+    Q3: getProrationFactor(eligibilityDate, QUARTER_MONTHS.Q3[0], QUARTER_MONTHS.Q3[1]),
+    Q4: getProrationFactor(eligibilityDate, QUARTER_MONTHS.Q4[0], QUARTER_MONTHS.Q4[1]),
+  };
+  const annualFactor = getProrationFactor(eligibilityDate, YEAR_MONTHS[0], YEAR_MONTHS[1]);
+  const isProrated =
+    eligibilityDate && (
+      annualFactor < 1 ||
+      quarterFactors.Q1 < 1 || quarterFactors.Q2 < 1 ||
+      quarterFactors.Q3 < 1 || quarterFactors.Q4 < 1
+    );
   
   // State for formatted salary display
   const [displaySalary, setDisplaySalary] = useState(position.salary.toLocaleString('en-US'));
@@ -141,13 +189,30 @@ const PositionHeader = ({
             {formatCurrency(calculateActualTotalBonus(position, activeTab))}
           </p>
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
-            {['Q1','Q2','Q3','Q4'].map(qId => (
-              <span key={qId} className="text-xs text-gray-500">
-                {qId} <span className="font-medium text-green-600">{formatCurrency(quarterTotals[qId])}</span>
-              </span>
-            ))}
+            {['Q1','Q2','Q3','Q4'].map(qId => {
+              const full = quarterTotals[qId];
+              const prorated = full * quarterFactors[qId];
+              const showProrated = isProrated && quarterFactors[qId] < 1;
+              return (
+                <span key={qId} className="text-xs text-gray-500">
+                  {qId}{' '}
+                  {showProrated && (
+                    <span className="line-through text-green-600 mr-1">{formatCurrency(full)}</span>
+                  )}
+                  <span className={`font-medium ${showProrated ? 'text-amber-600' : 'text-green-600'}`}>
+                    {formatCurrency(showProrated ? prorated : full)}
+                  </span>
+                </span>
+              );
+            })}
             <span className="text-xs text-gray-500">
-              YE <span className="font-medium text-blue-600">{formatCurrency(totalAnnualBonus)}</span>
+              YE{' '}
+              {isProrated && annualFactor < 1 && (
+                <span className="line-through text-blue-600 mr-1">{formatCurrency(totalAnnualBonus)}</span>
+              )}
+              <span className={`font-medium ${isProrated && annualFactor < 1 ? 'text-amber-600' : 'text-blue-600'}`}>
+                {formatCurrency(isProrated && annualFactor < 1 ? totalAnnualBonus * annualFactor : totalAnnualBonus)}
+              </span>
             </span>
           </div>
         </div>
