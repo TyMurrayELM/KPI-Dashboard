@@ -1260,6 +1260,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
                 onWeightChange={handleWeightChange}
                 userBranch={userBranch}
                 userDepartment={userDepartment}
+                userEligibilityDate={userEligibilityDate}
                 isAdmin={isAdmin}
               />
             ))}

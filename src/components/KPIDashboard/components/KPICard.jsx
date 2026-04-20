@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { formatCurrency, formatKPIActual } from '../utils/formatters';
 import { computePeriodBonusMax } from '../utils/bonusCalculations';
 import { getMinValueForKPI, getMaxValueForKPI, getAnnualMaxValueForKPI, getQuarterFloorForKPI, getAnnualMinValueForKPI } from '../utils/kpiHelpers';
+import { QUARTER_MONTHS, YEAR_MONTHS, parseEligibilityDate, getProrationMonths } from '../utils/proration';
 
 /**
  * Green checkmark SVG — shown when a quarter/annual target is met.
@@ -185,8 +186,10 @@ const KPICard = ({
   onWeightChange,
   userBranch,
   userDepartment,
+  userEligibilityDate,
   isAdmin
 }) => {
+  const eligibilityDate = parseEligibilityDate(userEligibilityDate);
   const [collapsed, setCollapsed] = useState(false);
   const [editingWeight, setEditingWeight] = useState(false);
   const [weightInput, setWeightInput] = useState(String(kpi.weight));
@@ -405,6 +408,11 @@ const KPICard = ({
             const onTarget = isQuarterOnTarget(q);
             const qMin = getQuarterFloorForKPI(kpi.name);
             const qMax = getMaxValueForKPI(kpi.name);
+            const qMonthRange = QUARTER_MONTHS[q.id];
+            const qProration = qMonthRange
+              ? getProrationMonths(eligibilityDate, qMonthRange[0], qMonthRange[1])
+              : null;
+            const showQProration = qProration && qProration.eligibleMonths < qProration.totalMonths;
 
             return (
               <div key={q.id} className="grid grid-cols-12 gap-2 items-center px-3 py-2">
@@ -460,6 +468,14 @@ const KPICard = ({
 
                 {/* Bonus earned / available + check */}
                 <div className="col-span-3 sm:col-span-3 flex items-center justify-end space-x-1">
+                  {showQProration && (
+                    <span
+                      className="text-[10px] font-medium text-amber-600 italic mr-1"
+                      title={`Eligible for ${qProration.eligibleMonths} of ${qProration.totalMonths} months this quarter`}
+                    >
+                      Pro-rated {qProration.eligibleMonths}/{qProration.totalMonths}
+                    </span>
+                  )}
                   {kpi.lockedQuarters?.includes(q.id) && <LockIcon />}
                   <span className={`text-xs font-medium ${qBonus > 0 ? 'text-green-600' : 'text-black'}`}>
                     {formatCurrency(qBonus)}

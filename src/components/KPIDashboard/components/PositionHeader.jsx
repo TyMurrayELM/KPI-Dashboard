@@ -5,51 +5,16 @@ import { formatCurrency } from '../utils/formatters';
 import { getPerformanceStatusColor } from '../utils/styles';
 import { getKpiSummary } from '../utils/kpiHelpers';
 import { computePeriodBonusMax, calculateQuarterBonus, calculateAnnualBonus } from '../utils/bonusCalculations';
-
-/**
- * Position Header Component
- * Displays salary, bonus info, KPI summary, and bonus breakdown
- * 
- * Now receives calculateTotalBonus, calculateActualTotalBonus, and calculateKpiBonus as props
- * to use database-driven formulas instead of hardcoded calculations
- */
-const PERFORMANCE_YEAR = 2026;
-
-// [startMonth, endMonth] inclusive, 0-indexed
-const QUARTER_MONTHS = {
-  Q1: [0, 2],
-  Q2: [3, 5],
-  Q3: [6, 8],
-  Q4: [9, 11],
-};
-const YEAR_MONTHS = [0, 11];
+import {
+  QUARTER_MONTHS, YEAR_MONTHS,
+  parseEligibilityDate, getProrationFactor,
+} from '../utils/proration';
 
 const formatEligibilityDate = (iso) => {
   if (!iso) return '';
   const [y, m, d] = String(iso).split('-').map(Number);
   if (!y || !m || !d) return '';
   return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
-
-// Parse YYYY-MM-DD as a local-midnight Date (avoids UTC shift).
-const parseEligibilityDate = (iso) => {
-  if (!iso) return null;
-  const [y, m, d] = String(iso).split('-').map(Number);
-  if (!y || !m || !d) return null;
-  return new Date(y, m - 1, d);
-};
-
-// Fraction of a period's months the user is eligible for, counting the
-// eligibility-date's month as eligible (e.g. start Feb 15 → Q1 = 2/3 = 0.67).
-const getProrationFactor = (eligibilityDate, startMonth, endMonth) => {
-  if (!eligibilityDate) return 1;
-  const eligYear = eligibilityDate.getFullYear();
-  const eligMonth = eligibilityDate.getMonth();
-  if (eligYear < PERFORMANCE_YEAR) return 1;
-  if (eligYear > PERFORMANCE_YEAR) return 0;
-  if (eligMonth <= startMonth) return 1;
-  if (eligMonth > endMonth) return 0;
-  return (endMonth - eligMonth + 1) / (endMonth - startMonth + 1);
 };
 
 const PositionHeader = ({
