@@ -39,11 +39,14 @@ const PositionHeader = ({
   let totalAnnualMax = 0;
   position.kpis.forEach(kpi => {
     if (kpi.hasPeriods) {
+      const excluded = new Set(kpi.excludedQuarters || []);
+      const activeQuarters = (kpi.quarters?.length || 4) - excluded.size;
       const { perQuarter, annual: annualMax } = computePeriodBonusMax(
-        position, kpi.weight, kpi.bonusSplit
+        position, kpi.weight, kpi.bonusSplit, activeQuarters
       );
       totalAnnualMax += annualMax;
       (kpi.quarters || []).forEach(q => {
+        if (excluded.has(q.id)) return;
         quarterTotals[q.id] = (quarterTotals[q.id] || 0) + calculateQuarterBonus(q, kpi.isInverse, perQuarter, kpi.name);
         quarterMaxes[q.id] = (quarterMaxes[q.id] || 0) + perQuarter;
       });
@@ -276,10 +279,12 @@ const PositionHeader = ({
               // Compute max from period-based bonus model
               let maxKpiBonus;
               if (kpi.hasPeriods) {
+                const kpiExcluded = new Set(kpi.excludedQuarters || []);
+                const kpiActive = (kpi.quarters?.length || 4) - kpiExcluded.size;
                 const { perQuarter, annual } = computePeriodBonusMax(
-                  position, kpi.weight, kpi.bonusSplit
+                  position, kpi.weight, kpi.bonusSplit, kpiActive
                 );
-                maxKpiBonus = perQuarter * 4 + annual;
+                maxKpiBonus = perQuarter * kpiActive + annual;
               } else {
                 maxKpiBonus = calculateTotalBonus(position) / position.kpis.length;
               }

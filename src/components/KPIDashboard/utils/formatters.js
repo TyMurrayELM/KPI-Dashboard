@@ -70,5 +70,8 @@ export const formatKPIActual = (value, unit) => {
   if (unit === '$') {
     return formatCurrency(value);
   }
+  if (unit === 'days') {
+    return `${value} days`;
+  }
   return `${value}%`;
 };

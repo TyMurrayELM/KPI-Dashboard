@@ -47,6 +47,17 @@ const KPI_OVERRIDES = {
     targetType: 'rate',
     quarterlyTargets: [97.5, 95, 92.5, 90],  // Q1–Q4 cascading thresholds
   },
+  'Days to Accounting Close': {
+    unit: 'days',
+    stepSize: 1,
+    targetType: 'rate',
+    quarterlyTarget: 24,  // 8 business days × 3 months per quarter
+  },
+  '% of Aging Over 60 Days': {
+    unit: '%',
+    stepSize: 0.5,
+    targetType: 'rate',
+  },
   // Gross Margin, Client Retention, etc. — defaults work fine
 };
 

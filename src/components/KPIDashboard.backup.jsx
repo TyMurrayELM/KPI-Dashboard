@@ -810,6 +810,106 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into Accounting Specialist (fully hardcoded, ignores DB assignments)
+      const acctFinKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Accounting Specialist'
+      );
+      if (acctFinKey) {
+        const buildAcctFinKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 50, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[acctFinKey].kpis = [
+          (() => {
+            const k = buildAcctFinKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.annual = { ...k.annual, actual: 5.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildAcctFinKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 88 };
+            k.annual = { ...k.annual, actual: 88 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildAcctFinKpi('Days to Accounting Close', '', 72, 'company', { isInverse: true });
+            return { ...k, weight: 25, excludedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildAcctFinKpi('% of Aging Over 60 Days', '', 10, 'company', { isInverse: true });
+            return { ...k, weight: 25 };
+          })(),
+        ];
+      }
+
+      // Inject hardcoded KPIs into Financial Specialist (fully hardcoded, ignores DB assignments)
+      const finSpecKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Financial Specialist'
+      );
+      if (finSpecKey) {
+        const buildFinSpecKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 34, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+
+        transformedPositions[finSpecKey].kpis = [
+          (() => {
+            const k = buildFinSpecKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.annual = { ...k.annual, actual: 5.2 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildFinSpecKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 88 };
+            k.annual = { ...k.annual, actual: 88 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildFinSpecKpi('Days to Accounting Close', '', 72, 'company', { isInverse: true });
+            return { ...k, weight: 25, excludedQuarters: ['Q1'] };
+          })(),
+          (() => {
+            const k = buildFinSpecKpi('% of Aging Over 60 Days', '', 10, 'company', { isInverse: true });
+            return { ...k, weight: 25 };
+          })(),
+        ];
+      }
+
       // Override salary with user's personal salary for non-admins
       if (!isAdmin && userSalary != null) {
         Object.keys(transformedPositions).forEach(key => {
@@ -832,14 +932,20 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
   // Bonus calculation using period-based proportional model
   const calculateKpiBonusForPeriods = useCallback((position, kpiIndex) => {
     const kpi = position.kpis[kpiIndex];
+    const excluded = new Set(kpi.excludedQuarters || []);
+    const activeQuarters = (kpi.quarters?.length || 4) - excluded.size;
     const { perQuarter, annual: annualMax } = computePeriodBonusMax(
-      position, kpi.weight, kpi.bonusSplit
+      position, kpi.weight, kpi.bonusSplit, activeQuarters
     );
 
     // Sum quarterly bonuses
     let quarterlyTotal = 0;
     const quarterBonuses = {};
     for (const q of kpi.quarters) {
+      if (excluded.has(q.id)) {
+        quarterBonuses[q.id] = 0;
+        continue;
+      }
       const formulaKey = kpi.formulaKey || kpi.name;
       const qBonus = calculateQuarterBonus(q, kpi.isInverse, perQuarter, formulaKey);
       quarterBonuses[q.id] = qBonus;

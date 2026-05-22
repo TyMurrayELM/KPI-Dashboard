@@ -453,6 +453,62 @@ export const buildPositions = ({
     ];
   }
 
+  // --- Accounting Specialist ---
+  const acctFinKey = findKey('Accounting Specialist');
+  if (acctFinKey) {
+    const build = makeKpiBuilder(34);
+    transformedPositions[acctFinKey].kpis = [
+      (() => {
+        const k = build('Net Maintenance Growth', '', 16, 'company');
+        k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.annual = { ...k.annual, actual: 5.2 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+      })(),
+      (() => {
+        const k = build('Extra Services Revenue', '', 120, 'company');
+        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.annual = { ...k.annual, actual: 88 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+      })(),
+      (() => {
+        const k = build('Days to Accounting Close', '', 72, 'company', { isInverse: true });
+        return { ...k, weight: 25, excludedQuarters: ['Q1'] };
+      })(),
+      (() => {
+        const k = build('% of Aging Over 60 Days', '', 10, 'company', { isInverse: true });
+        return { ...k, weight: 25 };
+      })(),
+    ];
+  }
+
+  // --- Financial Specialist ---
+  const finSpecKey = findKey('Financial Specialist');
+  if (finSpecKey) {
+    const build = makeKpiBuilder(34);
+    transformedPositions[finSpecKey].kpis = [
+      (() => {
+        const k = build('Net Maintenance Growth', '', 16, 'company');
+        k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.annual = { ...k.annual, actual: 5.2 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+      })(),
+      (() => {
+        const k = build('Extra Services Revenue', '', 120, 'company');
+        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.annual = { ...k.annual, actual: 88 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+      })(),
+      (() => {
+        const k = build('Days to Accounting Close', '', 72, 'company', { isInverse: true });
+        return { ...k, weight: 25, excludedQuarters: ['Q1'] };
+      })(),
+      (() => {
+        const k = build('% of Aging Over 60 Days', '', 10, 'company', { isInverse: true });
+        return { ...k, weight: 25 };
+      })(),
+    ];
+  }
+
   // Override salary with user's personal salary (non-admin or admin-viewing-user)
   if (userSalary != null) {
     Object.keys(transformedPositions).forEach(key => {

@@ -129,6 +129,12 @@ const ProgressBar = ({ actual, target, isInverse, variant = 'default', kpiName, 
   } else if (kpiName === 'Direct Labor Maintenance %') {
     // Lower is better: green at 40% or below, red above 40%
     barColor = actual <= 40 ? 'bg-green-500' : 'bg-red-400';
+  } else if (kpiName === 'Days to Accounting Close') {
+    // Lower is better, all-or-nothing: green at/below target, red above
+    barColor = actual <= target ? 'bg-green-500' : 'bg-red-400';
+  } else if (kpiName === '% of Aging Over 60 Days') {
+    // Lower is better, all-or-nothing: green at/below target, red above
+    barColor = actual <= target ? 'bg-green-500' : 'bg-red-400';
   } else if (kpiName === 'Total Gross Margin % on Completed Jobs') {
     // All-or-nothing at 60%
     barColor = actual >= 60 ? 'bg-green-500' : actual > 50 ? 'bg-red-300' : 'bg-gray-300';
@@ -196,10 +202,12 @@ const KPICard = ({
   const [guideExpanded, setGuideExpanded] = useState(false);
   const [previewBranch, setPreviewBranch] = useState(userBranch || null);
   const periodBonus = calculateKpiBonusForPeriods(position, index);
+  const excludedQuarters = new Set(kpi.excludedQuarters || []);
+  const activeQuarterCount = (kpi.quarters?.length || 4) - excludedQuarters.size;
   const { perQuarter: perQuarterMax, annual: annualMax } = computePeriodBonusMax(
-    position, kpi.weight, kpi.bonusSplit
+    position, kpi.weight, kpi.bonusSplit, activeQuarterCount
   );
-  const totalMax = perQuarterMax * 4 + annualMax;
+  const totalMax = perQuarterMax * activeQuarterCount + annualMax;
 
   const isQuarterOnTarget = (q) => {
     if (kpi.isInverse) return q.actual <= q.target;
@@ -404,6 +412,19 @@ const KPICard = ({
 
         <div className="border border-gray-200 rounded-lg divide-y divide-gray-100">
           {kpi.quarters.map((q) => {
+            if (excludedQuarters.has(q.id)) {
+              return (
+                <div key={q.id} className="grid grid-cols-12 gap-2 items-center px-3 py-2 bg-gray-50">
+                  <div className="col-span-2 sm:col-span-2">
+                    <span className="text-xs font-medium text-gray-400">{q.id}</span>
+                    <span className="text-xs text-gray-400 ml-1 hidden sm:inline">{q.period}</span>
+                  </div>
+                  <div className="col-span-10 sm:col-span-10 text-xs italic text-gray-400">
+                    Not measured this quarter
+                  </div>
+                </div>
+              );
+            }
             const qBonus = periodBonus.quarterBonuses[q.id] || 0;
             const onTarget = isQuarterOnTarget(q);
             const qMin = getQuarterFloorForKPI(kpi.name);
