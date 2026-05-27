@@ -462,21 +462,17 @@ export const buildPositions = ({
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
         k.annual = { ...k.annual, actual: 88 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
       })(),
       (() => {
         const k = build('Days to Accounting Close', '', 72, 'company', { isInverse: true });
-        return { ...k, weight: 25, excludedQuarters: ['Q1'] };
-      })(),
-      (() => {
-        const k = build('% of Aging Over 60 Days', '', 10, 'company', { isInverse: true });
-        return { ...k, weight: 25 };
+        return { ...k, weight: 34, excludedQuarters: ['Q1'] };
       })(),
     ];
   }
@@ -503,8 +499,10 @@ export const buildPositions = ({
         return { ...k, weight: 25, excludedQuarters: ['Q1'] };
       })(),
       (() => {
-        const k = build('% of Aging Over 60 Days', '', 10, 'company', { isInverse: true });
-        return { ...k, weight: 25 };
+        const k = build('% of Aging Over 60 Days', '', 2.5, 'company', { isInverse: true });
+        k.quarters[0] = { ...k.quarters[0], actual: 1.3 };
+        k.annual = { ...k.annual, actual: 1.3 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
       })(),
     ];
   }
