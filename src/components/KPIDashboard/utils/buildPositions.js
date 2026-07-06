@@ -457,7 +457,7 @@ export const buildPositions = ({
           if (v.Annual?.actual != null) k.annual = { ...k.annual, actual: v.Annual.actual };
         }
         return {
-          ...k, weight: 33, lockedQuarters: ['Q1'],
+          ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'],
           userValues: perUserMap, userOptions: cssUserOptions,
         };
       })(),

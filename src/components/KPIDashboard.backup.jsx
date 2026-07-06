@@ -769,7 +769,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return {
               ...k,
               weight: 33,
-              lockedQuarters: ['Q1'],
+              lockedQuarters: ['Q1', 'Q2'],
               userValues: perUserMap,
               userOptions: cssUserOptions,
             };
