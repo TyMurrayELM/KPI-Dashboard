@@ -983,9 +983,11 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           })(),
           (() => {
             const k = buildFinSpecKpi('% of Aging Over 60 Days', '', 2.5, 'company', { isInverse: true });
+            // Quarterly = average of the month-end AR snapshot "% over 60" readings (ar-dashboard)
             k.quarters[0] = { ...k.quarters[0], actual: 1.3 };
-            k.annual = { ...k.annual, actual: 1.3 };
-            return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+            k.quarters[1] = { ...k.quarters[1], actual: 4.2 };
+            k.annual = { ...k.annual, actual: 2.75 };
+            return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
         ];
       }
