@@ -114,14 +114,16 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: 0.6 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
-        k.annual = { ...k.annual, actual: 88 };
-        return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+        k.annual = { ...k.annual, actual: 103.2 };
+        return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Controllable Income Goal',
@@ -141,14 +143,16 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: 0.6 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
-        k.annual = { ...k.annual, actual: 88 };
-        return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+        k.annual = { ...k.annual, actual: 103.2 };
+        return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Controllable Income Goal',
@@ -168,14 +172,16 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: 0.6 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
-        k.annual = { ...k.annual, actual: 88 };
-        return { ...k, formulaKey: 'Extra Services Revenue (Spray)', weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+        k.annual = { ...k.annual, actual: 103.2 };
+        return { ...k, formulaKey: 'Extra Services Revenue (Spray)', weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Controllable Income Goal',
@@ -195,19 +201,23 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
         k.quarters[0] = { ...k.quarters[0], actual: 33 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 37.1 };
+        k.annual = { ...k.annual, actual: 35.1 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Controllable Income Goal',
@@ -229,37 +239,63 @@ export const buildPositions = ({
       'Phoenix - SouthEast': -12.9,
       'Phoenix - SouthWest': 8.8,
     };
+    const nmgBranchQ2 = {
+      'Phoenix - North': -8,
+      'Phoenix - SouthEast': 3.5,
+      'Phoenix - SouthWest': 1.2,
+    };
     const dlmBranch = {
       'Phoenix - North': 33.4,
       'Phoenix - SouthEast': 35.4,
       'Phoenix - SouthWest': 31,
     };
+    const dlmBranchQ2 = {
+      'Phoenix - North': 39.6,
+      'Phoenix - SouthEast': 37.3,
+      'Phoenix - SouthWest': 35.2,
+    };
+    const dlmBranchAnnual = {
+      'Phoenix - North': 36.4,
+      'Phoenix - SouthEast': 36.3,
+      'Phoenix - SouthWest': 33.1,
+    };
     transformedPositions[maintOpsMgrKey].kpis = [
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'individual');
         if (userBranch && nmgBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[userBranch] };
         }
-        return { ...k, weight: 25, lockedQuarters: ['Q1'], branchQ1Values: nmgBranch };
+        if (userBranch && nmgBranchQ2[userBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: nmgBranchQ2[userBranch] };
+        }
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: nmgBranch, branchQ2Values: nmgBranchQ2 };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 20, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
         if (userBranch && dlmBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[userBranch] };
         }
-        return { ...k, weight: 30, lockedQuarters: ['Q1'], branchQ1Values: dlmBranch };
+        if (userBranch && dlmBranchQ2[userBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: dlmBranchQ2[userBranch] };
+        }
+        if (userBranch && dlmBranchAnnual[userBranch] != null) {
+          k.annual = { ...k.annual, actual: dlmBranchAnnual[userBranch] };
+        }
+        return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: dlmBranch, branchQ2Values: dlmBranchQ2, branchAnnualValues: dlmBranchAnnual };
       })(),
     ];
   }
@@ -273,37 +309,63 @@ export const buildPositions = ({
       'Phoenix - SouthEast': -12.9,
       'Phoenix - SouthWest': 8.8,
     };
+    const nmgBranchQ2 = {
+      'Phoenix - North': -8,
+      'Phoenix - SouthEast': 3.5,
+      'Phoenix - SouthWest': 1.2,
+    };
     const dlmBranch = {
       'Phoenix - North': 33.4,
       'Phoenix - SouthEast': 35.4,
       'Phoenix - SouthWest': 31,
     };
+    const dlmBranchQ2 = {
+      'Phoenix - North': 39.6,
+      'Phoenix - SouthEast': 37.3,
+      'Phoenix - SouthWest': 35.2,
+    };
+    const dlmBranchAnnual = {
+      'Phoenix - North': 36.4,
+      'Phoenix - SouthEast': 36.3,
+      'Phoenix - SouthWest': 33.1,
+    };
     transformedPositions[mqsKey].kpis = [
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'individual');
         if (userBranch && nmgBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[userBranch] };
         }
-        return { ...k, weight: 25, lockedQuarters: ['Q1'], branchQ1Values: nmgBranch };
+        if (userBranch && nmgBranchQ2[userBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: nmgBranchQ2[userBranch] };
+        }
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: nmgBranch, branchQ2Values: nmgBranchQ2 };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 20, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
         if (userBranch && dlmBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[userBranch] };
         }
-        return { ...k, weight: 30, lockedQuarters: ['Q1'], branchQ1Values: dlmBranch };
+        if (userBranch && dlmBranchQ2[userBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: dlmBranchQ2[userBranch] };
+        }
+        if (userBranch && dlmBranchAnnual[userBranch] != null) {
+          k.annual = { ...k.annual, actual: dlmBranchAnnual[userBranch] };
+        }
+        return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: dlmBranch, branchQ2Values: dlmBranchQ2, branchAnnualValues: dlmBranchAnnual };
       })(),
     ];
   }
@@ -316,15 +378,17 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       { ...build('Net Maintenance Growth', '', 16, 'individual'), weight: 25 },
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 20, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       { ...build('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true }), weight: 30 },
     ];
@@ -338,26 +402,30 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: 0.6 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
-        k.annual = { ...k.annual, actual: 88 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+        k.annual = { ...k.annual, actual: 103.2 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
   }
@@ -370,8 +438,9 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Client Retention %', '', 100, 'individual');
@@ -395,8 +464,9 @@ export const buildPositions = ({
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
   }
@@ -409,20 +479,23 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Arbor Team Sales Goal', '', 100, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 100 };
-        k.annual = { ...k.annual, actual: 100 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[0] = { ...k.quarters[0], actual: 108 };
+        k.quarters[1] = { ...k.quarters[1], actual: 95 };
+        k.annual = { ...k.annual, actual: 102 };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
   }
@@ -435,20 +508,23 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: -1 };
         k.annual = { ...k.annual, actual: 4.2 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.annual = { ...k.annual, actual: 88.3 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
+        k.annual = { ...k.annual, actual: 99.4 };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Enhancement Team Sales Goal', '', 100, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 136 };
+        k.quarters[1] = { ...k.quarters[1], actual: 92 };
         k.annual = { ...k.annual, actual: 136 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
   }
@@ -461,18 +537,21 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: 0.6 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
-        k.annual = { ...k.annual, actual: 88 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+        k.annual = { ...k.annual, actual: 103.2 };
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Days to Accounting Close', '', 72, 'company', { isInverse: true });
-        return { ...k, weight: 34, excludedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 24 };
+        return { ...k, weight: 34, excludedQuarters: ['Q1'], lockedQuarters: ['Q2'] };
       })(),
     ];
   }
@@ -485,18 +564,21 @@ export const buildPositions = ({
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+        k.quarters[1] = { ...k.quarters[1], actual: 0.6 };
         k.annual = { ...k.annual, actual: 5.2 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
         k.quarters[0] = { ...k.quarters[0], actual: 88 };
-        k.annual = { ...k.annual, actual: 88 };
-        return { ...k, weight: 25, lockedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+        k.annual = { ...k.annual, actual: 103.2 };
+        return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
         const k = build('Days to Accounting Close', '', 72, 'company', { isInverse: true });
-        return { ...k, weight: 25, excludedQuarters: ['Q1'] };
+        k.quarters[1] = { ...k.quarters[1], actual: 24 };
+        return { ...k, weight: 25, excludedQuarters: ['Q1'], lockedQuarters: ['Q2'] };
       })(),
       (() => {
         const k = build('% of Aging Over 60 Days', '', 2.5, 'company', { isInverse: true });

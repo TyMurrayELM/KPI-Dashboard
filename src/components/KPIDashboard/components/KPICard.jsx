@@ -292,6 +292,14 @@ const KPICard = ({
     if (val != null && handleQuarterChange && kpi.quarters?.[0]) {
       handleQuarterChange(positionKey, index, kpi.quarters[0].id, val);
     }
+    const q2Val = kpi.branchQ2Values?.[branch];
+    if (q2Val != null && handleQuarterChange && kpi.quarters?.[1]) {
+      handleQuarterChange(positionKey, index, kpi.quarters[1].id, q2Val);
+    }
+    const annualVal = kpi.branchAnnualValues?.[branch];
+    if (annualVal != null && handleAnnualChange) {
+      handleAnnualChange(positionKey, index, annualVal);
+    }
   };
 
   return (
