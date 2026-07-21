@@ -453,9 +453,9 @@ export const buildPositions = ({
     transformedPositions[cssKey].kpis = [
       (() => {
         const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 4.2 };
-        k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-        k.annual = { ...k.annual, actual: 3.1 };
+        k.quarters[0] = { ...k.quarters[0], actual: 4.3 };
+        k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+        k.annual = { ...k.annual, actual: 4.6 };
         return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
@@ -479,7 +479,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
+        k.quarters[0] = { ...k.quarters[0], actual: 78 };
         k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
         k.annual = { ...k.annual, actual: 99.4 };
         return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
