@@ -120,7 +120,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
-        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.quarters[0] = { ...k.quarters[0], actual: 81 };
         k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
         k.annual = { ...k.annual, actual: 103.2 };
         return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1', 'Q2'] };
@@ -149,7 +149,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
-        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.quarters[0] = { ...k.quarters[0], actual: 81 };
         k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
         k.annual = { ...k.annual, actual: 103.2 };
         return { ...k, formulaKey: 'Extra Services Revenue (Arbor)', weight: 33, lockedQuarters: ['Q1', 'Q2'] };
@@ -178,7 +178,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
-        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.quarters[0] = { ...k.quarters[0], actual: 81 };
         k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
         k.annual = { ...k.annual, actual: 103.2 };
         return { ...k, formulaKey: 'Extra Services Revenue (Spray)', weight: 33, lockedQuarters: ['Q1', 'Q2'] };
@@ -431,7 +431,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
-        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.quarters[0] = { ...k.quarters[0], actual: 81 };
         k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
         k.annual = { ...k.annual, actual: 103.2 };
         return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
@@ -559,7 +559,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
-        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.quarters[0] = { ...k.quarters[0], actual: 81 };
         k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
         k.annual = { ...k.annual, actual: 103.2 };
         return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
@@ -586,7 +586,7 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Extra Services Revenue', '', 120, 'company');
-        k.quarters[0] = { ...k.quarters[0], actual: 88 };
+        k.quarters[0] = { ...k.quarters[0], actual: 81 };
         k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
         k.annual = { ...k.annual, actual: 103.2 };
         return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
