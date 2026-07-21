@@ -759,7 +759,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[cssKey].kpis = [
           (() => {
             const k = buildCssKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 4.3 };
+            k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
