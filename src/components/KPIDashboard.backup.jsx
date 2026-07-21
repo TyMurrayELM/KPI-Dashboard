@@ -843,9 +843,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           })(),
           (() => {
             const k = buildSalesSpecKpi('Arbor Team Sales Goal', '', 100, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 108 };
-            k.quarters[1] = { ...k.quarters[1], actual: 95 };
-            k.annual = { ...k.annual, actual: 102 };
+            k.quarters[0] = { ...k.quarters[0], actual: 108.3 };
+            k.quarters[1] = { ...k.quarters[1], actual: 94.4 };
+            k.annual = { ...k.annual, actual: 101.4 };
             return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
           })(),
         ];
