@@ -242,9 +242,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[arborKey].kpis = [
           (() => {
             const k = buildKpi('Net Maintenance Growth', '', 16, 'company');
-            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
-            k.annual = { ...k.annual, actual: 6.4 };
+            k.annual = { ...k.annual, actual: 7.4 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -293,9 +293,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[enhMgrKey].kpis = [
           (() => {
             const k = buildEnhMgrKpi('Net Maintenance Growth', '', 16, 'company');
-            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
-            k.annual = { ...k.annual, actual: 6.4 };
+            k.annual = { ...k.annual, actual: 7.4 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -344,9 +344,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[sprayKey].kpis = [
           (() => {
             const k = buildSprayKpi('Net Maintenance Growth', '', 16, 'company');
-            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
-            k.annual = { ...k.annual, actual: 6.4 };
+            k.annual = { ...k.annual, actual: 7.4 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -701,9 +701,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[csmKey].kpis = [
           (() => {
             const k = buildCsmKpi('Net Maintenance Growth', '', 16, 'company');
-            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
-            k.annual = { ...k.annual, actual: 6.4 };
+            k.annual = { ...k.annual, actual: 7.4 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -931,9 +931,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[acctFinKey].kpis = [
           (() => {
             const k = buildAcctFinKpi('Net Maintenance Growth', '', 16, 'company');
-            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
-            k.annual = { ...k.annual, actual: 6.4 };
+            k.annual = { ...k.annual, actual: 7.4 };
             return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -980,9 +980,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         transformedPositions[finSpecKey].kpis = [
           (() => {
             const k = buildFinSpecKpi('Net Maintenance Growth', '', 16, 'company');
-            k.quarters[0] = { ...k.quarters[0], actual: 5.2 };
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
             k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
-            k.annual = { ...k.annual, actual: 6.4 };
+            k.annual = { ...k.annual, actual: 7.4 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
