@@ -236,7 +236,7 @@ export const buildPositions = ({
     const build = makeKpiBuilder(33);
     const nmgBranch = {
       'Phoenix - North': -3.7,
-      'Phoenix - SouthEast': -12.9,
+      'Phoenix - SouthEast': 0.9,
       'Phoenix - SouthWest': 8.8,
     };
     const nmgBranchQ2 = {
@@ -314,7 +314,7 @@ export const buildPositions = ({
     const build = makeKpiBuilder(33);
     const nmgBranch = {
       'Phoenix - North': -3.7,
-      'Phoenix - SouthEast': -12.9,
+      'Phoenix - SouthEast': 0.9,
       'Phoenix - SouthWest': 8.8,
     };
     const nmgBranchQ2 = {

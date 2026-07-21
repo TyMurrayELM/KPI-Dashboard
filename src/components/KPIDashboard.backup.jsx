@@ -464,7 +464,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'individual');
             const branchQ1Values = {
               'Phoenix - North': -3.7,
-              'Phoenix - SouthEast': -12.9,
+              'Phoenix - SouthEast': 0.9,
               'Phoenix - SouthWest': 8.8,
             };
             const branchQ2Values = {
@@ -564,7 +564,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'individual');
             const branchQ1Values = {
               'Phoenix - North': -3.7,
-              'Phoenix - SouthEast': -12.9,
+              'Phoenix - SouthEast': 0.9,
               'Phoenix - SouthWest': 8.8,
             };
             const branchQ2Values = {
