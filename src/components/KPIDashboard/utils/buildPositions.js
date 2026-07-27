@@ -237,7 +237,7 @@ export const buildPositions = ({
     const nmgBranch = {
       'Phoenix - North': 8.1,
       'Phoenix - SouthEast': 0.9,
-      'Phoenix - SouthWest': 8.8,
+      'Phoenix - SouthWest': 4.2,
     };
     const nmgBranchQ2 = {
       'Phoenix - North': -1.3,
@@ -247,7 +247,7 @@ export const buildPositions = ({
     const nmgBranchAnnual = {
       'Phoenix - North': 7.4,
       'Phoenix - SouthEast': 2.1,
-      'Phoenix - SouthWest': 1.1,
+      'Phoenix - SouthWest': 2.2,
     };
     const dlmBranch = {
       'Phoenix - North': 33.9,
@@ -315,7 +315,7 @@ export const buildPositions = ({
     const nmgBranch = {
       'Phoenix - North': 8.1,
       'Phoenix - SouthEast': 0.9,
-      'Phoenix - SouthWest': 8.8,
+      'Phoenix - SouthWest': 4.2,
     };
     const nmgBranchQ2 = {
       'Phoenix - North': -1.3,
@@ -325,7 +325,7 @@ export const buildPositions = ({
     const nmgBranchAnnual = {
       'Phoenix - North': 7.4,
       'Phoenix - SouthEast': 2.1,
-      'Phoenix - SouthWest': 1.1,
+      'Phoenix - SouthWest': 2.2,
     };
     const dlmBranch = {
       'Phoenix - North': 33.9,
