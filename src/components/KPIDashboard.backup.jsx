@@ -500,17 +500,17 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const branchQ1Values = {
               'Phoenix - North': 33.9,
               'Phoenix - SouthEast': 36,
-              'Phoenix - SouthWest': 31,
+              'Phoenix - SouthWest': 31.8,
             };
             const branchQ2Values = {
               'Phoenix - North': 40.4,
               'Phoenix - SouthEast': 37.9,
-              'Phoenix - SouthWest': 35.2,
+              'Phoenix - SouthWest': 35.6,
             };
             const branchAnnualValues = {
               'Phoenix - North': 37.4,
               'Phoenix - SouthEast': 36.3,
-              'Phoenix - SouthWest': 33.1,
+              'Phoenix - SouthWest': 33.4,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
               k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
@@ -600,17 +600,17 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const branchQ1Values = {
               'Phoenix - North': 33.9,
               'Phoenix - SouthEast': 36,
-              'Phoenix - SouthWest': 31,
+              'Phoenix - SouthWest': 31.8,
             };
             const branchQ2Values = {
               'Phoenix - North': 40.4,
               'Phoenix - SouthEast': 37.9,
-              'Phoenix - SouthWest': 35.2,
+              'Phoenix - SouthWest': 35.6,
             };
             const branchAnnualValues = {
               'Phoenix - North': 37.4,
               'Phoenix - SouthEast': 36.3,
-              'Phoenix - SouthWest': 33.1,
+              'Phoenix - SouthWest': 33.4,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
               k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };

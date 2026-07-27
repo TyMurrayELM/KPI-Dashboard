@@ -252,17 +252,17 @@ export const buildPositions = ({
     const dlmBranch = {
       'Phoenix - North': 33.9,
       'Phoenix - SouthEast': 36,
-      'Phoenix - SouthWest': 31,
+      'Phoenix - SouthWest': 31.8,
     };
     const dlmBranchQ2 = {
       'Phoenix - North': 40.4,
       'Phoenix - SouthEast': 37.9,
-      'Phoenix - SouthWest': 35.2,
+      'Phoenix - SouthWest': 35.6,
     };
     const dlmBranchAnnual = {
       'Phoenix - North': 37.4,
       'Phoenix - SouthEast': 36.3,
-      'Phoenix - SouthWest': 33.1,
+      'Phoenix - SouthWest': 33.4,
     };
     transformedPositions[maintOpsMgrKey].kpis = [
       (() => {
@@ -330,17 +330,17 @@ export const buildPositions = ({
     const dlmBranch = {
       'Phoenix - North': 33.9,
       'Phoenix - SouthEast': 36,
-      'Phoenix - SouthWest': 31,
+      'Phoenix - SouthWest': 31.8,
     };
     const dlmBranchQ2 = {
       'Phoenix - North': 40.4,
       'Phoenix - SouthEast': 37.9,
-      'Phoenix - SouthWest': 35.2,
+      'Phoenix - SouthWest': 35.6,
     };
     const dlmBranchAnnual = {
       'Phoenix - North': 37.4,
       'Phoenix - SouthEast': 36.3,
-      'Phoenix - SouthWest': 33.1,
+      'Phoenix - SouthWest': 33.4,
     };
     transformedPositions[mqsKey].kpis = [
       (() => {
