@@ -130,7 +130,9 @@ export const buildPositions = ({
           'Percentage of Arbor Net Controllable Income goal achieved. Annual target for Phoenix Arbor is $3.5M.',
           100, 'region-phoenix');
         k.quarters[0] = { ...k.quarters[0], actual: 47 };
-        return { ...k, dollarTarget: 3500000, weight: 33, lockedQuarters: ['Q1'] };
+        const q2Actual = Math.round((856135 / (3500000 / 4)) * 100);
+        k.quarters[1] = { ...k.quarters[1], actual: q2Actual };
+        return { ...k, dollarTarget: 3500000, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
   }
