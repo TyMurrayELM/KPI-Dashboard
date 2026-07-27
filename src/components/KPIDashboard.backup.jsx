@@ -361,10 +361,11 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           })(),
           (() => {
             const k = buildSprayKpi('Net Controllable Income Goal',
-              'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $940K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
+              'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $650K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
               100, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 59 };
-            return { ...k, dollarTarget: 940000, weight: 33, lockedQuarters: ['Q1'] };
+            const q1Actual = Math.round((138650 / (650000 / 4)) * 100);
+            k.quarters[0] = { ...k.quarters[0], actual: q1Actual };
+            return { ...k, dollarTarget: 650000, weight: 33, lockedQuarters: ['Q1'] };
           })(),
         ];
       }
