@@ -499,12 +499,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const k = buildMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
             const branchQ1Values = {
               'Phoenix - North': 33.4,
-              'Phoenix - SouthEast': 35.4,
+              'Phoenix - SouthEast': 36,
               'Phoenix - SouthWest': 31,
             };
             const branchQ2Values = {
               'Phoenix - North': 39.6,
-              'Phoenix - SouthEast': 37.3,
+              'Phoenix - SouthEast': 37.9,
               'Phoenix - SouthWest': 35.2,
             };
             const branchAnnualValues = {
@@ -599,12 +599,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const k = buildMqsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
             const branchQ1Values = {
               'Phoenix - North': 33.4,
-              'Phoenix - SouthEast': 35.4,
+              'Phoenix - SouthEast': 36,
               'Phoenix - SouthWest': 31,
             };
             const branchQ2Values = {
               'Phoenix - North': 39.6,
-              'Phoenix - SouthEast': 37.3,
+              'Phoenix - SouthEast': 37.9,
               'Phoenix - SouthWest': 35.2,
             };
             const branchAnnualValues = {

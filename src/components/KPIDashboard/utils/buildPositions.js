@@ -251,12 +251,12 @@ export const buildPositions = ({
     };
     const dlmBranch = {
       'Phoenix - North': 33.4,
-      'Phoenix - SouthEast': 35.4,
+      'Phoenix - SouthEast': 36,
       'Phoenix - SouthWest': 31,
     };
     const dlmBranchQ2 = {
       'Phoenix - North': 39.6,
-      'Phoenix - SouthEast': 37.3,
+      'Phoenix - SouthEast': 37.9,
       'Phoenix - SouthWest': 35.2,
     };
     const dlmBranchAnnual = {
@@ -329,12 +329,12 @@ export const buildPositions = ({
     };
     const dlmBranch = {
       'Phoenix - North': 33.4,
-      'Phoenix - SouthEast': 35.4,
+      'Phoenix - SouthEast': 36,
       'Phoenix - SouthWest': 31,
     };
     const dlmBranchQ2 = {
       'Phoenix - North': 39.6,
-      'Phoenix - SouthEast': 37.3,
+      'Phoenix - SouthEast': 37.9,
       'Phoenix - SouthWest': 35.2,
     };
     const dlmBranchAnnual = {
