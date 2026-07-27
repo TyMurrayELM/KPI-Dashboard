@@ -246,7 +246,7 @@ export const buildPositions = ({
     };
     const nmgBranchAnnual = {
       'Phoenix - North': 7.4,
-      'Phoenix - SouthEast': 2.1,
+      'Phoenix - SouthEast': 5.2,
       'Phoenix - SouthWest': 2.2,
     };
     const dlmBranch = {
@@ -324,7 +324,7 @@ export const buildPositions = ({
     };
     const nmgBranchAnnual = {
       'Phoenix - North': 7.4,
-      'Phoenix - SouthEast': 2.1,
+      'Phoenix - SouthEast': 5.2,
       'Phoenix - SouthWest': 2.2,
     };
     const dlmBranch = {

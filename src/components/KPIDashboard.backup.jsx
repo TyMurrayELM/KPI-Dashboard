@@ -474,7 +474,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             };
             const branchAnnualValues = {
               'Phoenix - North': 7.4,
-              'Phoenix - SouthEast': 2.1,
+              'Phoenix - SouthEast': 5.2,
               'Phoenix - SouthWest': 2.2,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
@@ -574,7 +574,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             };
             const branchAnnualValues = {
               'Phoenix - North': 7.4,
-              'Phoenix - SouthEast': 2.1,
+              'Phoenix - SouthEast': 5.2,
               'Phoenix - SouthWest': 2.2,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
