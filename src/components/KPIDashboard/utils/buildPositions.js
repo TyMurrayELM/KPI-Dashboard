@@ -235,7 +235,7 @@ export const buildPositions = ({
   if (maintOpsMgrKey) {
     const build = makeKpiBuilder(33);
     const nmgBranch = {
-      'Phoenix - North': -3.7,
+      'Phoenix - North': 8.1,
       'Phoenix - SouthEast': 0.9,
       'Phoenix - SouthWest': 8.8,
     };
@@ -245,7 +245,7 @@ export const buildPositions = ({
       'Phoenix - SouthWest': -3,
     };
     const nmgBranchAnnual = {
-      'Phoenix - North': 6.7,
+      'Phoenix - North': 7.4,
       'Phoenix - SouthEast': 2.1,
       'Phoenix - SouthWest': 1.1,
     };
@@ -313,7 +313,7 @@ export const buildPositions = ({
   if (mqsKey) {
     const build = makeKpiBuilder(33);
     const nmgBranch = {
-      'Phoenix - North': -3.7,
+      'Phoenix - North': 8.1,
       'Phoenix - SouthEast': 0.9,
       'Phoenix - SouthWest': 8.8,
     };
@@ -323,7 +323,7 @@ export const buildPositions = ({
       'Phoenix - SouthWest': -3,
     };
     const nmgBranchAnnual = {
-      'Phoenix - North': 6.7,
+      'Phoenix - North': 7.4,
       'Phoenix - SouthEast': 2.1,
       'Phoenix - SouthWest': 1.1,
     };

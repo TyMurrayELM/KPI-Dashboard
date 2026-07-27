@@ -463,7 +463,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'individual');
             const branchQ1Values = {
-              'Phoenix - North': -3.7,
+              'Phoenix - North': 8.1,
               'Phoenix - SouthEast': 0.9,
               'Phoenix - SouthWest': 8.8,
             };
@@ -473,7 +473,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - SouthWest': -3,
             };
             const branchAnnualValues = {
-              'Phoenix - North': 6.7,
+              'Phoenix - North': 7.4,
               'Phoenix - SouthEast': 2.1,
               'Phoenix - SouthWest': 1.1,
             };
@@ -563,7 +563,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'individual');
             const branchQ1Values = {
-              'Phoenix - North': -3.7,
+              'Phoenix - North': 8.1,
               'Phoenix - SouthEast': 0.9,
               'Phoenix - SouthWest': 8.8,
             };
@@ -573,7 +573,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - SouthWest': -3,
             };
             const branchAnnualValues = {
-              'Phoenix - North': 6.7,
+              'Phoenix - North': 7.4,
               'Phoenix - SouthEast': 2.1,
               'Phoenix - SouthWest': 1.1,
             };
