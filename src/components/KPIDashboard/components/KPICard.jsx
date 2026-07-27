@@ -444,7 +444,8 @@ const KPICard = ({
             const showQProration = qProration && qProration.eligibleMonths < qProration.totalMonths;
 
             return (
-              <div key={q.id} className="grid grid-cols-12 gap-2 items-center px-3 py-2">
+              <div key={q.id} className="px-3 py-2">
+              <div className="grid grid-cols-12 gap-2 items-center">
                 {/* Period label */}
                 <div className="col-span-2 sm:col-span-2">
                   <span className="text-xs font-medium text-black">{q.id}</span>
@@ -512,6 +513,10 @@ const KPICard = ({
                   <span className="text-xs text-black">/ {formatCurrency(perQuarterMax)}</span>
                   {onTarget && q.actual > 0 && <CheckIcon />}
                 </div>
+              </div>
+              {kpi.quarterNotes?.[q.id] && (
+                <p className="text-[11px] text-gray-500 italic mt-1">{kpi.quarterNotes[q.id]}</p>
+              )}
               </div>
             );
           })}

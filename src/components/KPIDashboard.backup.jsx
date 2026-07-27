@@ -363,13 +363,25 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             const k = buildSprayKpi('Net Controllable Income Goal',
               'Percentage of Spray Net Controllable Income goal achieved. Annual target for Phoenix Spray is $650K. In-contract spray revenue captured at $105/hr based on actual hours spent on in-contract jobs.',
               100, 'region-phoenix');
-            const q1Actual = Math.round((137811 / (650000 / 4)) * 100);
-            k.quarters[0] = { ...k.quarters[0], actual: q1Actual };
-            const q2Actual = Math.round((156168 / (650000 / 4)) * 100);
-            k.quarters[1] = { ...k.quarters[1], actual: q2Actual };
-            const ytdActual = Math.round(((137811 + 156168) / (2 * (650000 / 4))) * 100);
-            k.annual = { ...k.annual, actual: ytdActual };
-            return { ...k, dollarTarget: 650000, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+            const qtrGoal = 650000 / 4;
+            const inContractRate = 105;
+            // In-contract spray hours are billed under another department; their
+            // revenue (hrs × $105) is added back to the quarterly NCI here.
+            const inContractHours = { Q1: null, Q2: 497.7 };
+            const baseNci = { Q1: 137811, Q2: 156168 };
+            const fmt = (n) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+            const quarterNotes = {};
+            const totalNci = {};
+            ['Q1', 'Q2'].forEach((qId, i) => {
+              const inContract = (inContractHours[qId] || 0) * inContractRate;
+              totalNci[qId] = baseNci[qId] + inContract;
+              k.quarters[i] = { ...k.quarters[i], actual: Math.round((totalNci[qId] / qtrGoal) * 100) };
+              if (inContractHours[qId] != null) {
+                quarterNotes[qId] = `Includes in-contract spray: ${inContractHours[qId]} hrs × $${inContractRate}/hr = ${fmt(inContract)} (NCI ${fmt(baseNci[qId])} + in-contract = ${fmt(totalNci[qId])})`;
+              }
+            });
+            k.annual = { ...k.annual, actual: Math.round(((totalNci.Q1 + totalNci.Q2) / (2 * qtrGoal)) * 100) };
+            return { ...k, dollarTarget: 650000, weight: 33, lockedQuarters: ['Q1', 'Q2'], quarterNotes };
           })(),
         ];
       }
