@@ -396,7 +396,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildSrMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -456,7 +456,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -556,7 +556,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -656,7 +656,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildMfsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -709,7 +709,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildCsmKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -760,7 +760,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildCssKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -830,7 +830,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildSalesSpecKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
           })(),
@@ -881,7 +881,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           (() => {
             const k = buildEnhSalesSpecKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
             k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: 1.5 };
+            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
             k.annual = { ...k.annual, actual: 4.6 };
             return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
           })(),
