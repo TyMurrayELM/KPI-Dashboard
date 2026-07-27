@@ -194,7 +194,7 @@ export const buildPositions = ({
         const inContractRate = 105;
         // In-contract spray hours are billed under another department; their
         // revenue (hrs × $105) is added back to the quarterly NCI here.
-        const inContractHours = { Q1: null, Q2: 497.7 };
+        const inContractHours = { Q1: 318.3, Q2: 497.7 };
         const baseNci = { Q1: 137811, Q2: 156168 };
         const fmt = (n) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
         const quarterNotes = {};
