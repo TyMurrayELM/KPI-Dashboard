@@ -33,6 +33,11 @@ import {
   calculateQuarterBonus,
   calculateAnnualBonus,
 } from './KPIDashboard/utils/bonusCalculations';
+import {
+  QUARTER_MONTHS,
+  parseEligibilityDate,
+  getProrationMonths,
+} from './KPIDashboard/utils/proration';
 
 // Keep your existing components
 import KPICard from './KPIDashboard/components/KPICard';
@@ -1082,10 +1087,18 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
     );
 
     // Sum quarterly bonuses
+    const eligDate = parseEligibilityDate(userEligibilityDate);
     let quarterlyTotal = 0;
     const quarterBonuses = {};
     for (const q of kpi.quarters) {
       if (excluded.has(q.id)) {
+        quarterBonuses[q.id] = 0;
+        continue;
+      }
+      // Quarters fully before the user's eligibility date pay nothing —
+      // the card still shows the values, greyed, with a "Not eligible" tag.
+      const range = QUARTER_MONTHS[q.id];
+      if (eligDate && range && getProrationMonths(eligDate, range[0], range[1]).eligibleMonths === 0) {
         quarterBonuses[q.id] = 0;
         continue;
       }
@@ -1107,7 +1120,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
       perQuarterMax: perQuarter,
       annualMax,
     };
-  }, []);
+  }, [userEligibilityDate]);
 
   // Legacy-compatible wrapper that returns just the total number
   const calculateKpiBonus = useCallback((position, kpiIndex, positionKey) => {

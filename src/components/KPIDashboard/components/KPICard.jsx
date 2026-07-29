@@ -441,10 +441,12 @@ const KPICard = ({
             const qProration = qMonthRange
               ? getProrationMonths(eligibilityDate, qMonthRange[0], qMonthRange[1])
               : null;
-            const showQProration = qProration && qProration.eligibleMonths < qProration.totalMonths;
+            const ineligible = !!(qProration && qProration.eligibleMonths === 0);
+            const showQProration = qProration && !ineligible
+              && qProration.eligibleMonths < qProration.totalMonths;
 
             return (
-              <div key={q.id} className="px-3 py-2">
+              <div key={q.id} className={`px-3 py-2${ineligible ? ' opacity-50 grayscale bg-gray-50' : ''}`}>
               <div className="grid grid-cols-12 gap-2 items-center">
                 {/* Period label */}
                 <div className="col-span-2 sm:col-span-2">
@@ -498,6 +500,14 @@ const KPICard = ({
 
                 {/* Bonus earned / available + check */}
                 <div className="col-span-3 sm:col-span-3 flex items-center justify-end space-x-1">
+                  {ineligible && (
+                    <span
+                      className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mr-1"
+                      title="This quarter ended before the eligibility date on this profile — shown for reference, no bonus paid"
+                    >
+                      Not eligible
+                    </span>
+                  )}
                   {showQProration && (
                     <span
                       className="text-[10px] font-medium text-amber-600 italic mr-1"
@@ -511,7 +521,7 @@ const KPICard = ({
                     {formatCurrency(qBonus)}
                   </span>
                   <span className="text-xs text-black">/ {formatCurrency(perQuarterMax)}</span>
-                  {onTarget && q.actual > 0 && <CheckIcon />}
+                  {onTarget && q.actual > 0 && !ineligible && <CheckIcon />}
                 </div>
               </div>
               {kpi.quarterNotes?.[q.id] && (
