@@ -790,8 +790,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         const cssRegionActuals = isLasVegas
           ? {
               nmg: { q1: 10, q2: 6.9, ytd: 17.6 },
-              // Las Vegas ESR actuals — pending
-              esr: { q1: null, q2: null, ytd: null },
+              esr: { q1: 90.4, q2: 139.7, ytd: 115.4 },
               locked: ['Q1', 'Q2'],
             }
           : {
