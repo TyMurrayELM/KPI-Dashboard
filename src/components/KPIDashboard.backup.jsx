@@ -38,7 +38,7 @@ import {
 import KPICard from './KPIDashboard/components/KPICard';
 import PositionHeader from './KPIDashboard/components/PositionHeader';
 
-const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userBranch = null, userDepartment = null, userEmail = null, userEligibilityDate = null }) => {
+const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, userRegion = null, userBranch = null, userDepartment = null, userEmail = null, userEligibilityDate = null }) => {
   const [activeTab, setActiveTab] = useState(null);
   
   // Data from Supabase
@@ -781,13 +781,33 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           };
         };
 
+        // Region scoping: users with region 'Las Vegas' (allowed_users.region,
+        // set in User Management) see LV-scoped region KPIs; everyone else
+        // gets Phoenix. LV actuals: fill in cssRegionActuals below as the
+        // numbers come in — null leaves the quarter at target (unlocked).
+        const isLasVegas = userRegion === 'Las Vegas';
+        const cssRegionScope = isLasVegas ? 'region-lasvegas' : 'region-phoenix';
+        const cssRegionActuals = isLasVegas
+          ? {
+              // Las Vegas region actuals — pending
+              nmg: { q1: null, q2: null, ytd: null },
+              esr: { q1: null, q2: null, ytd: null },
+              locked: [],
+            }
+          : {
+              nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 },
+              esr: { q1: 78, q2: 120.8, ytd: 99.4 },
+              locked: ['Q1', 'Q2'],
+            };
+
         transformedPositions[cssKey].kpis = [
           (() => {
-            const k = buildCssKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-            k.annual = { ...k.annual, actual: 4.6 };
-            return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
+            const k = buildCssKpi('Net Maintenance Growth', '', 16, cssRegionScope);
+            const a = cssRegionActuals.nmg;
+            if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+            if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+            if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+            return { ...k, weight: 34, lockedQuarters: cssRegionActuals.locked };
           })(),
           (() => {
             const k = buildCssKpi('Client Retention %', '', 100, 'individual');
@@ -816,11 +836,12 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             };
           })(),
           (() => {
-            const k = buildCssKpi('Extra Services Revenue', '', 120, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 78 };
-            k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
-            k.annual = { ...k.annual, actual: 99.4 };
-            return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+            const k = buildCssKpi('Extra Services Revenue', '', 120, cssRegionScope);
+            const a = cssRegionActuals.esr;
+            if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+            if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+            if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+            return { ...k, weight: 33, lockedQuarters: cssRegionActuals.locked };
           })(),
         ];
       }

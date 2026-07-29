@@ -40,6 +40,7 @@ export const buildPositions = ({
     isAdmin = false,
     userEmail = null,
     userSalary = null,
+    userRegion = null,
     userBranch = null,
   } = userContext;
 
@@ -475,13 +476,22 @@ export const buildPositions = ({
   const cssKey = findKey('Client Success Specialist');
   if (cssKey) {
     const build = makeKpiBuilder(33);
+    // Region scoping: allowed_users.region === 'Las Vegas' -> LV-scoped
+    // region KPIs; everyone else gets Phoenix. LV actuals pending — null
+    // leaves the quarter at target (unlocked).
+    const isLasVegas = userRegion === 'Las Vegas';
+    const cssRegionScope = isLasVegas ? 'region-lasvegas' : 'region-phoenix';
+    const cssRegionActuals = isLasVegas
+      ? { nmg: { q1: null, q2: null, ytd: null }, esr: { q1: null, q2: null, ytd: null }, locked: [] }
+      : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 78, q2: 120.8, ytd: 99.4 }, locked: ['Q1', 'Q2'] };
     transformedPositions[cssKey].kpis = [
       (() => {
-        const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-        k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-        k.annual = { ...k.annual, actual: 4.6 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
+        const k = build('Net Maintenance Growth', '', 16, cssRegionScope);
+        const a = cssRegionActuals.nmg;
+        if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+        if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+        if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+        return { ...k, weight: 34, lockedQuarters: cssRegionActuals.locked };
       })(),
       (() => {
         const k = build('Client Retention %', '', 100, 'individual');
@@ -503,11 +513,12 @@ export const buildPositions = ({
         };
       })(),
       (() => {
-        const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 78 };
-        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
-        k.annual = { ...k.annual, actual: 99.4 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+        const k = build('Extra Services Revenue', '', 120, cssRegionScope);
+        const a = cssRegionActuals.esr;
+        if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+        if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+        if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+        return { ...k, weight: 33, lockedQuarters: cssRegionActuals.locked };
       })(),
     ];
   }

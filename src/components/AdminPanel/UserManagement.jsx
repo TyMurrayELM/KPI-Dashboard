@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 
+const REGION_OPTIONS = ['Phoenix', 'Las Vegas'];
 const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest'];
 const BRANCH_ROLE_NAMES = ['Maintenance Operations Manager', 'Maintenance Quality Specialist'];
 const DEPARTMENT_OPTIONS = ['Arbor', 'Spray', 'Irrigation', 'Enhancements'];
@@ -19,6 +20,7 @@ const UserManagement = () => {
     email: '',
     name: '',
     salary: '',
+    region: '',
     branch: '',
     department: '',
     eligibility_date: '',
@@ -111,6 +113,7 @@ const UserManagement = () => {
           email: formData.email.toLowerCase().trim(),
           name: formData.name,
           salary: formData.salary ? parseFloat(formData.salary) : null,
+          region: formData.region || null,
           branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
           department: hasDepartmentRole(formData.assigned_roles) ? (formData.department || null) : null,
           eligibility_date: formData.eligibility_date || null,
@@ -155,6 +158,7 @@ const UserManagement = () => {
         .update({
           name: formData.name,
           salary: formData.salary ? parseFloat(formData.salary) : null,
+          region: formData.region || null,
           branch: hasBranchRole(formData.assigned_roles) ? (formData.branch || null) : null,
           department: hasDepartmentRole(formData.assigned_roles) ? (formData.department || null) : null,
           eligibility_date: formData.eligibility_date || null,
@@ -226,6 +230,7 @@ const UserManagement = () => {
       email: user.email,
       name: user.name || '',
       salary: user.salary || '',
+      region: user.region || '',
       branch: user.branch || '',
       department: user.department || '',
       eligibility_date: user.eligibility_date || '',
@@ -241,6 +246,7 @@ const UserManagement = () => {
       email: '',
       name: '',
       salary: '',
+      region: '',
       branch: '',
       department: '',
       eligibility_date: '',
@@ -400,6 +406,33 @@ const UserManagement = () => {
               />
               <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
                 Used for pro-rated payouts; shown on user dashboard. Leave blank for full eligibility.
+              </p>
+            </div>
+
+            <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                Region
+              </label>
+              <select
+                name="region"
+                value={formData.region || ''}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  background: 'white'
+                }}
+              >
+                <option value="">— Phoenix (default) —</option>
+                {REGION_OPTIONS.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+              <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                Scopes region-level KPIs (e.g. Net Maintenance Growth, ESR). Blank = Phoenix.
               </p>
             </div>
 

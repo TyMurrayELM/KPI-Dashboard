@@ -51,6 +51,7 @@ export default function Home() {
         isAdmin: false, // intentionally false so we see exactly what they see
         allowedRoles: (roles || []).map(r => r.role_key),
         salary: u.salary,
+        region: u.region,
         branch: u.branch,
         department: u.department,
         eligibility_date: u.eligibility_date,
@@ -65,6 +66,7 @@ export default function Home() {
     isAdmin: userAccess.isAdmin,
     allowedRoles: userAccess.allowedRoles,
     salary: userAccess.salary,
+    region: userAccess.region,
     branch: userAccess.branch,
     department: userAccess.department,
     eligibility_date: userAccess.eligibility_date,
@@ -146,6 +148,7 @@ export default function Home() {
         isAdmin: allowedUser.is_admin,
         allowedRoles: allowedRoles,
         salary: allowedUser.salary,
+        region: allowedUser.region,
         branch: allowedUser.branch,
         department: allowedUser.department,
         eligibility_date: allowedUser.eligibility_date
@@ -466,6 +469,7 @@ export default function Home() {
         isAdmin={effective?.isAdmin}
         allowedRoles={effective?.allowedRoles}
         userSalary={effective?.salary}
+        userRegion={effective?.region}
         userBranch={effective?.branch}
         userDepartment={effective?.department}
         userEmail={effective?.email}
