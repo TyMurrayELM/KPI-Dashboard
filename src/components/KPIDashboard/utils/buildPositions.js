@@ -482,7 +482,7 @@ export const buildPositions = ({
     const isLasVegas = userRegion === 'Las Vegas';
     const cssRegionScope = isLasVegas ? 'region-lasvegas' : 'region-phoenix';
     const cssRegionActuals = isLasVegas
-      ? { nmg: { q1: null, q2: null, ytd: null }, esr: { q1: null, q2: null, ytd: null }, locked: [] }
+      ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: null, q2: null, ytd: null }, locked: ['Q1', 'Q2'] }
       : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 78, q2: 120.8, ytd: 99.4 }, locked: ['Q1', 'Q2'] };
     transformedPositions[cssKey].kpis = [
       (() => {
