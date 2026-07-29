@@ -226,6 +226,9 @@ const UserManagement = () => {
 
   const startEdit = (user) => {
     setEditingUser(user);
+    // The edit form renders at the top of the page — without this scroll it
+    // opens off-screen and clicking Edit looks like it did nothing.
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setFormData({
       email: user.email,
       name: user.name || '',
@@ -280,7 +283,7 @@ const UserManagement = () => {
         </h2>
         {!showForm && (
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => { setShowForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             style={{
               padding: '10px 20px',
               background: '#3b82f6',
@@ -629,6 +632,9 @@ const UserManagement = () => {
                 Salary
               </th>
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+                Region
+              </th>
+              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
                 Branch
               </th>
               <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
@@ -716,6 +722,36 @@ const UserManagement = () => {
                         }}
                       />
                     </div>
+                  </td>
+                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                    <select
+                      value={user.region === 'Las Vegas' ? 'Las Vegas' : ''}
+                      onChange={async (e) => {
+                        const newRegion = e.target.value || null;
+                        setUsers(prev => prev.map(u => u.id === user.id ? { ...u, region: newRegion } : u));
+                        const { error } = await supabase
+                          .from('allowed_users')
+                          .update({ region: newRegion, updated_at: new Date().toISOString() })
+                          .eq('id', user.id);
+                        if (error) {
+                          alert(`Error updating region: ${error.message}`);
+                          fetchData();
+                        }
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '4px',
+                        fontSize: '13px',
+                        background: 'white',
+                        minWidth: '110px'
+                      }}
+                    >
+                      <option value="">Phoenix</option>
+                      {REGION_OPTIONS.filter(r => r !== 'Phoenix').map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
                   </td>
                   <td style={{ padding: '12px', fontSize: '13px' }}>
                     {hasBranchRole(user.user_roles?.map(r => r.role_key) || []) ? (
