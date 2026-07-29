@@ -1108,9 +1108,14 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
       quarterlyTotal += qBonus;
     }
 
-    // Annual bonus
+    // Annual bonus — prorated by eligible months of the performance year
+    // (e.g. eligibility 7/1 → 6/12 → 50% of the annual payout).
     const formulaKey = kpi.formulaKey || kpi.name;
-    const annualBonus = calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, formulaKey);
+    const yearFactor = eligDate
+      ? getProrationMonths(eligDate, 0, 11).eligibleMonths / 12
+      : 1;
+    const annualBonus =
+      calculateAnnualBonus(kpi.annual, kpi.isInverse, annualMax, formulaKey) * yearFactor;
 
     return {
       quarterBonuses,

@@ -588,6 +588,17 @@ const KPICard = ({
 
           {/* Bonus / available + pay date */}
           <div className="col-span-3 sm:col-span-3 flex items-center justify-end space-x-1">
+            {(() => {
+              const yp = getProrationMonths(eligibilityDate, YEAR_MONTHS[0], YEAR_MONTHS[1]);
+              return yp.eligibleMonths < yp.totalMonths ? (
+                <span
+                  className="text-[10px] font-medium text-amber-600 italic mr-1"
+                  title={`Eligible for ${yp.eligibleMonths} of ${yp.totalMonths} months this year — annual bonus prorated accordingly`}
+                >
+                  Pro-rated {yp.eligibleMonths}/{yp.totalMonths}
+                </span>
+              ) : null;
+            })()}
             {kpi.lockedAnnual && <LockIcon />}
             <span className={`text-xs font-medium ${periodBonus.annualBonus > 0 ? 'text-blue-800' : 'text-blue-800'}`}>
               {formatCurrency(periodBonus.annualBonus)}
