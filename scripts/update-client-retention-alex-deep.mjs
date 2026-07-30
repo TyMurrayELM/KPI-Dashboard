@@ -13,7 +13,7 @@ const KPI = 'Client Retention %';
 const EMAIL = 'alex.deep@encorelm.com'; // <-- Alex Deep's login email, must match allowed_users exactly
 // Q3/Q4 seeded at 90 (retention is cumulative — can't exceed the YTD floor);
 // those two were applied with locked=false since they're running values.
-const VALUES = { Q1: 96, Q2: 90, Q3: 90, Q4: 90, Annual: 90 };
+const VALUES = { Q1: 98, Q2: 92, Q3: 90, Q4: 90, Annual: 90 }; // corrected 2026-07-30
 const apply = process.argv.includes('--apply');
 
 if (EMAIL.startsWith('SET-ME')) {
