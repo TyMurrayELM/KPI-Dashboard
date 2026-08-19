@@ -496,7 +496,7 @@ export const buildPositions = ({
     // Region scoping via the shared isLasVegas/regionScope above.
     const cssRegionScope = regionScope;
     const cssRegionActuals = isLasVegas
-      ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, locked: ['Q1', 'Q2'] }
+      ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, locked: ['Q1', 'Q2'] }
       : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 78, q2: 120.8, ytd: 99.4 }, locked: ['Q1', 'Q2'] };
     transformedPositions[cssKey].kpis = [
       (() => {
@@ -575,8 +575,8 @@ export const buildPositions = ({
     const build = makeKpiBuilder(50);
     const enhActuals = isLasVegas
       ? {
-          nmg: { q1: 10, q2: 6.9, ytd: 17.6 },
-          esr: { q1: 90.4, q2: 139.7, ytd: 115.4 },
+          nmg: { q1: 10, q2: 6.9, ytd: 10.2 },
+          esr: { q1: 90.4, q2: 139.7, ytd: 114.9 },
           team: { q2: 168 },
           teamLocked: ['Q2'],
           locked: ['Q1', 'Q2'],
@@ -612,7 +612,7 @@ export const buildPositions = ({
   if (gmKey) {
     const build = makeKpiBuilder(34);
     const gmActuals = isLasVegas
-      ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, dl: { q1: 35.5, q2: 40.4 }, dlLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] }
+      ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, dl: { q1: 35.5, q2: 40.4, ytd: 40.4 }, dlLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] }
       : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] };
     transformedPositions[gmKey].kpis = [
       (() => {

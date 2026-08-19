@@ -794,8 +794,8 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         const cssRegionScope = isLasVegas ? 'region-lasvegas' : 'region-phoenix';
         const cssRegionActuals = isLasVegas
           ? {
-              nmg: { q1: 10, q2: 6.9, ytd: 17.6 },
-              esr: { q1: 90.4, q2: 139.7, ytd: 115.4 },
+              nmg: { q1: 10, q2: 6.9, ytd: 10.2 },
+              esr: { q1: 90.4, q2: 139.7, ytd: 114.9 },
               locked: ['Q1', 'Q2'],
             }
           : {
@@ -934,7 +934,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         const enhIsLasVegas = userRegion === 'Las Vegas';
         const enhRegionScope = enhIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
         const enhRegionActuals = enhIsLasVegas
-          ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, team: { q2: 168 }, teamLocked: ['Q2'], locked: ['Q1', 'Q2'] }
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, team: { q2: 168 }, teamLocked: ['Q2'], locked: ['Q1', 'Q2'] }
           : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, team: { q1: 109.9, q2: 52.9, ytd: 81.9 }, teamLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] };
         const enhApply = (k, a) => {
           if (!a) return k;
@@ -990,7 +990,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         const gmIsLasVegas = userRegion === 'Las Vegas';
         const gmRegionScope = gmIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
         const gmActuals = gmIsLasVegas
-          ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, dl: { q1: 35.5, q2: 40.4 }, dlLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] }
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, dl: { q1: 35.5, q2: 40.4, ytd: 40.4 }, dlLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] }
           : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] };
         const gmApply = (k, a) => {
           if (!a) return k;
