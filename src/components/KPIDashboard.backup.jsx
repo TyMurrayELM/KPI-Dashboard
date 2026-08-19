@@ -934,7 +934,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         const enhIsLasVegas = userRegion === 'Las Vegas';
         const enhRegionScope = enhIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
         const enhRegionActuals = enhIsLasVegas
-          ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, team: null, teamLocked: [], locked: ['Q1', 'Q2'] }
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, team: { q2: 168 }, teamLocked: ['Q2'], locked: ['Q1', 'Q2'] }
           : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, team: { q1: 109.9, q2: 52.9, ytd: 81.9 }, teamLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] };
         const enhApply = (k, a) => {
           if (!a) return k;

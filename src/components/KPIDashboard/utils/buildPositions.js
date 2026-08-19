@@ -577,8 +577,8 @@ export const buildPositions = ({
       ? {
           nmg: { q1: 10, q2: 6.9, ytd: 17.6 },
           esr: { q1: 90.4, q2: 139.7, ytd: 115.4 },
-          team: null,
-          teamLocked: [],
+          team: { q2: 168 },
+          teamLocked: ['Q2'],
           locked: ['Q1', 'Q2'],
         }
       : {
