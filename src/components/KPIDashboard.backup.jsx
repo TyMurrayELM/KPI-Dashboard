@@ -491,7 +491,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
-            const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'individual');
+            const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'individual');
             const branchQ1Values = {
               'Phoenix - North': 8.1,
               'Phoenix - SouthEast': 0.9,
@@ -529,7 +529,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
-            const k = buildMaintOpsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
+            const k = buildMaintOpsKpi('Direct Labor Maintenance %', '', 40, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'individual', { isInverse: true });
             const branchQ1Values = {
               'Phoenix - North': 33.9,
               'Phoenix - SouthEast': 36,
@@ -597,7 +597,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
-            const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'individual');
+            const k = buildMqsKpi('Net Maintenance Growth', '', 16, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'individual');
             const branchQ1Values = {
               'Phoenix - North': 8.1,
               'Phoenix - SouthEast': 0.9,
@@ -635,7 +635,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
-            const k = buildMqsKpi('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
+            const k = buildMqsKpi('Direct Labor Maintenance %', '', 40, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'individual', { isInverse: true });
             const branchQ1Values = {
               'Phoenix - North': 33.9,
               'Phoenix - SouthEast': 36,

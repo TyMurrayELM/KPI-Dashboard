@@ -322,7 +322,7 @@ export const buildPositions = ({
         return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
-        const k = build('Net Maintenance Growth', '', 16, 'individual');
+        const k = build('Net Maintenance Growth', '', 16, isLasVegas ? 'region-lasvegas' : 'individual');
         if (userBranch && nmgBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[userBranch] };
         }
@@ -342,7 +342,7 @@ export const buildPositions = ({
         return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
-        const k = build('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
+        const k = build('Direct Labor Maintenance %', '', 40, isLasVegas ? 'region-lasvegas' : 'individual', { isInverse: true });
         if (userBranch && dlmBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[userBranch] };
         }
@@ -406,7 +406,7 @@ export const buildPositions = ({
         return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
-        const k = build('Net Maintenance Growth', '', 16, 'individual');
+        const k = build('Net Maintenance Growth', '', 16, isLasVegas ? 'region-lasvegas' : 'individual');
         if (userBranch && nmgBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[userBranch] };
         }
@@ -426,7 +426,7 @@ export const buildPositions = ({
         return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
-        const k = build('Direct Labor Maintenance %', '', 40, 'individual', { isInverse: true });
+        const k = build('Direct Labor Maintenance %', '', 40, isLasVegas ? 'region-lasvegas' : 'individual', { isInverse: true });
         if (userBranch && dlmBranch[userBranch] != null) {
           k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[userBranch] };
         }
