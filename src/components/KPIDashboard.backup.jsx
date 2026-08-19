@@ -1046,7 +1046,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         const irrIsLasVegas = userRegion === 'Las Vegas';
         const irrRegionScope = irrIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
         const irrActuals = irrIsLasVegas
-          ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, irr: null, irrLocked: [], locked: ['Q1', 'Q2'] }
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, irr: { q1: 58.3, q2: 95.9 }, irrLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] }
           : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, irr: null, irrLocked: [], locked: ['Q1', 'Q2'] };
         const irrApply = (k, a) => {
           if (!a) return k;
