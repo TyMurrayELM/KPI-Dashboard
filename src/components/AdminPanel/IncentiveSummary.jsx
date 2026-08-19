@@ -86,6 +86,7 @@ const IncentiveSummary = () => {
             isAdmin: false,
             userEmail: user.email,
             userSalary: user.salary,
+            userRegion: user.region,
             userBranch: user.branch,
             userDepartment: user.department,
           },

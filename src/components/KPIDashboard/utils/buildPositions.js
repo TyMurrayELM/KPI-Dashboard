@@ -107,6 +107,23 @@ export const buildPositions = ({
   const findKey = (title) =>
     Object.keys(transformedPositions).find(k => transformedPositions[k].title === title);
 
+  // Region scoping shared by specialist roles: allowed_users.region ===
+  // 'Las Vegas' -> LV-scoped region KPIs; everyone else gets Phoenix.
+  // Actuals stay per-role (roles legitimately differ, e.g. CSS Phoenix ESR
+  // Q1 78 vs Sales Specialist 88.3) — only the scope test is shared.
+  // A null actual leaves the quarter at target (unlocked).
+  const isLasVegas = userRegion === 'Las Vegas';
+  const regionScope = isLasVegas ? 'region-lasvegas' : 'region-phoenix';
+  const applyActuals = (k, a) => {
+    if (!a) return k;
+    if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+    if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+    if (a.q3 != null) k.quarters[2] = { ...k.quarters[2], actual: a.q3 };
+    if (a.q4 != null) k.quarters[3] = { ...k.quarters[3], actual: a.q4 };
+    if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+    return k;
+  };
+
   // --- Arbor Manager ---
   const arborKey = findKey('Arbor Manager');
   if (arborKey) {
@@ -476,11 +493,8 @@ export const buildPositions = ({
   const cssKey = findKey('Client Success Specialist');
   if (cssKey) {
     const build = makeKpiBuilder(33);
-    // Region scoping: allowed_users.region === 'Las Vegas' -> LV-scoped
-    // region KPIs; everyone else gets Phoenix. LV actuals pending — null
-    // leaves the quarter at target (unlocked).
-    const isLasVegas = userRegion === 'Las Vegas';
-    const cssRegionScope = isLasVegas ? 'region-lasvegas' : 'region-phoenix';
+    // Region scoping via the shared isLasVegas/regionScope above.
+    const cssRegionScope = regionScope;
     const cssRegionActuals = isLasVegas
       ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, locked: ['Q1', 'Q2'] }
       : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 78, q2: 120.8, ytd: 99.4 }, locked: ['Q1', 'Q2'] };
@@ -553,30 +567,39 @@ export const buildPositions = ({
   }
 
   // --- Enhancement Sales Specialist ---
+  // Region-scoped (2026-08-19, first LV user: Jose Gomez). LV Enhancement
+  // Team Sales Goal actuals are pending — nulls leave those quarters at
+  // target and UNLOCKED so nothing pays out on placeholder data.
   const enhSalesSpecKey = findKey('Enhancement Sales Specialist');
   if (enhSalesSpecKey) {
     const build = makeKpiBuilder(50);
+    const enhActuals = isLasVegas
+      ? {
+          nmg: { q1: 10, q2: 6.9, ytd: 17.6 },
+          esr: { q1: 90.4, q2: 139.7, ytd: 115.4 },
+          team: null,
+          teamLocked: [],
+          locked: ['Q1', 'Q2'],
+        }
+      : {
+          nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 },
+          esr: { q1: 88.3, q2: 120.8, ytd: 99.4 },
+          team: { q1: 109.9, q2: 52.9, ytd: 81.9 },
+          teamLocked: ['Q1', 'Q2'],
+          locked: ['Q1', 'Q2'],
+        };
     transformedPositions[enhSalesSpecKey].kpis = [
       (() => {
-        const k = build('Net Maintenance Growth', '', 16, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-        k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-        k.annual = { ...k.annual, actual: 4.6 };
-        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
+        const k = applyActuals(build('Net Maintenance Growth', '', 16, regionScope), enhActuals.nmg);
+        return { ...k, weight: 34, lockedQuarters: enhActuals.locked };
       })(),
       (() => {
-        const k = build('Extra Services Revenue', '', 120, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-        k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
-        k.annual = { ...k.annual, actual: 99.4 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+        const k = applyActuals(build('Extra Services Revenue', '', 120, regionScope), enhActuals.esr);
+        return { ...k, weight: 33, lockedQuarters: enhActuals.locked };
       })(),
       (() => {
-        const k = build('Enhancement Team Sales Goal', '', 100, 'region-phoenix');
-        k.quarters[0] = { ...k.quarters[0], actual: 109.9 };
-        k.quarters[1] = { ...k.quarters[1], actual: 52.9 };
-        k.annual = { ...k.annual, actual: 81.9 };
-        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+        const k = applyActuals(build('Enhancement Team Sales Goal', '', 100, regionScope), enhActuals.team);
+        return { ...k, weight: 33, lockedQuarters: enhActuals.teamLocked };
       })(),
     ];
   }

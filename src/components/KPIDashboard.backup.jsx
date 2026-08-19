@@ -927,27 +927,34 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           };
         };
 
+        // Region scoping (2026-08-19, first LV user: Jose Gomez): same
+        // pattern as Client Success Specialist above. LV Enhancement Team
+        // Sales Goal actuals pending — quarters stay at target, UNLOCKED,
+        // so nothing pays out on placeholder data.
+        const enhIsLasVegas = userRegion === 'Las Vegas';
+        const enhRegionScope = enhIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
+        const enhRegionActuals = enhIsLasVegas
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, team: null, teamLocked: [], locked: ['Q1', 'Q2'] }
+          : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, team: { q1: 109.9, q2: 52.9, ytd: 81.9 }, teamLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] };
+        const enhApply = (k, a) => {
+          if (!a) return k;
+          if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+          if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+          if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+          return k;
+        };
         transformedPositions[enhSalesSpecKey].kpis = [
           (() => {
-            const k = buildEnhSalesSpecKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-            k.annual = { ...k.annual, actual: 4.6 };
-            return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2'] };
+            const k = enhApply(buildEnhSalesSpecKpi('Net Maintenance Growth', '', 16, enhRegionScope), enhRegionActuals.nmg);
+            return { ...k, weight: 34, lockedQuarters: enhRegionActuals.locked };
           })(),
           (() => {
-            const k = buildEnhSalesSpecKpi('Extra Services Revenue', '', 120, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-            k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
-            k.annual = { ...k.annual, actual: 99.4 };
-            return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+            const k = enhApply(buildEnhSalesSpecKpi('Extra Services Revenue', '', 120, enhRegionScope), enhRegionActuals.esr);
+            return { ...k, weight: 33, lockedQuarters: enhRegionActuals.locked };
           })(),
           (() => {
-            const k = buildEnhSalesSpecKpi('Enhancement Team Sales Goal', '', 100, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 109.9 };
-            k.quarters[1] = { ...k.quarters[1], actual: 52.9 };
-            k.annual = { ...k.annual, actual: 81.9 };
-            return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+            const k = enhApply(buildEnhSalesSpecKpi('Enhancement Team Sales Goal', '', 100, enhRegionScope), enhRegionActuals.team);
+            return { ...k, weight: 33, lockedQuarters: enhRegionActuals.teamLocked };
           })(),
         ];
       }
