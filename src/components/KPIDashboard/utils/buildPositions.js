@@ -612,7 +612,7 @@ export const buildPositions = ({
   if (gmKey) {
     const build = makeKpiBuilder(34);
     const gmActuals = isLasVegas
-      ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] }
+      ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, dl: { q1: 35.5, q2: 40.4 }, dlLocked: ['Q1', 'Q2'], locked: ['Q1', 'Q2'] }
       : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] };
     transformedPositions[gmKey].kpis = [
       (() => {
