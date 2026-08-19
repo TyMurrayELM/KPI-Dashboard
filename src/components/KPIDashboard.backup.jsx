@@ -484,10 +484,10 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
 
         transformedPositions[maintOpsMgrKey].kpis = [
           (() => {
-            const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-            k.annual = { ...k.annual, actual: 4.6 };
+            const k = buildMaintOpsKpi('Net Maintenance Growth', '', 16, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: userRegion === 'Las Vegas' ? 10 : 4.6 };
+            k.quarters[1] = { ...k.quarters[1], actual: userRegion === 'Las Vegas' ? 6.9 : -1.2 };
+            k.annual = { ...k.annual, actual: userRegion === 'Las Vegas' ? 10.2 : 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -496,16 +496,19 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - North': 8.1,
               'Phoenix - SouthEast': 0.9,
               'Phoenix - SouthWest': 4.2,
+              'Las Vegas': 10,
             };
             const branchQ2Values = {
               'Phoenix - North': -1.3,
               'Phoenix - SouthEast': 1.2,
               'Phoenix - SouthWest': -3,
+              'Las Vegas': 6.9,
             };
             const branchAnnualValues = {
               'Phoenix - North': 7.4,
               'Phoenix - SouthEast': 5.2,
               'Phoenix - SouthWest': 2.2,
+              'Las Vegas': 10.2,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
               k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
@@ -519,10 +522,10 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),
           (() => {
-            const k = buildMaintOpsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-            k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
-            k.annual = { ...k.annual, actual: 99.4 };
+            const k = buildMaintOpsKpi('Extra Services Revenue', '', 120, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: userRegion === 'Las Vegas' ? 90.4 : 88.3 };
+            k.quarters[1] = { ...k.quarters[1], actual: userRegion === 'Las Vegas' ? 139.7 : 120.8 };
+            k.annual = { ...k.annual, actual: userRegion === 'Las Vegas' ? 114.9 : 99.4 };
             return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -531,16 +534,19 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - North': 33.9,
               'Phoenix - SouthEast': 36,
               'Phoenix - SouthWest': 31.8,
+              'Las Vegas': 35.5,
             };
             const branchQ2Values = {
               'Phoenix - North': 40.4,
               'Phoenix - SouthEast': 37.9,
               'Phoenix - SouthWest': 35.6,
+              'Las Vegas': 40.4,
             };
             const branchAnnualValues = {
               'Phoenix - North': 37.4,
               'Phoenix - SouthEast': 36.3,
               'Phoenix - SouthWest': 33.4,
+              'Las Vegas': 40.4,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
               k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
@@ -584,10 +590,10 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
 
         transformedPositions[mqsKey].kpis = [
           (() => {
-            const k = buildMqsKpi('Net Maintenance Growth', '', 16, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 4.6 };
-            k.quarters[1] = { ...k.quarters[1], actual: -1.2 };
-            k.annual = { ...k.annual, actual: 4.6 };
+            const k = buildMqsKpi('Net Maintenance Growth', '', 16, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: userRegion === 'Las Vegas' ? 10 : 4.6 };
+            k.quarters[1] = { ...k.quarters[1], actual: userRegion === 'Las Vegas' ? 6.9 : -1.2 };
+            k.annual = { ...k.annual, actual: userRegion === 'Las Vegas' ? 10.2 : 4.6 };
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -596,16 +602,19 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - North': 8.1,
               'Phoenix - SouthEast': 0.9,
               'Phoenix - SouthWest': 4.2,
+              'Las Vegas': 10,
             };
             const branchQ2Values = {
               'Phoenix - North': -1.3,
               'Phoenix - SouthEast': 1.2,
               'Phoenix - SouthWest': -3,
+              'Las Vegas': 6.9,
             };
             const branchAnnualValues = {
               'Phoenix - North': 7.4,
               'Phoenix - SouthEast': 5.2,
               'Phoenix - SouthWest': 2.2,
+              'Las Vegas': 10.2,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
               k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
@@ -619,10 +628,10 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),
           (() => {
-            const k = buildMqsKpi('Extra Services Revenue', '', 120, 'region-phoenix');
-            k.quarters[0] = { ...k.quarters[0], actual: 88.3 };
-            k.quarters[1] = { ...k.quarters[1], actual: 120.8 };
-            k.annual = { ...k.annual, actual: 99.4 };
+            const k = buildMqsKpi('Extra Services Revenue', '', 120, userRegion === 'Las Vegas' ? 'region-lasvegas' : 'region-phoenix');
+            k.quarters[0] = { ...k.quarters[0], actual: userRegion === 'Las Vegas' ? 90.4 : 88.3 };
+            k.quarters[1] = { ...k.quarters[1], actual: userRegion === 'Las Vegas' ? 139.7 : 120.8 };
+            k.annual = { ...k.annual, actual: userRegion === 'Las Vegas' ? 114.9 : 99.4 };
             return { ...k, weight: 20, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
@@ -631,16 +640,19 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - North': 33.9,
               'Phoenix - SouthEast': 36,
               'Phoenix - SouthWest': 31.8,
+              'Las Vegas': 35.5,
             };
             const branchQ2Values = {
               'Phoenix - North': 40.4,
               'Phoenix - SouthEast': 37.9,
               'Phoenix - SouthWest': 35.6,
+              'Las Vegas': 40.4,
             };
             const branchAnnualValues = {
               'Phoenix - North': 37.4,
               'Phoenix - SouthEast': 36.3,
               'Phoenix - SouthWest': 33.4,
+              'Las Vegas': 40.4,
             };
             if (userBranch && branchQ1Values[userBranch] != null) {
               k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };

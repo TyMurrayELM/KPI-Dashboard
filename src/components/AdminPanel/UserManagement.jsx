@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 
 const REGION_OPTIONS = ['Phoenix', 'Las Vegas'];
-const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest'];
+const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest', 'Las Vegas'];
 const BRANCH_ROLE_NAMES = ['Maintenance Operations Manager', 'Maintenance Quality Specialist'];
 const DEPARTMENT_OPTIONS = ['Arbor', 'Spray', 'Irrigation', 'Enhancements'];
 const DEPARTMENT_ROLE_NAMES = ['Spray Manager', 'Arbor Manager', 'Senior Manager of Maintenance Operations'];
