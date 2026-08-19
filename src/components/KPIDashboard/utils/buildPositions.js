@@ -633,7 +633,11 @@ export const buildPositions = ({
   // --- Irrigation Support Specialist (region-scoped; first holder Claudia
   // Landa, LV, 2026-08-19) --- LV NMG/ESR = the shared region figures.
   // Irrigation Revenue vs Goal actuals PENDING - at target, unlocked.
-  const irrSpecKey = findKey('Irrigation Support Specialist');
+  // Looked up by role KEY, not display name - Tyler renamed this role to
+  // "Operations Support Specialist" on 2026-08-19 and title matching broke.
+  // The key is stable across renames; user_roles also stores the key.
+  const irrSpecKey = transformedPositions['irrigation-support-specialist']
+    ? 'irrigation-support-specialist' : undefined;
   if (irrSpecKey) {
     const build = makeKpiBuilder(34);
     const irrActuals = isLasVegas

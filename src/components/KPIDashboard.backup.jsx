@@ -1019,9 +1019,10 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
       // scoped; first holder Claudia Landa, LV, 2026-08-19). LV NMG/ESR =
       // the shared region figures. Irrigation Revenue vs Goal actuals
       // PENDING - at target, unlocked.
-      const irrSpecKey = Object.keys(transformedPositions).find(
-        k => transformedPositions[k].title === 'Irrigation Support Specialist'
-      );
+      // Looked up by role KEY, not display name - the role was renamed to
+      // "Operations Support Specialist" (2026-08-19); keys survive renames.
+      const irrSpecKey = transformedPositions['irrigation-support-specialist']
+        ? 'irrigation-support-specialist' : undefined;
       if (irrSpecKey) {
         const buildIrrKpi = (name, description, target, scope, overrides = {}) => {
           const config = getKpiPeriodConfig(name);
