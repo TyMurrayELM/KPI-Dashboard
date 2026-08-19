@@ -959,6 +959,62 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into General Manager (region-scoped; first
+      // holder Steve Swanson, LV, 2026-08-19). LV NMG/ESR actuals = the
+      // region figures the LV specialist roles use. DL Maintenance %
+      // actuals PENDING (both regions) — quarters sit at target, unlocked.
+      const gmKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'General Manager'
+      );
+      if (gmKey) {
+        const buildGmKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 34, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+        const gmIsLasVegas = userRegion === 'Las Vegas';
+        const gmRegionScope = gmIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
+        const gmActuals = gmIsLasVegas
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] }
+          : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] };
+        const gmApply = (k, a) => {
+          if (!a) return k;
+          if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+          if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+          if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+          return k;
+        };
+        transformedPositions[gmKey].kpis = [
+          (() => {
+            const k = gmApply(buildGmKpi('Net Maintenance Growth', '', 16, gmRegionScope), gmActuals.nmg);
+            return { ...k, weight: 34, lockedQuarters: gmActuals.locked };
+          })(),
+          (() => {
+            const k = gmApply(buildGmKpi('Extra Services Revenue', '', 120, gmRegionScope), gmActuals.esr);
+            return { ...k, weight: 33, lockedQuarters: gmActuals.locked };
+          })(),
+          (() => {
+            const k = gmApply(buildGmKpi('Direct Labor Maintenance %', '', 40, gmRegionScope, { isInverse: true }), gmActuals.dl);
+            return { ...k, weight: 33, lockedQuarters: gmActuals.dlLocked };
+          })(),
+        ];
+      }
+
       // Inject hardcoded KPIs into Accounting Specialist (fully hardcoded, ignores DB assignments)
       const acctFinKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Accounting Specialist'

@@ -604,6 +604,32 @@ export const buildPositions = ({
     ];
   }
 
+  // --- General Manager (region-scoped; first holder Steve Swanson, LV, 2026-08-19) ---
+  // LV NMG/ESR actuals = the region figures already used by the LV specialist
+  // roles. DL Maintenance % actuals PENDING (both regions) — quarters sit at
+  // target, unlocked. A Phoenix GM (none yet) gets Phoenix NMG/ESR figures.
+  const gmKey = findKey('General Manager');
+  if (gmKey) {
+    const build = makeKpiBuilder(34);
+    const gmActuals = isLasVegas
+      ? { nmg: { q1: 10, q2: 6.9, ytd: 17.6 }, esr: { q1: 90.4, q2: 139.7, ytd: 115.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] }
+      : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, dl: null, dlLocked: [], locked: ['Q1', 'Q2'] };
+    transformedPositions[gmKey].kpis = [
+      (() => {
+        const k = applyActuals(build('Net Maintenance Growth', '', 16, regionScope), gmActuals.nmg);
+        return { ...k, weight: 34, lockedQuarters: gmActuals.locked };
+      })(),
+      (() => {
+        const k = applyActuals(build('Extra Services Revenue', '', 120, regionScope), gmActuals.esr);
+        return { ...k, weight: 33, lockedQuarters: gmActuals.locked };
+      })(),
+      (() => {
+        const k = applyActuals(build('Direct Labor Maintenance %', '', 40, regionScope, { isInverse: true }), gmActuals.dl);
+        return { ...k, weight: 33, lockedQuarters: gmActuals.dlLocked };
+      })(),
+    ];
+  }
+
   // --- Accounting Specialist ---
   const acctFinKey = findKey('Accounting Specialist');
   if (acctFinKey) {
