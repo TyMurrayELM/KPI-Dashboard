@@ -1015,6 +1015,62 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into Irrigation Support Specialist (region-
+      // scoped; first holder Claudia Landa, LV, 2026-08-19). LV NMG/ESR =
+      // the shared region figures. Irrigation Revenue vs Goal actuals
+      // PENDING - at target, unlocked.
+      const irrSpecKey = Object.keys(transformedPositions).find(
+        k => transformedPositions[k].title === 'Irrigation Support Specialist'
+      );
+      if (irrSpecKey) {
+        const buildIrrKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 34, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+        const irrIsLasVegas = userRegion === 'Las Vegas';
+        const irrRegionScope = irrIsLasVegas ? 'region-lasvegas' : 'region-phoenix';
+        const irrActuals = irrIsLasVegas
+          ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, irr: null, irrLocked: [], locked: ['Q1', 'Q2'] }
+          : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, irr: null, irrLocked: [], locked: ['Q1', 'Q2'] };
+        const irrApply = (k, a) => {
+          if (!a) return k;
+          if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+          if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+          if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+          return k;
+        };
+        transformedPositions[irrSpecKey].kpis = [
+          (() => {
+            const k = irrApply(buildIrrKpi('Net Maintenance Growth', '', 16, irrRegionScope), irrActuals.nmg);
+            return { ...k, weight: 34, lockedQuarters: irrActuals.locked };
+          })(),
+          (() => {
+            const k = irrApply(buildIrrKpi('Extra Services Revenue', '', 120, irrRegionScope), irrActuals.esr);
+            return { ...k, weight: 33, lockedQuarters: irrActuals.locked };
+          })(),
+          (() => {
+            const k = irrApply(buildIrrKpi('Irrigation Revenue vs Goal', '', 100, irrRegionScope), irrActuals.irr);
+            return { ...k, weight: 33, lockedQuarters: irrActuals.irrLocked };
+          })(),
+        ];
+      }
+
       // Inject hardcoded KPIs into Accounting Specialist (fully hardcoded, ignores DB assignments)
       const acctFinKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Accounting Specialist'

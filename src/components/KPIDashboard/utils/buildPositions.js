@@ -630,6 +630,31 @@ export const buildPositions = ({
     ];
   }
 
+  // --- Irrigation Support Specialist (region-scoped; first holder Claudia
+  // Landa, LV, 2026-08-19) --- LV NMG/ESR = the shared region figures.
+  // Irrigation Revenue vs Goal actuals PENDING - at target, unlocked.
+  const irrSpecKey = findKey('Irrigation Support Specialist');
+  if (irrSpecKey) {
+    const build = makeKpiBuilder(34);
+    const irrActuals = isLasVegas
+      ? { nmg: { q1: 10, q2: 6.9, ytd: 10.2 }, esr: { q1: 90.4, q2: 139.7, ytd: 114.9 }, irr: null, irrLocked: [], locked: ['Q1', 'Q2'] }
+      : { nmg: { q1: 4.6, q2: -1.2, ytd: 4.6 }, esr: { q1: 88.3, q2: 120.8, ytd: 99.4 }, irr: null, irrLocked: [], locked: ['Q1', 'Q2'] };
+    transformedPositions[irrSpecKey].kpis = [
+      (() => {
+        const k = applyActuals(build('Net Maintenance Growth', '', 16, regionScope), irrActuals.nmg);
+        return { ...k, weight: 34, lockedQuarters: irrActuals.locked };
+      })(),
+      (() => {
+        const k = applyActuals(build('Extra Services Revenue', '', 120, regionScope), irrActuals.esr);
+        return { ...k, weight: 33, lockedQuarters: irrActuals.locked };
+      })(),
+      (() => {
+        const k = applyActuals(build('Irrigation Revenue vs Goal', '', 100, regionScope), irrActuals.irr);
+        return { ...k, weight: 33, lockedQuarters: irrActuals.irrLocked };
+      })(),
+    ];
+  }
+
   // --- Accounting Specialist ---
   const acctFinKey = findKey('Accounting Specialist');
   if (acctFinKey) {

@@ -87,6 +87,8 @@ export const getMaxValueForKPI = (kpiName) => {
       return 50;
     case 'Enhancement Team Sales Goal':
       return 120;
+    case 'Irrigation Revenue vs Goal':
+      return 130;
     case 'Extra Services Revenue':
       return 140;
     case 'Total Gross Margin % on Completed Jobs':
@@ -124,6 +126,8 @@ export const getAnnualMaxValueForKPI = (kpiName) => {
     case 'Arbor Team Sales Goal':
     case 'Enhancement Team Sales Goal':
       return 120;
+    case 'Irrigation Revenue vs Goal':
+      return 130;
     default:
       return getMaxValueForKPI(kpiName);
   }
