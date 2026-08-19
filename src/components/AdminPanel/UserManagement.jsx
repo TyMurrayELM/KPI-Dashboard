@@ -611,42 +611,36 @@ const UserManagement = () => {
         background: 'white', 
         border: '1px solid #e5e7eb',
         borderRadius: '8px',
-        overflow: 'hidden'
+        overflowX: 'auto'
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{ background: '#1e3a5f' }}>
             <tr>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+              <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
                 Name
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
-                Email
+              <th style={{ padding: '6px 8px', textAlign: 'center', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
+                Status
               </th>
-              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: 'white' }}>
-                Admin
-              </th>
-              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', fontSize: '13px', color: 'white' }}>
-                Active
-              </th>
-              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+              <th style={{ padding: '6px 8px', textAlign: 'right', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
                 Salary
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+              <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
                 Region
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+              <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
                 Branch
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
-                Department
+              <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
+                Dept
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+              <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
                 Eligibility
               </th>
-              <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600', fontSize: '13px', color: 'white' }}>
-                Assigned Roles
+              <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
+                Roles
               </th>
-              <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600', fontSize: '13px', color: 'white' }}>
+              <th style={{ padding: '6px 8px', textAlign: 'right', fontWeight: '600', fontSize: '12px', color: 'white', whiteSpace: 'nowrap' }}>
                 Actions
               </th>
             </tr>
@@ -654,41 +648,38 @@ const UserManagement = () => {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={10} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={9} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
                   No users found. Add your first user to get started.
                 </td>
               </tr>
             ) : (
               users.map((user) => (
                 <tr key={user.id} style={{ borderTop: '1px solid #e5e7eb' }}>
-                  <td style={{ padding: '12px', fontSize: '14px', fontWeight: '500' }}>
-                    {user.name || '—'}
+                  <td style={{ padding: '6px 8px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '500', whiteSpace: 'nowrap' }}>{user.name || '—'}</div>
+                    <div style={{ fontSize: '11px', color: '#6b7280', whiteSpace: 'nowrap' }}>{user.email}</div>
                   </td>
-                  <td style={{ padding: '12px', fontSize: '14px', color: '#6b7280' }}>
-                    {user.email}
-                  </td>
-                  <td style={{ padding: '12px', textAlign: 'center' }}>
-                    {user.is_admin ? (
+                  <td style={{ padding: '6px 8px', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    {user.is_active ? (
+                      <span style={{ color: '#059669' }} title="Active">✓</span>
+                    ) : (
+                      <span style={{ color: '#dc2626' }} title="Inactive">✗</span>
+                    )}
+                    {user.is_admin && (
                       <span style={{
-                        padding: '2px 8px',
+                        marginLeft: '4px',
+                        padding: '1px 6px',
                         background: '#dbeafe',
                         color: '#1e40af',
                         borderRadius: '4px',
-                        fontSize: '12px',
+                        fontSize: '11px',
                         fontWeight: '500'
                       }}>
                         Admin
                       </span>
-                    ) : '—'}
-                  </td>
-                  <td style={{ padding: '12px', textAlign: 'center' }}>
-                    {user.is_active ? (
-                      <span style={{ color: '#059669' }}>✓</span>
-                    ) : (
-                      <span style={{ color: '#dc2626' }}>✗</span>
                     )}
                   </td>
-                  <td style={{ padding: '12px', fontSize: '14px', textAlign: 'right', color: '#374151' }}>
+                  <td style={{ padding: '6px 8px', fontSize: '13px', textAlign: 'right', color: '#374151' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px' }}>
                       <span style={{ color: '#6b7280', fontSize: '13px' }}>$</span>
                       <input
@@ -712,7 +703,7 @@ const UserManagement = () => {
                           }
                         }}
                         style={{
-                          width: '90px',
+                          width: '72px',
                           padding: '4px 8px',
                           border: '1px solid #e5e7eb',
                           borderRadius: '4px',
@@ -723,7 +714,7 @@ const UserManagement = () => {
                       />
                     </div>
                   </td>
-                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                  <td style={{ padding: '6px 8px', fontSize: '12px' }}>
                     <select
                       value={user.region === 'Las Vegas' ? 'Las Vegas' : ''}
                       onChange={async (e) => {
@@ -744,7 +735,7 @@ const UserManagement = () => {
                         borderRadius: '4px',
                         fontSize: '13px',
                         background: 'white',
-                        minWidth: '110px'
+                        minWidth: '86px'
                       }}
                     >
                       <option value="">Phoenix</option>
@@ -753,7 +744,7 @@ const UserManagement = () => {
                       ))}
                     </select>
                   </td>
-                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                  <td style={{ padding: '6px 8px', fontSize: '12px' }}>
                     {hasBranchRole(user.user_roles?.map(r => r.role_key) || []) ? (
                       <select
                         value={user.branch || ''}
@@ -775,7 +766,7 @@ const UserManagement = () => {
                           borderRadius: '4px',
                           fontSize: '13px',
                           background: 'white',
-                          minWidth: '160px'
+                          minWidth: '118px'
                         }}
                       >
                         <option value="">— None —</option>
@@ -787,7 +778,7 @@ const UserManagement = () => {
                       <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '12px' }}>—</span>
                     )}
                   </td>
-                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                  <td style={{ padding: '6px 8px', fontSize: '12px' }}>
                     {hasDepartmentRole(user.user_roles?.map(r => r.role_key) || []) ? (
                       <select
                         value={user.department || ''}
@@ -809,7 +800,7 @@ const UserManagement = () => {
                           borderRadius: '4px',
                           fontSize: '13px',
                           background: 'white',
-                          minWidth: '140px'
+                          minWidth: '104px'
                         }}
                       >
                         <option value="">— None —</option>
@@ -821,7 +812,7 @@ const UserManagement = () => {
                       <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '12px' }}>—</span>
                     )}
                   </td>
-                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                  <td style={{ padding: '6px 8px', fontSize: '12px' }}>
                     <input
                       type="date"
                       value={user.eligibility_date || ''}
@@ -844,12 +835,13 @@ const UserManagement = () => {
                         padding: '4px 8px',
                         border: '1px solid #e5e7eb',
                         borderRadius: '4px',
-                        fontSize: '13px',
+                        fontSize: '12px',
                         background: 'white',
+                        width: '118px',
                       }}
                     />
                   </td>
-                  <td style={{ padding: '12px', fontSize: '13px' }}>
+                  <td style={{ padding: '6px 8px', fontSize: '12px' }}>
                     {user.user_roles && user.user_roles.length > 0 ? (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                         {user.user_roles.map(ur => {
@@ -876,35 +868,38 @@ const UserManagement = () => {
                       </span>
                     )}
                   </td>
-                  <td style={{ padding: '12px', textAlign: 'right' }}>
-                    <button
-                      onClick={() => startEdit(user)}
-                      style={{
-                        padding: '6px 12px',
-                        background: '#f3f4f6',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        marginRight: '8px'
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user)}
-                      style={{
-                        padding: '6px 12px',
-                        background: '#fee2e2',
-                        border: '1px solid #fca5a5',
-                        color: '#991b1b',
-                        borderRadius: '4px',
-                        fontSize: '13px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Remove
-                    </button>
+                  <td style={{ padding: '6px 8px', textAlign: 'right' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
+                      <button
+                        onClick={() => startEdit(user)}
+                        style={{
+                          padding: '3px 10px',
+                          background: '#f3f4f6',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          width: '68px'
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user)}
+                        style={{
+                          padding: '3px 10px',
+                          background: '#fee2e2',
+                          border: '1px solid #fca5a5',
+                          color: '#991b1b',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          width: '68px'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
