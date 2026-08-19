@@ -153,9 +153,26 @@ const PositionHeader = ({
         </div>
         <div>
           <h3 className="text-xs md:text-lg font-semibold text-gray-800">Projected Bonus</h3>
-          <p className="text-lg md:text-2xl font-bold text-green-600 mt-1">
-            {formatCurrency(calculateActualTotalBonus(position, activeTab))}
-          </p>
+          {(() => {
+            // Headline = full projected bonus minus what pro-ration removes
+            // from the period KPIs, so it always equals the sum of the
+            // (prorated) chips below.
+            const fullTotal = calculateActualTotalBonus(position, activeTab);
+            const prorationReduction = ['Q1', 'Q2', 'Q3', 'Q4'].reduce(
+              (sum, qId) => sum + quarterTotals[qId] * (1 - quarterFactors[qId]),
+              0
+            ) + totalAnnualBonus * (1 - annualFactor);
+            const shown = fullTotal - prorationReduction;
+            const reduced = prorationReduction > 0.005;
+            return (
+              <p className={`text-lg md:text-2xl font-bold mt-1 ${reduced ? 'text-amber-600' : 'text-green-600'}`}>
+                {reduced && (
+                  <span className="text-sm md:text-base line-through text-gray-400 mr-2">{formatCurrency(fullTotal)}</span>
+                )}
+                {formatCurrency(shown)}
+              </p>
+            );
+          })()}
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
             {['Q1','Q2','Q3','Q4'].map(qId => {
               const full = quarterTotals[qId];

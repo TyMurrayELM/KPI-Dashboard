@@ -202,6 +202,19 @@ const KPICard = ({
   const [guideExpanded, setGuideExpanded] = useState(false);
   const [previewBranch, setPreviewBranch] = useState(userBranch || null);
   const periodBonus = calculateKpiBonusForPeriods(position, index);
+  // Pro-ration factors from the eligibility date. The badge ("Pro-rated
+  // 1/3") and the payable $ must agree — earned amounts render as
+  // full × factor, with the full amount struck through (same visual
+  // language as PositionHeader's quarter chips).
+  const qFactor = (qId) => {
+    const range = QUARTER_MONTHS[qId];
+    if (!range) return 1;
+    const { eligibleMonths, totalMonths } = getProrationMonths(eligibilityDate, range[0], range[1]);
+    return totalMonths > 0 ? eligibleMonths / totalMonths : 1;
+  };
+  const annualProration = getProrationMonths(eligibilityDate, YEAR_MONTHS[0], YEAR_MONTHS[1]);
+  const annualFactor = annualProration.totalMonths > 0
+    ? annualProration.eligibleMonths / annualProration.totalMonths : 1;
   const excludedQuarters = new Set(kpi.excludedQuarters || []);
   const activeQuarterCount = (kpi.quarters?.length || 4) - excludedQuarters.size;
   const { perQuarter: perQuarterMax, annual: annualMax } = computePeriodBonusMax(
@@ -398,9 +411,18 @@ const KPICard = ({
         </div>
         <div className="text-right flex-shrink-0">
           <p className="text-xs text-gray-500">Total Bonus</p>
-          <p className={`text-lg font-bold ${periodBonus.total > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-            {formatCurrency(periodBonus.total)}
-          </p>
+          {(() => {
+            const proratedTotal = ['Q1', 'Q2', 'Q3', 'Q4'].reduce(
+              (sum, qId) => sum + (periodBonus.quarterBonuses[qId] || 0) * qFactor(qId),
+              0
+            ) + periodBonus.annualBonus * annualFactor;
+            const isReduced = proratedTotal < periodBonus.total - 0.005;
+            return (
+              <p className={`text-lg font-bold ${isReduced ? 'text-amber-600' : proratedTotal > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                {formatCurrency(proratedTotal)}
+              </p>
+            );
+          })()}
           <p className="text-xs text-gray-500">of {formatCurrency(totalMax)}</p>
         </div>
       </div>
@@ -517,8 +539,11 @@ const KPICard = ({
                     </span>
                   )}
                   {kpi.lockedQuarters?.includes(q.id) && <LockIcon />}
-                  <span className={`text-xs font-medium ${qBonus > 0 ? 'text-green-600' : 'text-black'}`}>
-                    {formatCurrency(qBonus)}
+                  {showQProration && qBonus > 0 && (
+                    <span className="text-xs line-through text-gray-400">{formatCurrency(qBonus)}</span>
+                  )}
+                  <span className={`text-xs font-medium ${showQProration && qBonus > 0 ? 'text-amber-600' : qBonus > 0 ? 'text-green-600' : 'text-black'}`}>
+                    {formatCurrency(qBonus * qFactor(q.id))}
                   </span>
                   <span className="text-xs text-black">/ {formatCurrency(perQuarterMax)}</span>
                   {onTarget && q.actual > 0 && !ineligible && <CheckIcon />}
@@ -600,8 +625,11 @@ const KPICard = ({
               ) : null;
             })()}
             {kpi.lockedAnnual && <LockIcon />}
-            <span className={`text-xs font-medium ${periodBonus.annualBonus > 0 ? 'text-blue-800' : 'text-blue-800'}`}>
-              {formatCurrency(periodBonus.annualBonus)}
+            {annualFactor < 1 && periodBonus.annualBonus > 0 && (
+              <span className="text-xs line-through text-gray-400">{formatCurrency(periodBonus.annualBonus)}</span>
+            )}
+            <span className={`text-xs font-medium ${annualFactor < 1 && periodBonus.annualBonus > 0 ? 'text-amber-600' : 'text-blue-800'}`}>
+              {formatCurrency(periodBonus.annualBonus * annualFactor)}
             </span>
             <span className="text-xs text-blue-800">/ {formatCurrency(annualMax)}</span>
             {isAnnualOnTarget() && kpi.annual.actual > 0 && <CheckIcon />}
