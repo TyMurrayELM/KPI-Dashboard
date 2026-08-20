@@ -461,6 +461,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         k => transformedPositions[k].title === 'Maintenance Operations Manager'
       );
       if (maintOpsMgrKey) {
+        // LV region == its single branch: LV users read the 'Las Vegas'
+        // branch values even if their branch field is not set yet.
+        const effBranch = userRegion === 'Las Vegas' ? 'Las Vegas' : userBranch;
         const buildMaintOpsKpi = (name, description, target, scope, overrides = {}) => {
           const config = getKpiPeriodConfig(name);
           const qTarget = config.quarterlyTarget != null
@@ -510,14 +513,14 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - SouthWest': 2.2,
               'Las Vegas': 10.2,
             };
-            if (userBranch && branchQ1Values[userBranch] != null) {
-              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
+            if (effBranch && branchQ1Values[effBranch] != null) {
+              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[effBranch] };
             }
-            if (userBranch && branchQ2Values[userBranch] != null) {
-              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[userBranch] };
+            if (effBranch && branchQ2Values[effBranch] != null) {
+              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[effBranch] };
             }
-            if (userBranch && branchAnnualValues[userBranch] != null) {
-              k.annual = { ...k.annual, actual: branchAnnualValues[userBranch] };
+            if (effBranch && branchAnnualValues[effBranch] != null) {
+              k.annual = { ...k.annual, actual: branchAnnualValues[effBranch] };
             }
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),
@@ -548,14 +551,14 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - SouthWest': 33.4,
               'Las Vegas': 40.4,
             };
-            if (userBranch && branchQ1Values[userBranch] != null) {
-              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
+            if (effBranch && branchQ1Values[effBranch] != null) {
+              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[effBranch] };
             }
-            if (userBranch && branchQ2Values[userBranch] != null) {
-              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[userBranch] };
+            if (effBranch && branchQ2Values[effBranch] != null) {
+              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[effBranch] };
             }
-            if (userBranch && branchAnnualValues[userBranch] != null) {
-              k.annual = { ...k.annual, actual: branchAnnualValues[userBranch] };
+            if (effBranch && branchAnnualValues[effBranch] != null) {
+              k.annual = { ...k.annual, actual: branchAnnualValues[effBranch] };
             }
             return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),
@@ -567,6 +570,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         k => transformedPositions[k].title === 'Maintenance Quality Specialist'
       );
       if (mqsKey) {
+        // LV region == its single branch: LV users read the 'Las Vegas'
+        // branch values even if their branch field is not set yet.
+        const effBranch = userRegion === 'Las Vegas' ? 'Las Vegas' : userBranch;
         const buildMqsKpi = (name, description, target, scope, overrides = {}) => {
           const config = getKpiPeriodConfig(name);
           const qTarget = config.quarterlyTarget != null
@@ -616,14 +622,14 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - SouthWest': 2.2,
               'Las Vegas': 10.2,
             };
-            if (userBranch && branchQ1Values[userBranch] != null) {
-              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
+            if (effBranch && branchQ1Values[effBranch] != null) {
+              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[effBranch] };
             }
-            if (userBranch && branchQ2Values[userBranch] != null) {
-              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[userBranch] };
+            if (effBranch && branchQ2Values[effBranch] != null) {
+              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[effBranch] };
             }
-            if (userBranch && branchAnnualValues[userBranch] != null) {
-              k.annual = { ...k.annual, actual: branchAnnualValues[userBranch] };
+            if (effBranch && branchAnnualValues[effBranch] != null) {
+              k.annual = { ...k.annual, actual: branchAnnualValues[effBranch] };
             }
             return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),
@@ -654,14 +660,14 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
               'Phoenix - SouthWest': 33.4,
               'Las Vegas': 40.4,
             };
-            if (userBranch && branchQ1Values[userBranch] != null) {
-              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[userBranch] };
+            if (effBranch && branchQ1Values[effBranch] != null) {
+              k.quarters[0] = { ...k.quarters[0], actual: branchQ1Values[effBranch] };
             }
-            if (userBranch && branchQ2Values[userBranch] != null) {
-              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[userBranch] };
+            if (effBranch && branchQ2Values[effBranch] != null) {
+              k.quarters[1] = { ...k.quarters[1], actual: branchQ2Values[effBranch] };
             }
-            if (userBranch && branchAnnualValues[userBranch] != null) {
-              k.annual = { ...k.annual, actual: branchAnnualValues[userBranch] };
+            if (effBranch && branchAnnualValues[effBranch] != null) {
+              k.annual = { ...k.annual, actual: branchAnnualValues[effBranch] };
             }
             return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),

@@ -277,6 +277,9 @@ export const buildPositions = ({
   const maintOpsMgrKey = findKey('Maintenance Operations Manager');
   if (maintOpsMgrKey) {
     const build = makeKpiBuilder(33);
+    // LV region == its single branch: LV users read the 'Las Vegas'
+    // branch values even if their branch field is not set yet.
+    const effBranch = isLasVegas ? 'Las Vegas' : userBranch;
     const nmgBranch = {
       'Phoenix - North': 8.1,
       'Phoenix - SouthEast': 0.9,
@@ -323,14 +326,14 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Net Maintenance Growth', '', 16, isLasVegas ? 'region-lasvegas' : 'individual');
-        if (userBranch && nmgBranch[userBranch] != null) {
-          k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[userBranch] };
+        if (effBranch && nmgBranch[effBranch] != null) {
+          k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[effBranch] };
         }
-        if (userBranch && nmgBranchQ2[userBranch] != null) {
-          k.quarters[1] = { ...k.quarters[1], actual: nmgBranchQ2[userBranch] };
+        if (effBranch && nmgBranchQ2[effBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: nmgBranchQ2[effBranch] };
         }
-        if (userBranch && nmgBranchAnnual[userBranch] != null) {
-          k.annual = { ...k.annual, actual: nmgBranchAnnual[userBranch] };
+        if (effBranch && nmgBranchAnnual[effBranch] != null) {
+          k.annual = { ...k.annual, actual: nmgBranchAnnual[effBranch] };
         }
         return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: nmgBranch, branchQ2Values: nmgBranchQ2, branchAnnualValues: nmgBranchAnnual };
       })(),
@@ -343,14 +346,14 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Direct Labor Maintenance %', '', 40, isLasVegas ? 'region-lasvegas' : 'individual', { isInverse: true });
-        if (userBranch && dlmBranch[userBranch] != null) {
-          k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[userBranch] };
+        if (effBranch && dlmBranch[effBranch] != null) {
+          k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[effBranch] };
         }
-        if (userBranch && dlmBranchQ2[userBranch] != null) {
-          k.quarters[1] = { ...k.quarters[1], actual: dlmBranchQ2[userBranch] };
+        if (effBranch && dlmBranchQ2[effBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: dlmBranchQ2[effBranch] };
         }
-        if (userBranch && dlmBranchAnnual[userBranch] != null) {
-          k.annual = { ...k.annual, actual: dlmBranchAnnual[userBranch] };
+        if (effBranch && dlmBranchAnnual[effBranch] != null) {
+          k.annual = { ...k.annual, actual: dlmBranchAnnual[effBranch] };
         }
         return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: dlmBranch, branchQ2Values: dlmBranchQ2, branchAnnualValues: dlmBranchAnnual };
       })(),
@@ -361,6 +364,9 @@ export const buildPositions = ({
   const mqsKey = findKey('Maintenance Quality Specialist');
   if (mqsKey) {
     const build = makeKpiBuilder(33);
+    // LV region == its single branch: LV users read the 'Las Vegas'
+    // branch values even if their branch field is not set yet.
+    const effBranch = isLasVegas ? 'Las Vegas' : userBranch;
     const nmgBranch = {
       'Phoenix - North': 8.1,
       'Phoenix - SouthEast': 0.9,
@@ -407,14 +413,14 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Net Maintenance Growth', '', 16, isLasVegas ? 'region-lasvegas' : 'individual');
-        if (userBranch && nmgBranch[userBranch] != null) {
-          k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[userBranch] };
+        if (effBranch && nmgBranch[effBranch] != null) {
+          k.quarters[0] = { ...k.quarters[0], actual: nmgBranch[effBranch] };
         }
-        if (userBranch && nmgBranchQ2[userBranch] != null) {
-          k.quarters[1] = { ...k.quarters[1], actual: nmgBranchQ2[userBranch] };
+        if (effBranch && nmgBranchQ2[effBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: nmgBranchQ2[effBranch] };
         }
-        if (userBranch && nmgBranchAnnual[userBranch] != null) {
-          k.annual = { ...k.annual, actual: nmgBranchAnnual[userBranch] };
+        if (effBranch && nmgBranchAnnual[effBranch] != null) {
+          k.annual = { ...k.annual, actual: nmgBranchAnnual[effBranch] };
         }
         return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: nmgBranch, branchQ2Values: nmgBranchQ2, branchAnnualValues: nmgBranchAnnual };
       })(),
@@ -427,14 +433,14 @@ export const buildPositions = ({
       })(),
       (() => {
         const k = build('Direct Labor Maintenance %', '', 40, isLasVegas ? 'region-lasvegas' : 'individual', { isInverse: true });
-        if (userBranch && dlmBranch[userBranch] != null) {
-          k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[userBranch] };
+        if (effBranch && dlmBranch[effBranch] != null) {
+          k.quarters[0] = { ...k.quarters[0], actual: dlmBranch[effBranch] };
         }
-        if (userBranch && dlmBranchQ2[userBranch] != null) {
-          k.quarters[1] = { ...k.quarters[1], actual: dlmBranchQ2[userBranch] };
+        if (effBranch && dlmBranchQ2[effBranch] != null) {
+          k.quarters[1] = { ...k.quarters[1], actual: dlmBranchQ2[effBranch] };
         }
-        if (userBranch && dlmBranchAnnual[userBranch] != null) {
-          k.annual = { ...k.annual, actual: dlmBranchAnnual[userBranch] };
+        if (effBranch && dlmBranchAnnual[effBranch] != null) {
+          k.annual = { ...k.annual, actual: dlmBranchAnnual[effBranch] };
         }
         return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: dlmBranch, branchQ2Values: dlmBranchQ2, branchAnnualValues: dlmBranchAnnual };
       })(),
