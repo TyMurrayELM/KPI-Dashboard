@@ -677,6 +677,26 @@ export const buildPositions = ({
     ];
   }
 
+  // --- Client Growth Manager (Phoenix-only; first holder Tiffany
+  // Pennington, 2026-09-23) --- NMG 50 / Extra Services Revenue 50, both
+  // Phoenix region figures. Matched by role KEY or title so a later rename
+  // doesn't silently empty the role (see irrigation-support-specialist).
+  const cgmKey = transformedPositions['client-growth-manager']
+    ? 'client-growth-manager' : findKey('Client Growth Manager');
+  if (cgmKey) {
+    const build = makeKpiBuilder(50);
+    transformedPositions[cgmKey].kpis = [
+      (() => {
+        const k = applyActuals(build('Net Maintenance Growth', '', 16, 'region-phoenix'), { q1: 4.6, q2: -1.2, ytd: 4.6 });
+        return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
+      })(),
+      (() => {
+        const k = applyActuals(build('Extra Services Revenue', '', 120, 'region-phoenix'), { q1: 88.3, q2: 120.8, ytd: 99.4 });
+        return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
+      })(),
+    ];
+  }
+
   // --- Accounting Specialist ---
   const acctFinKey = findKey('Accounting Specialist');
   if (acctFinKey) {

@@ -1090,6 +1090,54 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into Client Growth Manager (Phoenix-only;
+      // first holder Tiffany Pennington, 2026-09-23). NMG 50 / Extra
+      // Services Revenue 50, Phoenix region figures. Matched by role KEY or
+      // title so a later rename doesn't silently empty the role.
+      const cgmKey = transformedPositions['client-growth-manager']
+        ? 'client-growth-manager'
+        : Object.keys(transformedPositions).find(
+            k => transformedPositions[k].title === 'Client Growth Manager'
+          );
+      if (cgmKey) {
+        const buildCgmKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 50, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+        const cgmApply = (k, a) => {
+          if (a.q1 != null) k.quarters[0] = { ...k.quarters[0], actual: a.q1 };
+          if (a.q2 != null) k.quarters[1] = { ...k.quarters[1], actual: a.q2 };
+          if (a.ytd != null) k.annual = { ...k.annual, actual: a.ytd };
+          return k;
+        };
+        transformedPositions[cgmKey].kpis = [
+          (() => {
+            const k = cgmApply(buildCgmKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), { q1: 4.6, q2: -1.2, ytd: 4.6 });
+            return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
+          })(),
+          (() => {
+            const k = cgmApply(buildCgmKpi('Extra Services Revenue', '', 120, 'region-phoenix'), { q1: 88.3, q2: 120.8, ytd: 99.4 });
+            return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
+          })(),
+        ];
+      }
+
       // Inject hardcoded KPIs into Accounting Specialist (fully hardcoded, ignores DB assignments)
       const acctFinKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Accounting Specialist'
