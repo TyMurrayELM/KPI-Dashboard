@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import AdminModal, { btnPrimary, btnSecondary } from './AdminModal';
 
 const colorOptions = [
   { name: 'Blue', value: '#dbeafe' },
@@ -59,18 +60,19 @@ const RoleForm = ({ role, onSave, onCancel }) => {
   const isEditing = !!role;
 
   return (
-    <div style={{
-      background: '#f9fafb',
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: '24px',
-      marginBottom: '24px'
-    }}>
-      <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '20px' }}>
-        {isEditing ? 'Edit Role' : 'Create New Role'}
-      </h3>
-
-      <form onSubmit={handleSubmit}>
+    <AdminModal
+      title={isEditing ? 'Edit Role' : 'Create New Role'}
+      subtitle={isEditing ? role.name : null}
+      onClose={onCancel}
+      width={760}
+      footer={<>
+        <button type="button" onClick={onCancel} style={btnSecondary}>Cancel</button>
+        <button type="submit" form="role-form" style={btnPrimary}>
+          {isEditing ? 'Update Role' : 'Create Role'}
+        </button>
+      </>}
+    >
+      <form id="role-form" onSubmit={handleSubmit}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
@@ -250,41 +252,8 @@ const RoleForm = ({ role, onSave, onCancel }) => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            type="submit"
-            style={{
-              padding: '10px 24px',
-              background: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
-          >
-            {isEditing ? 'Update Role' : 'Create Role'}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            style={{
-              padding: '10px 24px',
-              background: '#e5e7eb',
-              color: '#374151',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
-          >
-            Cancel
-          </button>
-        </div>
       </form>
-    </div>
+    </AdminModal>
   );
 };
 

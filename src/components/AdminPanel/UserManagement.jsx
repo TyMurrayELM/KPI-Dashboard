@@ -3,6 +3,7 @@
 // src/components/AdminPanel/UserManagement.jsx
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
+import AdminModal, { btnPrimary, btnSecondary } from './components/AdminModal';
 
 const REGION_OPTIONS = ['Phoenix', 'Las Vegas'];
 const BRANCH_OPTIONS = ['Phoenix - North', 'Phoenix - SouthEast', 'Phoenix - SouthWest', 'Las Vegas'];
@@ -16,6 +17,7 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [search, setSearch] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -226,9 +228,6 @@ const UserManagement = () => {
 
   const startEdit = (user) => {
     setEditingUser(user);
-    // The edit form renders at the top of the page — without this scroll it
-    // opens off-screen and clicking Edit looks like it did nothing.
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     setFormData({
       email: user.email,
       name: user.name || '',
@@ -269,6 +268,15 @@ const UserManagement = () => {
     return <div style={{ padding: '20px', textAlign: 'center' }}>Loading users...</div>;
   }
 
+  const q = search.trim().toLowerCase();
+  const filteredUsers = !q ? users : users.filter(u => {
+    const roleNames = (u.user_roles || [])
+      .map(ur => roles.find(r => r.key === ur.role_key)?.name || ur.role_key)
+      .join(' ');
+    return [u.name, u.email, u.region, u.branch, u.department, roleNames]
+      .some(v => (v || '').toLowerCase().includes(q));
+  });
+
   return (
     <div>
       {/* Header */}
@@ -276,44 +284,55 @@ const UserManagement = () => {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
-        marginBottom: '24px'
+        gap: '12px',
+        flexWrap: 'wrap',
+        marginBottom: '12px'
       }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '600' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '600', margin: 0 }}>
           User Management
+          <span style={{ fontSize: '13px', fontWeight: '400', color: '#6b7280', marginLeft: '8px' }}>
+            {q ? `${filteredUsers.length} of ${users.length}` : users.length} users
+          </span>
         </h2>
-        {!showForm && (
-          <button
-            onClick={() => { setShowForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, email, role, branch..."
             style={{
-              padding: '10px 20px',
-              background: '#3b82f6',
-              color: 'white',
-              border: 'none',
+              width: '260px',
+              padding: '7px 10px',
+              border: '1px solid #d1d5db',
               borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer'
+              fontSize: '13px',
+              background: 'white'
             }}
+          />
+          <button
+            onClick={() => { resetForm(); setShowForm(true); }}
+            style={btnPrimary}
           >
             + Add New User
           </button>
-        )}
+        </div>
       </div>
 
       {/* Create/Edit Form */}
       {showForm && (
-        <div style={{
-          background: '#f9fafb',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          padding: '24px',
-          marginBottom: '24px'
-        }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '20px' }}>
-            {editingUser ? 'Edit User' : 'Add New User'}
-          </h3>
-          
-          <form onSubmit={editingUser ? handleUpdate : handleCreate}>
+        <AdminModal
+          title={editingUser ? 'Edit User' : 'Add New User'}
+          subtitle={editingUser ? (editingUser.name || editingUser.email) : null}
+          onClose={handleCancel}
+          width={820}
+          footer={<>
+            <button type="button" onClick={handleCancel} style={btnSecondary}>Cancel</button>
+            <button type="submit" form="user-form" style={btnPrimary}>
+              {editingUser ? 'Update User' : 'Add User'}
+            </button>
+          </>}
+        >
+          <form id="user-form" onSubmit={editingUser ? handleUpdate : handleCreate}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
@@ -389,7 +408,13 @@ const UserManagement = () => {
               </div>
             </div>
 
-            <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+              gap: '16px',
+              marginBottom: '16px'
+            }}>
+            <div>
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
                 Eligibility Date
               </label>
@@ -412,7 +437,7 @@ const UserManagement = () => {
               </p>
             </div>
 
-            <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+            <div>
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
                 Region
               </label>
@@ -440,7 +465,7 @@ const UserManagement = () => {
             </div>
 
             {hasBranchRole(formData.assigned_roles) && (
-              <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+              <div>
                 <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
                   Branch
                 </label>
@@ -469,7 +494,7 @@ const UserManagement = () => {
             )}
 
             {hasDepartmentRole(formData.assigned_roles) && (
-              <div style={{ marginBottom: '16px', maxWidth: '320px' }}>
+              <div>
                 <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
                   Department
                 </label>
@@ -496,6 +521,7 @@ const UserManagement = () => {
                 </p>
               </div>
             )}
+            </div>
 
             <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -528,7 +554,7 @@ const UserManagement = () => {
             </div>
 
             {/* Role Assignment */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '4px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
                 Assigned Dashboard Roles
               </label>
@@ -569,41 +595,8 @@ const UserManagement = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                type="submit"
-                style={{
-                  padding: '10px 24px',
-                  background: '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer'
-                }}
-              >
-                {editingUser ? 'Update User' : 'Add User'}
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                style={{
-                  padding: '10px 24px',
-                  background: '#e5e7eb',
-                  color: '#374151',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer'
-                }}
-              >
-                Cancel
-              </button>
-            </div>
           </form>
-        </div>
+        </AdminModal>
       )}
 
       {/* Users Table */}
@@ -646,14 +639,16 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
+            {filteredUsers.length === 0 ? (
               <tr>
                 <td colSpan={9} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
-                  No users found. Add your first user to get started.
+                  {users.length === 0
+                    ? 'No users found. Add your first user to get started.'
+                    : `No users match "${search}".`}
                 </td>
               </tr>
             ) : (
-              users.map((user) => (
+              filteredUsers.map((user) => (
                 <tr key={user.id} style={{ borderTop: '1px solid #e5e7eb' }}>
                   <td style={{ padding: '6px 8px' }}>
                     <div style={{ fontSize: '13px', fontWeight: '500', whiteSpace: 'nowrap' }}>{user.name || '—'}</div>

@@ -6,6 +6,7 @@ import RoleCard from './components/RoleCard';
 import RoleForm from './components/RoleForm';
 import KPIFormModal from './components/KPIFormModal';
 import BonusFormulaModal from './components/BonusFormulaModal';
+import { btnPrimary, btnSecondary } from './components/AdminModal';
 
 const RolesAndKPIs = () => {
   const [roles, setRoles] = useState([]);
@@ -13,6 +14,11 @@ const RolesAndKPIs = () => {
   const [roleKpisMap, setRoleKpisMap] = useState({}); // { roleId: [roleKpi, ...] }
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Card collapse + filter. Cards start collapsed so the list is scannable;
+  // a search that matches a role's KPI names also finds the role.
+  const [expandedRoles, setExpandedRoles] = useState(() => new Set());
+  const [roleSearch, setRoleSearch] = useState('');
 
   // Role form state
   const [showRoleForm, setShowRoleForm] = useState(false);
@@ -287,6 +293,23 @@ const RolesAndKPIs = () => {
     return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
   }
 
+  const q = roleSearch.trim().toLowerCase();
+  const filteredRoles = !q ? roles : roles.filter(role =>
+    [role.name, role.key].some(v => (v || '').toLowerCase().includes(q)) ||
+    (roleKpisMap[role.id] || []).some(rk => (rk.kpi?.name || '').toLowerCase().includes(q))
+  );
+  const allExpanded = filteredRoles.length > 0 && filteredRoles.every(r => expandedRoles.has(r.id));
+  const toggleRole = (id) => setExpandedRoles(prev => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
+  const setAllExpanded = (open) => setExpandedRoles(prev => {
+    const next = new Set(prev);
+    filteredRoles.forEach(r => (open ? next.add(r.id) : next.delete(r.id)));
+    return next;
+  });
+
   return (
     <div>
       {/* Header + action buttons */}
@@ -294,44 +317,51 @@ const RolesAndKPIs = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '24px'
+        gap: '12px',
+        flexWrap: 'wrap',
+        marginBottom: '12px'
       }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '600' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '600', margin: 0 }}>
           Roles & KPIs
+          <span style={{ fontSize: '13px', fontWeight: '400', color: '#6b7280', marginLeft: '8px' }}>
+            {q ? `${filteredRoles.length} of ${roles.length}` : roles.length} roles
+          </span>
         </h2>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input
+            type="search"
+            value={roleSearch}
+            onChange={(e) => setRoleSearch(e.target.value)}
+            placeholder="Search roles or KPIs..."
+            style={{
+              width: '220px',
+              padding: '7px 10px',
+              border: '1px solid #d1d5db',
+              borderRadius: '6px',
+              fontSize: '13px',
+              background: 'white'
+            }}
+          />
+          <button
+            onClick={() => setAllExpanded(!allExpanded)}
+            style={btnSecondary}
+          >
+            {allExpanded ? 'Collapse all' : 'Expand all'}
+          </button>
           <button
             onClick={() => {
               setEditingRole(null);
               setShowRoleForm(true);
             }}
-            style={{
-              padding: '10px 20px',
-              background: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
+            style={btnPrimary}
           >
-            + Create New Role
+            + New Role
           </button>
           <button
             onClick={openCreateKpiDefinition}
-            style={{
-              padding: '10px 20px',
-              background: '#10b981',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
+            style={{ ...btnPrimary, background: '#10b981' }}
           >
-            + Create New KPI Definition
+            + New KPI Definition
           </button>
         </div>
       </div>
@@ -360,11 +390,17 @@ const RolesAndKPIs = () => {
         }}>
           No roles found. Create your first role to get started.
         </div>
+      ) : filteredRoles.length === 0 ? (
+        <div style={{ padding: '24px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
+          No roles or KPIs match "{roleSearch}".
+        </div>
       ) : (
-        roles.map(role => (
+        filteredRoles.map(role => (
           <RoleCard
             key={role.id}
             role={role}
+            expanded={expandedRoles.has(role.id)}
+            onToggleExpand={() => toggleRole(role.id)}
             roleKpis={roleKpisMap[role.id] || []}
             onEditRole={openEditRole}
             onDeleteRole={handleDeleteRole}

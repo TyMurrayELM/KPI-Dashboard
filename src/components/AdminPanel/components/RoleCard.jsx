@@ -20,31 +20,63 @@ const RoleCard = ({
   onUpdateRoleKpi,
   onRemoveKpi,
   onEditKpiDefinition,
-  onOpenFormula
+  onOpenFormula,
+  expanded,
+  onToggleExpand
 }) => {
-  const totalWeight = (roleKpis || []).reduce((sum, rk) => sum + (rk.weight || 0), 0);
+  const totalWeight = (roleKpis || []).reduce((sum, rk) => sum + (Number(rk.weight) || 0), 0);
+  const kpiCount = (roleKpis || []).length;
+  const weightOk = Math.abs(totalWeight - 100) < 0.01;
 
   return (
     <div style={{
       background: 'white',
       border: '1px solid #e5e7eb',
-      borderRadius: '10px',
-      marginBottom: '20px',
+      borderRadius: '8px',
+      marginBottom: '8px',
       overflow: 'hidden'
     }}>
       {/* Header */}
       <div style={{
-        padding: '16px 20px',
+        padding: '8px 14px',
         background: role.color || '#dbeafe',
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: expanded ? '1px solid #e5e7eb' : 'none',
         display: 'flex',
+        gap: '12px',
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <h3 style={{ fontSize: '17px', fontWeight: '600', margin: 0 }}>
-            {role.name}
-          </h3>
+        <div
+          onClick={onToggleExpand}
+          title={expanded ? 'Collapse' : 'Expand to edit KPIs'}
+          style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', cursor: 'pointer', flex: 1, minWidth: 0 }}
+        >
+          <button
+            type="button"
+            aria-expanded={!!expanded}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#111827'
+            }}
+          >
+            <span aria-hidden="true" style={{
+              display: 'inline-block', width: '10px', fontSize: '10px', color: '#4b5563',
+              transition: 'transform 0.15s', transform: expanded ? 'rotate(90deg)' : 'none'
+            }}>
+              &#9654;
+            </span>
+            <span style={{ fontSize: '15px', fontWeight: '600' }}>{role.name}</span>
+          </button>
+          <span style={{
+            fontSize: '12px',
+            fontWeight: '500',
+            padding: '1px 8px',
+            borderRadius: '10px',
+            background: 'rgba(255,255,255,0.75)',
+            color: kpiCount === 0 ? '#6b7280' : (weightOk ? '#15803d' : '#b91c1c')
+          }}>
+            {kpiCount === 0 ? 'No KPIs' : `${kpiCount} KPI${kpiCount === 1 ? '' : 's'} · ${totalWeight}%`}
+          </span>
           <span style={{ fontSize: '13px', color: '#374151' }}>
             {formatCurrency(role.base_salary)} salary
           </span>
@@ -118,8 +150,9 @@ const RoleCard = ({
         </div>
       </div>
 
-      {/* KPI Assignment Table */}
-      <div style={{ padding: '16px 20px' }}>
+      {/* KPI Assignment Table (only when expanded) */}
+      {expanded && (
+      <div style={{ padding: '12px 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', margin: 0 }}>
             Assigned KPIs
@@ -304,6 +337,7 @@ const RoleCard = ({
           </>
         )}
       </div>
+      )}
     </div>
   );
 };

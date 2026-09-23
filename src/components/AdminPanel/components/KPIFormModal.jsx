@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import TurndownService from 'turndown';
+import AdminModal, { btnPrimary, btnSecondary } from './AdminModal';
 
 const turndown = new TurndownService({
   headingStyle: 'atx',
@@ -554,35 +555,22 @@ const KPIFormModal = ({ kpi, allKpis, assignToRole, existingAssignment, onSave, 
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        background: 'white',
-        borderRadius: '12px',
-        padding: '32px',
-        maxWidth: '700px',
-        width: '90%',
-        maxHeight: '80vh',
-        overflowY: 'auto',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-      }}>
-        <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '24px' }}>
+    <AdminModal
+      title={isAssignMode
+        ? (isEditAssignment ? 'Edit KPI Assignment' : 'Assign KPI to ' + assignToRole.name)
+        : (kpi ? 'Edit KPI Definition' : 'Create New KPI')}
+      onClose={onCancel}
+      width={760}
+      footer={<>
+        <button type="button" onClick={onCancel} style={btnSecondary}>Cancel</button>
+        <button type="submit" form="kpi-form" style={btnPrimary}>
           {isAssignMode
-            ? (isEditAssignment ? 'Edit KPI Assignment' : 'Assign KPI to ' + assignToRole.name)
-            : (kpi ? 'Edit KPI Definition' : 'Create New KPI')}
-        </h3>
-
-        <form onSubmit={handleSubmit}>
+            ? (isEditAssignment ? 'Update Assignment' : (createNewKpi ? 'Create & Assign KPI' : 'Assign KPI'))
+            : (kpi ? 'Update KPI' : 'Create KPI')}
+        </button>
+      </>}
+    >
+        <form id="kpi-form" onSubmit={handleSubmit}>
           {isAssignMode && !isEditAssignment && (
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
@@ -619,44 +607,8 @@ const KPIFormModal = ({ kpi, allKpis, assignToRole, existingAssignment, onSave, 
           {/* Assignment fields */}
           {isAssignMode && (selectedExistingKpi || createNewKpi || isEditAssignment) && renderAssignmentFields()}
 
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button
-              type="button"
-              onClick={onCancel}
-              style={{
-                padding: '10px 24px',
-                background: '#e5e7eb',
-                color: '#374151',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer'
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              style={{
-                padding: '10px 24px',
-                background: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer'
-              }}
-            >
-              {isAssignMode
-                ? (isEditAssignment ? 'Update Assignment' : (createNewKpi ? 'Create & Assign KPI' : 'Assign KPI'))
-                : (kpi ? 'Update KPI' : 'Create KPI')}
-            </button>
-          </div>
         </form>
-      </div>
-    </div>
+    </AdminModal>
   );
 };
 
