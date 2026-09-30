@@ -1099,7 +1099,8 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         : Object.keys(transformedPositions).find(
             k => transformedPositions[k].title === 'Client Growth Manager'
           );
-      if (cgmKey) {
+      // Business Developer (Dave Jelinek mock, 2026-09-30) shares the CGM KPIs.
+      [cgmKey, transformedPositions['business-developer'] ? 'business-developer' : null].filter(Boolean).forEach(cgmKey => {
         const buildCgmKpi = (name, description, target, scope, overrides = {}) => {
           const config = getKpiPeriodConfig(name);
           const qTarget = config.quarterlyTarget != null
@@ -1136,7 +1137,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
           })(),
         ];
-      }
+      });
 
       // Inject hardcoded KPIs into Accounting Specialist (fully hardcoded, ignores DB assignments)
       const acctFinKey = Object.keys(transformedPositions).find(

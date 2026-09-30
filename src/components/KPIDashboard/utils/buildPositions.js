@@ -683,7 +683,9 @@ export const buildPositions = ({
   // doesn't silently empty the role (see irrigation-support-specialist).
   const cgmKey = transformedPositions['client-growth-manager']
     ? 'client-growth-manager' : findKey('Client Growth Manager');
-  if (cgmKey) {
+  // Business Developer (Dave Jelinek mock, 2026-09-30) shares the CGM KPIs.
+  const cgmKeys = [cgmKey, transformedPositions['business-developer'] ? 'business-developer' : null].filter(Boolean);
+  cgmKeys.forEach(cgmKey => {
     const build = makeKpiBuilder(50);
     transformedPositions[cgmKey].kpis = [
       (() => {
@@ -695,7 +697,7 @@ export const buildPositions = ({
         return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
-  }
+  });
 
   // --- Accounting Specialist ---
   const acctFinKey = findKey('Accounting Specialist');
