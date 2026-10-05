@@ -156,12 +156,18 @@ const PositionHeader = ({
           {(() => {
             // Headline = full projected bonus minus what pro-ration removes
             // from the period KPIs, so it always equals the sum of the
-            // (prorated) chips below.
+            // (prorated) chips below. fullTotal already zeroes quarters
+            // before eligibility and pro-rates the annual payout (see
+            // calculateKpiBonusForPeriods), so only PARTIAL quarters are
+            // left to reduce here - subtracting the rest double-counts and
+            // can push the headline negative.
             const fullTotal = calculateActualTotalBonus(position, activeTab);
             const prorationReduction = ['Q1', 'Q2', 'Q3', 'Q4'].reduce(
-              (sum, qId) => sum + quarterTotals[qId] * (1 - quarterFactors[qId]),
+              (sum, qId) => quarterFactors[qId] > 0
+                ? sum + quarterTotals[qId] * (1 - quarterFactors[qId])
+                : sum,
               0
-            ) + totalAnnualBonus * (1 - annualFactor);
+            );
             const shown = fullTotal - prorationReduction;
             const reduced = prorationReduction > 0.005;
             return (
