@@ -1090,17 +1090,25 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
-      // Inject hardcoded KPIs into Client Growth Manager (Phoenix-only;
-      // first holder Tiffany Pennington, 2026-09-23). NMG 50 / Extra
-      // Services Revenue 50, Phoenix region figures. Matched by role KEY or
-      // title so a later rename doesn't silently empty the role.
+      // Inject hardcoded KPIs into Client Growth Manager (first holder
+      // Tiffany Pennington, 2026-09-23): NMG 50 / Extra Services Revenue 50,
+      // the user's REGION figures (Phoenix unless allowed_users.region is
+      // Las Vegas). Matched by role KEY or title so a later rename doesn't
+      // silently empty the role.
       const cgmKey = transformedPositions['client-growth-manager']
         ? 'client-growth-manager'
         : Object.keys(transformedPositions).find(
             k => transformedPositions[k].title === 'Client Growth Manager'
           );
-      // Business Developer (Dave Jelinek mock, 2026-09-30) shares the CGM KPIs.
-      [cgmKey, transformedPositions['business-developer'] ? 'business-developer' : null].filter(Boolean).forEach(cgmKey => {
+      // Quality Manager (2026-10-05) and Business Developer (Dave Jelinek
+      // mock, 2026-09-30) carry the same two region KPIs.
+      const qualityMgrKey = transformedPositions['quality-manager']
+        ? 'quality-manager'
+        : Object.keys(transformedPositions).find(
+            k => transformedPositions[k].title === 'Quality Manager'
+          );
+      const cgmIsLv = userRegion === 'Las Vegas';
+      [cgmKey, qualityMgrKey, transformedPositions['business-developer'] ? 'business-developer' : null].filter(Boolean).forEach(cgmKey => {
         const buildCgmKpi = (name, description, target, scope, overrides = {}) => {
           const config = getKpiPeriodConfig(name);
           const qTarget = config.quarterlyTarget != null
@@ -1129,11 +1137,15 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         };
         transformedPositions[cgmKey].kpis = [
           (() => {
-            const k = cgmApply(buildCgmKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), { q1: 4.6, q2: -1.2, ytd: 4.6 });
+            const k = cgmIsLv
+              ? cgmApply(buildCgmKpi('Net Maintenance Growth', '', 16, 'region-lasvegas'), { q1: 10, q2: 6.9, ytd: 10.2 })
+              : cgmApply(buildCgmKpi('Net Maintenance Growth', '', 16, 'region-phoenix'), { q1: 4.6, q2: -1.2, ytd: 4.6 });
             return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
           })(),
           (() => {
-            const k = cgmApply(buildCgmKpi('Extra Services Revenue', '', 120, 'region-phoenix'), { q1: 88.3, q2: 120.8, ytd: 99.4 });
+            const k = cgmIsLv
+              ? cgmApply(buildCgmKpi('Extra Services Revenue', '', 120, 'region-lasvegas'), { q1: 90.4, q2: 139.7, ytd: 114.9 })
+              : cgmApply(buildCgmKpi('Extra Services Revenue', '', 120, 'region-phoenix'), { q1: 88.3, q2: 120.8, ytd: 99.4 });
             return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
           })(),
         ];

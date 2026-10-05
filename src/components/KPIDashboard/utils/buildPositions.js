@@ -677,23 +677,31 @@ export const buildPositions = ({
     ];
   }
 
-  // --- Client Growth Manager (Phoenix-only; first holder Tiffany
-  // Pennington, 2026-09-23) --- NMG 50 / Extra Services Revenue 50, both
-  // Phoenix region figures. Matched by role KEY or title so a later rename
-  // doesn't silently empty the role (see irrigation-support-specialist).
+  // --- Client Growth Manager (first holder Tiffany Pennington, 2026-09-23)
+  // --- NMG 50 / Extra Services Revenue 50, the user's REGION figures
+  // (Phoenix unless allowed_users.region is Las Vegas). Matched by role KEY
+  // or title so a later rename doesn't silently empty the role (see
+  // irrigation-support-specialist). Mirrors KPIDashboard.backup.jsx.
   const cgmKey = transformedPositions['client-growth-manager']
     ? 'client-growth-manager' : findKey('Client Growth Manager');
-  // Business Developer (Dave Jelinek mock, 2026-09-30) shares the CGM KPIs.
-  const cgmKeys = [cgmKey, transformedPositions['business-developer'] ? 'business-developer' : null].filter(Boolean);
+  // Quality Manager (2026-10-05) and Business Developer (Dave Jelinek mock,
+  // 2026-09-30) carry the same two region KPIs.
+  const qualityMgrKey = transformedPositions['quality-manager']
+    ? 'quality-manager' : findKey('Quality Manager');
+  const cgmKeys = [cgmKey, qualityMgrKey, transformedPositions['business-developer'] ? 'business-developer' : null].filter(Boolean);
   cgmKeys.forEach(cgmKey => {
     const build = makeKpiBuilder(50);
     transformedPositions[cgmKey].kpis = [
       (() => {
-        const k = applyActuals(build('Net Maintenance Growth', '', 16, 'region-phoenix'), { q1: 4.6, q2: -1.2, ytd: 4.6 });
+        const k = isLasVegas
+          ? applyActuals(build('Net Maintenance Growth', '', 16, 'region-lasvegas'), { q1: 10, q2: 6.9, ytd: 10.2 })
+          : applyActuals(build('Net Maintenance Growth', '', 16, 'region-phoenix'), { q1: 4.6, q2: -1.2, ytd: 4.6 });
         return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
       })(),
       (() => {
-        const k = applyActuals(build('Extra Services Revenue', '', 120, 'region-phoenix'), { q1: 88.3, q2: 120.8, ytd: 99.4 });
+        const k = isLasVegas
+          ? applyActuals(build('Extra Services Revenue', '', 120, 'region-lasvegas'), { q1: 90.4, q2: 139.7, ytd: 114.9 })
+          : applyActuals(build('Extra Services Revenue', '', 120, 'region-phoenix'), { q1: 88.3, q2: 120.8, ytd: 99.4 });
         return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
