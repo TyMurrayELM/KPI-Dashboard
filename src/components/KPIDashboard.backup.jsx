@@ -565,6 +565,20 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // LV region == its single branch, so the region and branch NMG cards are
+      // identical: collapse them into one NMG card carrying both weights.
+      if (userRegion === 'Las Vegas') {
+        const lvKey = Object.keys(transformedPositions).find(k => transformedPositions[k].title === 'Maintenance Operations Manager');
+        const lvKpis = lvKey && transformedPositions[lvKey].kpis;
+        if (lvKpis) {
+          const nmgIdx = lvKpis.map((k, i) => (k.name === 'Net Maintenance Growth' ? i : -1)).filter(i => i >= 0);
+          if (nmgIdx.length === 2) {
+            lvKpis[nmgIdx[0]] = { ...lvKpis[nmgIdx[0]], weight: lvKpis[nmgIdx[0]].weight + lvKpis[nmgIdx[1]].weight };
+            lvKpis.splice(nmgIdx[1], 1);
+          }
+        }
+      }
+
       // Inject hardcoded KPIs into Maintenance Quality Specialist (same as Maintenance Operations Manager)
       const mqsKey = Object.keys(transformedPositions).find(
         k => transformedPositions[k].title === 'Maintenance Quality Specialist'
@@ -672,6 +686,20 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values, branchQ2Values, branchAnnualValues };
           })(),
         ];
+      }
+
+      // LV region == its single branch, so the region and branch NMG cards are
+      // identical: collapse them into one NMG card carrying both weights.
+      if (userRegion === 'Las Vegas') {
+        const lvKey = Object.keys(transformedPositions).find(k => transformedPositions[k].title === 'Maintenance Quality Specialist');
+        const lvKpis = lvKey && transformedPositions[lvKey].kpis;
+        if (lvKpis) {
+          const nmgIdx = lvKpis.map((k, i) => (k.name === 'Net Maintenance Growth' ? i : -1)).filter(i => i >= 0);
+          if (nmgIdx.length === 2) {
+            lvKpis[nmgIdx[0]] = { ...lvKpis[nmgIdx[0]], weight: lvKpis[nmgIdx[0]].weight + lvKpis[nmgIdx[1]].weight };
+            lvKpis.splice(nmgIdx[1], 1);
+          }
+        }
       }
 
       // Inject hardcoded KPIs into Maintenance Field Supervisor (same as Maintenance Quality Specialist)

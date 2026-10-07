@@ -360,6 +360,20 @@ export const buildPositions = ({
     ];
   }
 
+  // LV region == its single branch, so the region and branch NMG cards are
+  // identical: collapse them into one NMG card carrying both weights.
+  if (isLasVegas) {
+    const lvKey = Object.keys(transformedPositions).find(k => transformedPositions[k].title === 'Maintenance Operations Manager');
+    const lvKpis = lvKey && transformedPositions[lvKey].kpis;
+    if (lvKpis) {
+      const nmgIdx = lvKpis.map((k, i) => (k.name === 'Net Maintenance Growth' ? i : -1)).filter(i => i >= 0);
+      if (nmgIdx.length === 2) {
+        lvKpis[nmgIdx[0]] = { ...lvKpis[nmgIdx[0]], weight: lvKpis[nmgIdx[0]].weight + lvKpis[nmgIdx[1]].weight };
+        lvKpis.splice(nmgIdx[1], 1);
+      }
+    }
+  }
+
   // --- Maintenance Quality Specialist ---
   const mqsKey = findKey('Maintenance Quality Specialist');
   if (mqsKey) {
@@ -445,6 +459,20 @@ export const buildPositions = ({
         return { ...k, weight: 30, lockedQuarters: ['Q1', 'Q2'], branchQ1Values: dlmBranch, branchQ2Values: dlmBranchQ2, branchAnnualValues: dlmBranchAnnual };
       })(),
     ];
+  }
+
+  // LV region == its single branch, so the region and branch NMG cards are
+  // identical: collapse them into one NMG card carrying both weights.
+  if (isLasVegas) {
+    const lvKey = Object.keys(transformedPositions).find(k => transformedPositions[k].title === 'Maintenance Quality Specialist');
+    const lvKpis = lvKey && transformedPositions[lvKey].kpis;
+    if (lvKpis) {
+      const nmgIdx = lvKpis.map((k, i) => (k.name === 'Net Maintenance Growth' ? i : -1)).filter(i => i >= 0);
+      if (nmgIdx.length === 2) {
+        lvKpis[nmgIdx[0]] = { ...lvKpis[nmgIdx[0]], weight: lvKpis[nmgIdx[0]].weight + lvKpis[nmgIdx[1]].weight };
+        lvKpis.splice(nmgIdx[1], 1);
+      }
+    }
   }
 
   // --- Maintenance Field Supervisor ---
