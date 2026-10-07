@@ -718,10 +718,12 @@ export const buildPositions = ({
         });
         if (v.Annual?.actual != null) k.annual = { ...k.annual, actual: v.Annual.actual };
       }
+      // Retention only counts from Q3: Q1-Q2 split 50/50 between NMG and ESR,
+      // Q3 onward 34/33/33. weight = annual weight.
       transformedPositions[cgmKey].kpis = [
-        { ...kpis[0], weight: 34 },
-        { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] },
-        { ...kpis[1], weight: 33 },
+        { ...kpis[0], weight: 34, quarterWeights: { Q1: 50, Q2: 50, Q3: 34, Q4: 34 } },
+        { ...k, weight: 33, excludedQuarters: ['Q1', 'Q2'], lockedQuarters: ['Q1', 'Q2'], quarterWeights: { Q1: 0, Q2: 0, Q3: 33, Q4: 33 } },
+        { ...kpis[1], weight: 33, quarterWeights: { Q1: 50, Q2: 50, Q3: 33, Q4: 33 } },
       ];
     }
   });

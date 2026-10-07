@@ -41,12 +41,13 @@ const PositionHeader = ({
     if (kpi.hasPeriods) {
       const excluded = new Set(kpi.excludedQuarters || []);
       const activeQuarters = (kpi.quarters?.length || 4) - excluded.size;
-      const { perQuarter, annual: annualMax } = computePeriodBonusMax(
-        position, kpi.weight, kpi.bonusSplit, activeQuarters
+      const { perQuarter: perQuarterBase, annual: annualMax, byQuarter } = computePeriodBonusMax(
+        position, kpi.weight, kpi.bonusSplit, activeQuarters, kpi.quarterWeights
       );
       totalAnnualMax += annualMax;
       (kpi.quarters || []).forEach(q => {
         if (excluded.has(q.id)) return;
+        const perQuarter = byQuarter?.[q.id] ?? perQuarterBase;
         quarterTotals[q.id] = (quarterTotals[q.id] || 0) + calculateQuarterBonus(q, kpi.isInverse, perQuarter, kpi.name);
         quarterMaxes[q.id] = (quarterMaxes[q.id] || 0) + perQuarter;
       });
@@ -304,10 +305,10 @@ const PositionHeader = ({
               if (kpi.hasPeriods) {
                 const kpiExcluded = new Set(kpi.excludedQuarters || []);
                 const kpiActive = (kpi.quarters?.length || 4) - kpiExcluded.size;
-                const { perQuarter, annual } = computePeriodBonusMax(
-                  position, kpi.weight, kpi.bonusSplit, kpiActive
+                const { perQuarter, annual, quarterlyTotal } = computePeriodBonusMax(
+                  position, kpi.weight, kpi.bonusSplit, kpiActive, kpi.quarterWeights
                 );
-                maxKpiBonus = perQuarter * kpiActive + annual;
+                maxKpiBonus = (quarterlyTotal ?? perQuarter * kpiActive) + annual;
               } else {
                 maxKpiBonus = calculateTotalBonus(position) / position.kpis.length;
               }

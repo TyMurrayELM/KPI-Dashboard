@@ -403,13 +403,26 @@ export const calculateActualTotalBonus = (position) => {
  * @param {Object} bonusSplit - { quarterly: 0.5, annual: 0.5 }
  * @returns {{ perQuarter: number, annual: number }}
  */
-export const computePeriodBonusMax = (position, kpiWeight, bonusSplit, activeQuarters = 4) => {
+// Optional quarterWeights ({ Q1: 50, Q2: 50, Q3: 34, Q4: 34 }) gives a KPI a
+// different weight per quarter (quarterly pool = total * split.quarterly / 4,
+// shared by that quarter's weights). When set, also returns byQuarter (max per
+// quarter id) and quarterlyTotal; kpiWeight then only drives the annual piece.
+export const computePeriodBonusMax = (position, kpiWeight, bonusSplit, activeQuarters = 4, quarterWeights = null) => {
   const totalBonus = position.salary * (position.bonusPercentage / 100);
   const kpiBonusAvailable = totalBonus * (kpiWeight / 100);
+  const annual = kpiBonusAvailable * bonusSplit.annual;
+  if (quarterWeights) {
+    const byQuarter = {};
+    let quarterlyTotal = 0;
+    for (const id of ['Q1', 'Q2', 'Q3', 'Q4']) {
+      byQuarter[id] = (totalBonus * bonusSplit.quarterly * ((quarterWeights[id] || 0) / 100)) / 4;
+      quarterlyTotal += byQuarter[id];
+    }
+    return { perQuarter: byQuarter.Q3, annual, byQuarter, quarterlyTotal };
+  }
   const perQuarter = activeQuarters > 0
     ? (kpiBonusAvailable * bonusSplit.quarterly) / activeQuarters
     : 0;
-  const annual = kpiBonusAvailable * bonusSplit.annual;
   return { perQuarter, annual };
 };
 

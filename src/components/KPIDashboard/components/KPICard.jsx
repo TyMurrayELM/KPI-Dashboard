@@ -217,10 +217,10 @@ const KPICard = ({
     ? annualProration.eligibleMonths / annualProration.totalMonths : 1;
   const excludedQuarters = new Set(kpi.excludedQuarters || []);
   const activeQuarterCount = (kpi.quarters?.length || 4) - excludedQuarters.size;
-  const { perQuarter: perQuarterMax, annual: annualMax } = computePeriodBonusMax(
-    position, kpi.weight, kpi.bonusSplit, activeQuarterCount
+  const { perQuarter: perQuarterMax, annual: annualMax, byQuarter: byQuarterMax, quarterlyTotal: quarterlyMaxTotal } = computePeriodBonusMax(
+    position, kpi.weight, kpi.bonusSplit, activeQuarterCount, kpi.quarterWeights
   );
-  const totalMax = perQuarterMax * activeQuarterCount + annualMax;
+  const totalMax = (quarterlyMaxTotal ?? perQuarterMax * activeQuarterCount) + annualMax;
 
   const isQuarterOnTarget = (q) => {
     if (kpi.isInverse) return q.actual <= q.target;
@@ -545,7 +545,7 @@ const KPICard = ({
                   <span className={`text-xs font-medium ${showQProration && qBonus > 0 ? 'text-amber-600' : qBonus > 0 ? 'text-green-600' : 'text-black'}`}>
                     {formatCurrency(qBonus * qFactor(q.id))}
                   </span>
-                  <span className="text-xs text-black">/ {formatCurrency(perQuarterMax)}</span>
+                  <span className="text-xs text-black">/ {formatCurrency(byQuarterMax?.[q.id] ?? perQuarterMax)}</span>
                   {onTarget && q.actual > 0 && !ineligible && <CheckIcon />}
                 </div>
               </div>

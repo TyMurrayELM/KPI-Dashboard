@@ -109,8 +109,8 @@ const IncentiveSummary = () => {
             if (!kpi.hasPeriods) continue;
             const excluded = new Set(kpi.excludedQuarters || []);
             const activeQuarters = (kpi.quarters?.length || 4) - excluded.size;
-            const { perQuarter, annual: annualMax } = computePeriodBonusMax(
-              position, kpi.weight, kpi.bonusSplit, activeQuarters
+            const { perQuarter, annual: annualMax, byQuarter } = computePeriodBonusMax(
+              position, kpi.weight, kpi.bonusSplit, activeQuarters, kpi.quarterWeights
             );
             const formulaKey = kpi.formulaKey || kpi.name;
 
@@ -119,7 +119,7 @@ const IncentiveSummary = () => {
 
             for (const q of kpi.quarters || []) {
               if (excluded.has(q.id)) continue;
-              const qBonus = calculateQuarterBonus(q, kpi.isInverse, perQuarter, formulaKey);
+              const qBonus = calculateQuarterBonus(q, kpi.isInverse, byQuarter?.[q.id] ?? perQuarter, formulaKey);
               full[q.id] = qBonus;
               prorated[q.id] = qBonus * (factors[q.id] ?? 1);
             }
