@@ -1149,6 +1149,25 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
           })(),
         ];
+        // Quality Manager (Mark Deleon) adds a 3rd KPI: Client Retention %,
+        // individual (his clients only) via user_kpi_actuals. Weights 34/33/33.
+        if (cgmKey === qualityMgrKey) {
+          const kpis = transformedPositions[cgmKey].kpis;
+          const k = buildCgmKpi('Client Retention %', '', 100, 'individual');
+          const perUserMap = userActualsByKpi['Client Retention %'] || {};
+          const v = userEmail ? perUserMap[userEmail] : null;
+          if (v) {
+            ['Q1','Q2','Q3','Q4'].forEach((p, i) => {
+              if (v[p]?.actual != null) k.quarters[i] = { ...k.quarters[i], actual: v[p].actual };
+            });
+            if (v.Annual?.actual != null) k.annual = { ...k.annual, actual: v.Annual.actual };
+          }
+          transformedPositions[cgmKey].kpis = [
+            { ...kpis[0], weight: 34 },
+            { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] },
+            { ...kpis[1], weight: 33 },
+          ];
+        }
       });
 
       // Inject hardcoded KPIs into Accounting Specialist (fully hardcoded, ignores DB assignments)
@@ -1617,7 +1636,20 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
   return (
     <div className="max-w-6xl mx-auto p-4">
       <style>{sliderStyles}</style>
-      
+
+      {/* Notice: Q3 finalization deadline */}
+      <div style={{
+        marginBottom: '16px',
+        padding: '10px 16px',
+        background: '#fef3c7',
+        border: '1px solid #fcd34d',
+        borderRadius: '8px',
+        fontSize: '14px',
+        color: '#92400e'
+      }}>
+        <strong>Note:</strong> Q3 numbers will be finalized by October 15th.
+      </div>
+
       {/* Tabs - Modern pill style with role colors */}
       <div style={{
         display: 'flex',

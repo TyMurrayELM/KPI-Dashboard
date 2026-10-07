@@ -11,6 +11,7 @@ import { supabase } from '../../config/supabaseClient';
 // Configuration: which (role name, kpi name) pairs are editable here.
 const PER_USER_KPIS = [
   { roleName: 'Client Success Specialist', kpiName: 'Client Retention %', unit: '%' },
+  { roleName: 'Quality Manager', kpiName: 'Client Retention %', unit: '%' },
 ];
 
 const PERIODS = ['Q1', 'Q2', 'Q3', 'Q4', 'Annual'];

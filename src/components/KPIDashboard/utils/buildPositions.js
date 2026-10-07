@@ -705,6 +705,25 @@ export const buildPositions = ({
         return { ...k, weight: 50, lockedQuarters: ['Q1', 'Q2'] };
       })(),
     ];
+    // Quality Manager (Mark Deleon) adds a 3rd KPI: Client Retention %,
+    // individual (his clients only) via user_kpi_actuals. Weights 34/33/33.
+    if (cgmKey === qualityMgrKey) {
+      const kpis = transformedPositions[cgmKey].kpis;
+      const k = build('Client Retention %', '', 100, 'individual');
+      const perUserMap = userActualsByKpi['Client Retention %'] || {};
+      const v = userEmail ? perUserMap[userEmail] : null;
+      if (v) {
+        ['Q1','Q2','Q3','Q4'].forEach((p, i) => {
+          if (v[p]?.actual != null) k.quarters[i] = { ...k.quarters[i], actual: v[p].actual };
+        });
+        if (v.Annual?.actual != null) k.annual = { ...k.annual, actual: v.Annual.actual };
+      }
+      transformedPositions[cgmKey].kpis = [
+        { ...kpis[0], weight: 34 },
+        { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2'] },
+        { ...kpis[1], weight: 33 },
+      ];
+    }
   });
 
   // --- Accounting Specialist ---
