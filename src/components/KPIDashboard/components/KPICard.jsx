@@ -309,6 +309,10 @@ const KPICard = ({
     if (q2Val != null && handleQuarterChange && kpi.quarters?.[1]) {
       handleQuarterChange(positionKey, index, kpi.quarters[1].id, q2Val);
     }
+    const q3Val = kpi.branchQ3Values?.[branch];
+    if (q3Val != null && handleQuarterChange && kpi.quarters?.[2]) {
+      handleQuarterChange(positionKey, index, kpi.quarters[2].id, q3Val);
+    }
     const annualVal = kpi.branchAnnualValues?.[branch];
     if (annualVal != null && handleAnnualChange) {
       handleAnnualChange(positionKey, index, annualVal);
