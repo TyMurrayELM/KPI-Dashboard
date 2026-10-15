@@ -327,7 +327,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.quarters[0] = { ...k.quarters[0], actual: q1Actual };
             const q2Actual = Math.round((408936 / (2150000 / 4)) * 100);
             k.quarters[1] = { ...k.quarters[1], actual: q2Actual };
-            return { ...k, dollarTarget: 2150000, weight: 33, lockedQuarters: ['Q1', 'Q2'] };
+            const q3Actual = Math.round((663180 / (2150000 / 4)) * 100);
+            k.quarters[2] = { ...k.quarters[2], actual: q3Actual };
+            return { ...k, dollarTarget: 2150000, weight: 33, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
           })(),
         ];
       }
@@ -462,7 +464,9 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             k.quarters[0] = { ...k.quarters[0], actual: q1Actual };
             const q2Actual = Math.round((408936 / (2150000 / 4)) * 100);
             k.quarters[1] = { ...k.quarters[1], actual: q2Actual };
-            return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2'] };
+            const q3Actual = Math.round((663180 / (2150000 / 4)) * 100);
+            k.quarters[2] = { ...k.quarters[2], actual: q3Actual };
+            return { ...k, weight: 25, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
           })(),
         ];
       }
