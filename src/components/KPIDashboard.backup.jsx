@@ -386,11 +386,11 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             // In-contract spray hours are billed under another department; their
             // revenue (hrs × $105) is added back to the quarterly NCI here.
             const inContractHours = { Q1: 318.3, Q2: 497.7 };
-            const baseNci = { Q1: 137811, Q2: 156168 };
+            const baseNci = { Q1: 137811, Q2: 156168, Q3: 129375 };
             const fmt = (n) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
             const quarterNotes = {};
             const totalNci = {};
-            ['Q1', 'Q2'].forEach((qId, i) => {
+            ['Q1', 'Q2', 'Q3'].forEach((qId, i) => {
               const inContract = (inContractHours[qId] || 0) * inContractRate;
               totalNci[qId] = baseNci[qId] + inContract;
               k.quarters[i] = { ...k.quarters[i], actual: Math.round((totalNci[qId] / qtrGoal) * 100) };
@@ -398,8 +398,8 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
                 quarterNotes[qId] = `Includes in-contract spray: ${inContractHours[qId]} hrs × $${inContractRate}/hr = ${fmt(inContract)} (NCI ${fmt(baseNci[qId])} + in-contract = ${fmt(totalNci[qId])})`;
               }
             });
-            k.annual = { ...k.annual, actual: Math.round(((totalNci.Q1 + totalNci.Q2) / (2 * qtrGoal)) * 100) };
-            return { ...k, dollarTarget: 650000, weight: 33, lockedQuarters: ['Q1', 'Q2'], quarterNotes };
+            k.annual = { ...k.annual, actual: Math.round(((totalNci.Q1 + totalNci.Q2 + totalNci.Q3) / (3 * qtrGoal)) * 100) };
+            return { ...k, dollarTarget: 650000, weight: 33, lockedQuarters: ['Q1', 'Q2', 'Q3'], quarterNotes };
           })(),
         ];
       }
