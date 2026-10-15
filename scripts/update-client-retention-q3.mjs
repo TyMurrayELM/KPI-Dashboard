@@ -17,6 +17,7 @@ const UPDATES = [
   { name: 'Alex Deep', email: 'alex.deep@encorelm.com', Q3: 87 },
   { name: 'Mark Deleon', email: 'mark.deleon@encorelm.com', Q3: 100 },
   { name: 'Erin Dustin', email: 'erin.dustin@encorelm.com', Q3: 100 },
+  { name: 'Jose Benitez', email: 'jose.benitez@encorelm.com', Q3: 100 },
 ];
 const apply = process.argv.includes('--apply');
 
