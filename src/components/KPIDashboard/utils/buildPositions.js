@@ -775,7 +775,7 @@ export const buildPositions = ({
   // --- Company NMG 34 / Phoenix DL Maintenance % 33 / Company Extra
   // Services Revenue 33 for 2026; Extra Services Staffing Level (NEW KPI,
   // target 100, all-or-nothing quarterly) at 0% weight, greyed, until 2027
-  // when it replaces ESR. Phoenix DL% PENDING - at target, unlocked.
+  // when it replaces ESR. Phoenix DL% = the Sr Maint Ops Phoenix figures.
   const tcKey = transformedPositions['talent-culture-specialist']
     ? 'talent-culture-specialist'
     : findKey('Talent & Culture Specialist');
@@ -787,8 +787,8 @@ export const buildPositions = ({
         return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
       })(),
       (() => {
-        const k = build('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
-        return { ...k, weight: 33, lockedQuarters: [] };
+        const k = applyActuals(build('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true }), { q1: 33, q2: 37.1, q3: 35.3, ytd: 35.1 });
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
       })(),
       (() => {
         const k = applyActuals(build('Extra Services Revenue', '', 120, 'company'), { q1: 81, q2: 125.5, q3: 120.9, ytd: 103.2 });

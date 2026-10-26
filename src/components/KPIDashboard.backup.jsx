@@ -1194,7 +1194,7 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
       // positions / positions needed, target 100, all-or-nothing quarterly)
       // shows greyed at 0% weight until 2027, when it replaces Extra Services
       // Revenue (Tyler 10-26). Company NMG/ESR = the company figures (Q1-Q3
-      // locked); Phoenix DL% PENDING - at target, unlocked. Matched by role
+      // locked); Phoenix DL% = the Sr Maint Ops Phoenix figures. Matched by role
       // KEY or title so a rename doesn't empty the role.
       const tcKey = transformedPositions['talent-culture-specialist']
         ? 'talent-culture-specialist'
@@ -1233,7 +1233,11 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
           })(),
           (() => {
             const k = buildTcKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
-            return { ...k, weight: 33, lockedQuarters: [] };
+            k.quarters[0] = { ...k.quarters[0], actual: 33 };
+            k.quarters[1] = { ...k.quarters[1], actual: 37.1 };
+            k.quarters[2] = { ...k.quarters[2], actual: 35.3 };
+            k.annual = { ...k.annual, actual: 35.1 };
+            return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
           })(),
           (() => {
             const k = buildTcKpi('Extra Services Revenue', '', 120, 'company');
