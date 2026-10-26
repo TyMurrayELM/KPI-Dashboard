@@ -196,7 +196,9 @@ const KPICard = ({
   isAdmin
 }) => {
   const eligibilityDate = parseEligibilityDate(userEligibilityDate);
-  const [collapsed, setCollapsed] = useState(false);
+  // A KPI that isn't live yet (kpi.inactiveNote, e.g. 'Starts 2027') shows
+  // greyed and collapsed at 0% weight, so it pays nothing until it swaps in
+  const [collapsed, setCollapsed] = useState(!!kpi.inactiveNote);
   const [editingWeight, setEditingWeight] = useState(false);
   const [weightInput, setWeightInput] = useState(String(kpi.weight));
   const [guideExpanded, setGuideExpanded] = useState(false);
@@ -320,7 +322,10 @@ const KPICard = ({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+    <div
+      className={`bg-white p-4 rounded-lg shadow-md mb-4 ${kpi.inactiveNote ? 'opacity-60 grayscale' : ''}`}
+      title={kpi.inactiveNote ? `${kpi.inactiveNote} - not counted toward this year's bonus` : undefined}
+    >
       {/* Header: Title + Total Bonus */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 mr-4">
@@ -410,6 +415,11 @@ const KPICard = ({
                 <>{kpi.weight}%</>
               )}
             </span>
+            {kpi.inactiveNote && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-gray-200 text-gray-600 border-gray-300">
+                {kpi.inactiveNote}
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-600 mt-1">{kpi.description}</p>
         </div>

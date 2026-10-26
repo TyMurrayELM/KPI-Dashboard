@@ -772,9 +772,10 @@ export const buildPositions = ({
   }
 
   // --- Talent & Culture Specialist (first holder Alexia Silva, 2026-10-26)
-  // --- Company NMG 34 / Phoenix DL Maintenance % 33 / Extra Services
-  // Staffing Level 33 (NEW KPI, target 100, all-or-nothing quarterly).
-  // Phoenix DL% and Staffing actuals PENDING - at target, unlocked.
+  // --- Company NMG 34 / Phoenix DL Maintenance % 33 / Company Extra
+  // Services Revenue 33 for 2026; Extra Services Staffing Level (NEW KPI,
+  // target 100, all-or-nothing quarterly) at 0% weight, greyed, until 2027
+  // when it replaces ESR. Phoenix DL% PENDING - at target, unlocked.
   const tcKey = transformedPositions['talent-culture-specialist']
     ? 'talent-culture-specialist'
     : findKey('Talent & Culture Specialist');
@@ -790,10 +791,14 @@ export const buildPositions = ({
         return { ...k, weight: 33, lockedQuarters: [] };
       })(),
       (() => {
+        const k = applyActuals(build('Extra Services Revenue', '', 120, 'company'), { q1: 81, q2: 125.5, q3: 120.9, ytd: 103.2 });
+        return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
+      })(),
+      (() => {
         const k = build('Extra Services Staffing Level',
           'Extra-services crew positions filled (Arbor, Irrigation, Enhancements, Spray) as a % of positions needed. Example: 36 filled of 40 needed = 90%. Target 100%.',
           100, 'company');
-        return { ...k, weight: 33, lockedQuarters: [] };
+        return { ...k, weight: 0, inactiveNote: 'Starts 2027', lockedQuarters: [] };
       })(),
     ];
   }

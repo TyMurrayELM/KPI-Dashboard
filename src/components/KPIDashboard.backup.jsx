@@ -1189,11 +1189,13 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
 
       // Inject hardcoded KPIs into Talent & Culture Specialist (first holder
       // Alexia Silva, 2026-10-26): Company NMG 34 / Phoenix Direct Labor
-      // Maintenance % 33 / Extra Services Staffing Level 33 (NEW KPI: filled
-      // extra-services positions / positions needed, target 100, all-or-nothing
-      // quarterly). Company NMG = the company figures (Q1-Q3 locked); Phoenix
-      // DL% and Staffing actuals PENDING - at target, unlocked. Matched by
-      // role KEY or title so a rename doesn't empty the role.
+      // Maintenance % 33 / Company Extra Services Revenue 33 for 2026.
+      // Extra Services Staffing Level (NEW KPI: filled extra-services
+      // positions / positions needed, target 100, all-or-nothing quarterly)
+      // shows greyed at 0% weight until 2027, when it replaces Extra Services
+      // Revenue (Tyler 10-26). Company NMG/ESR = the company figures (Q1-Q3
+      // locked); Phoenix DL% PENDING - at target, unlocked. Matched by role
+      // KEY or title so a rename doesn't empty the role.
       const tcKey = transformedPositions['talent-culture-specialist']
         ? 'talent-culture-specialist'
         : Object.keys(transformedPositions).find(
@@ -1234,10 +1236,18 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
             return { ...k, weight: 33, lockedQuarters: [] };
           })(),
           (() => {
+            const k = buildTcKpi('Extra Services Revenue', '', 120, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 81 };
+            k.quarters[1] = { ...k.quarters[1], actual: 125.5 };
+            k.quarters[2] = { ...k.quarters[2], actual: 120.9 };
+            k.annual = { ...k.annual, actual: 103.2 };
+            return { ...k, weight: 33, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
+          })(),
+          (() => {
             const k = buildTcKpi('Extra Services Staffing Level',
               'Extra-services crew positions filled (Arbor, Irrigation, Enhancements, Spray) as a % of positions needed. Example: 36 filled of 40 needed = 90%. Target 100%.',
               100, 'company');
-            return { ...k, weight: 33, lockedQuarters: [] };
+            return { ...k, weight: 0, inactiveNote: 'Starts 2027', lockedQuarters: [] };
           })(),
         ];
       }
