@@ -451,6 +451,7 @@ const PERIOD_THRESHOLD_FORMULAS = {
   'Arbor Team Sales Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
   'Enhancement Team Sales Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
   'Irrigation Revenue vs Goal': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
+  'Extra Services Staffing Level': { quarterly: { allOrNothing: 100 }, annual: { proportional: true, threshold: 100 } },
   'Client Retention %': { quarterly: { allOrNothingAtTarget: true }, annual: { baseThreshold: 90, scalePerPoint: 0.1 } },
   'Days to Accounting Close': { quarterly: { allOrNothingInverse: 24 }, annual: { allOrNothingInverse: 72 } },
   '% of Aging Over 60 Days': { quarterly: { allOrNothingInverse: 2.5 }, annual: { allOrNothingInverse: 2.5 } },

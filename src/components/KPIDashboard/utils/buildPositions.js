@@ -771,6 +771,33 @@ export const buildPositions = ({
     ];
   }
 
+  // --- Talent & Culture Specialist (first holder Alexia Silva, 2026-10-26)
+  // --- Company NMG 34 / Phoenix DL Maintenance % 33 / Extra Services
+  // Staffing Level 33 (NEW KPI, target 100, all-or-nothing quarterly).
+  // Phoenix DL% and Staffing actuals PENDING - at target, unlocked.
+  const tcKey = transformedPositions['talent-culture-specialist']
+    ? 'talent-culture-specialist'
+    : findKey('Talent & Culture Specialist');
+  if (tcKey) {
+    const build = makeKpiBuilder(34);
+    transformedPositions[tcKey].kpis = [
+      (() => {
+        const k = applyActuals(build('Net Maintenance Growth', '', 16, 'company'), { q1: 5.6, q2: 0.8, q3: -0.2, ytd: 7.4 });
+        return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
+      })(),
+      (() => {
+        const k = build('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
+        return { ...k, weight: 33, lockedQuarters: [] };
+      })(),
+      (() => {
+        const k = build('Extra Services Staffing Level',
+          'Extra-services crew positions filled (Arbor, Irrigation, Enhancements, Spray) as a % of positions needed. Example: 36 filled of 40 needed = 90%. Target 100%.',
+          100, 'company');
+        return { ...k, weight: 33, lockedQuarters: [] };
+      })(),
+    ];
+  }
+
   // --- Client Growth Manager (first holder Tiffany Pennington, 2026-09-23)
   // --- NMG 50 / Extra Services Revenue 50, the user's REGION figures
   // (Phoenix unless allowed_users.region is Las Vegas). Matched by role KEY

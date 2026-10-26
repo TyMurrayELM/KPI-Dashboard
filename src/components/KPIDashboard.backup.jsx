@@ -1187,6 +1187,61 @@ const KPIDashboard = ({ isAdmin = false, allowedRoles = [], userSalary = null, u
         ];
       }
 
+      // Inject hardcoded KPIs into Talent & Culture Specialist (first holder
+      // Alexia Silva, 2026-10-26): Company NMG 34 / Phoenix Direct Labor
+      // Maintenance % 33 / Extra Services Staffing Level 33 (NEW KPI: filled
+      // extra-services positions / positions needed, target 100, all-or-nothing
+      // quarterly). Company NMG = the company figures (Q1-Q3 locked); Phoenix
+      // DL% and Staffing actuals PENDING - at target, unlocked. Matched by
+      // role KEY or title so a rename doesn't empty the role.
+      const tcKey = transformedPositions['talent-culture-specialist']
+        ? 'talent-culture-specialist'
+        : Object.keys(transformedPositions).find(
+            k => transformedPositions[k].title === 'Talent & Culture Specialist'
+          );
+      if (tcKey) {
+        const buildTcKpi = (name, description, target, scope, overrides = {}) => {
+          const config = getKpiPeriodConfig(name);
+          const qTarget = config.quarterlyTarget != null
+            ? config.quarterlyTarget
+            : config.targetType === 'rate' ? target : target / 4;
+          const quarters = config.quarters.map(q => ({
+            id: q.id, period: q.period, payDate: q.payDate,
+            target: qTarget, actual: qTarget,
+          }));
+          return {
+            name, description, target, actual: target,
+            weight: 34, isInverse: false, scope,
+            successFactors: [], successGuide: '',
+            hasPeriods: true, unit: config.unit, stepSize: config.stepSize,
+            targetType: config.targetType, bonusSplit: config.bonusSplit,
+            annualPayDate: config.annualPayDate, quarters,
+            annual: { target, actual: target },
+            ...overrides,
+          };
+        };
+        transformedPositions[tcKey].kpis = [
+          (() => {
+            const k = buildTcKpi('Net Maintenance Growth', '', 16, 'company');
+            k.quarters[0] = { ...k.quarters[0], actual: 5.6 };
+            k.quarters[1] = { ...k.quarters[1], actual: 0.8 };
+            k.quarters[2] = { ...k.quarters[2], actual: -0.2 };
+            k.annual = { ...k.annual, actual: 7.4 };
+            return { ...k, weight: 34, lockedQuarters: ['Q1', 'Q2', 'Q3'] };
+          })(),
+          (() => {
+            const k = buildTcKpi('Direct Labor Maintenance %', '', 40, 'region-phoenix', { isInverse: true });
+            return { ...k, weight: 33, lockedQuarters: [] };
+          })(),
+          (() => {
+            const k = buildTcKpi('Extra Services Staffing Level',
+              'Extra-services crew positions filled (Arbor, Irrigation, Enhancements, Spray) as a % of positions needed. Example: 36 filled of 40 needed = 90%. Target 100%.',
+              100, 'company');
+            return { ...k, weight: 33, lockedQuarters: [] };
+          })(),
+        ];
+      }
+
       // Inject hardcoded KPIs into Client Growth Manager (first holder
       // Tiffany Pennington, 2026-09-23): NMG 50 / Extra Services Revenue 50,
       // the user's REGION figures (Phoenix unless allowed_users.region is
